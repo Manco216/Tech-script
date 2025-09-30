@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Certificados - Tech-script</title>
+    <link rel="stylesheet" href="../../static/css/certificados.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- CONTENEDOR PRINCIPAL DEL LAYOUT -->
+    <div class="layout">
+        <!-- ========== SIDEBAR - BARRA LATERAL ========== -->
+        <aside class="sidebar" id="sidebar">
+            <!-- BOTÓN HAMBURGUESA ARRIBA -->
+            <button id="toggleSidebar" class="toggle-btn">☰</button>
+            
+            <!-- LOGO -->
+            <div class="logo">
+                <div class="logo-content">
+                    <img src="../static/img/logo.png" alt="Logo">
+                    <h2>Tech-script</h2>
+                </div>
+            </div>
+            
+            <!-- NAVEGACIÓN PRINCIPAL -->
+            <nav>
+                <a href="{{ url_for('student') }}" class="nav-item" id="Inicio">
+                    <i class="fas fa-chart-line icon"></i>
+                    <span class="text">Inicio</span>
+                </a>
+                <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
+                    <i class="fas fa-book icon"></i>
+                    <span class="text">Diplomados</span>
+                </a>
+                <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
+                    <i class="fas fa-video icon"></i>
+                    <span class="text">Mi progreso</span>
+                </a>
+                <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
+                    <i class="fas fa-credit-card icon"></i>
+                    <span class="text">Pagos</span>
+                </a>
+                <a href="{{ url_for('mensajes') }}" class="nav-item" id="mensajes">
+                    <i class="fas fa-envelope icon"></i>
+                    <span class="text">Mensajes</span>
+                </a>
+                <a href="{{ url_for('certificados') }}" class="nav-item active" id="certificados">
+                    <i class="fas fa-certificate icon"></i>
+                    <span class="text">Certificados</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- ========== MAIN CONTENT ========== -->
+        <main class="main">
+            <!-- TOPBAR -->
+            <div class="topbar">
+                <button id="toggleSidebarTop" class="toggle-btn">☰</button>
+                
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="¿Qué quieres aprender?">
+                </div>
+                
+                <div class="topbar-right">
+                    <div class="notification-icon">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    
+                    <div class="profile-dropdown">
+                        <div class="profile-pic" id="profile">
+                            <img src="../../static/img/user.jpg" alt="Usuario">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTENIDO PRINCIPAL -->
+            <div class="content">
+                <div class="page-header">
+                    <h1>Mis certificados</h1>
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-number" id="totalCerts">0</span>
+                                <span class="stat-label">Certificados</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-number" id="thisMonth">0</span>
+                                <span class="stat-label">Este mes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FILTROS -->
+                <div class="filters-section">
+                    <div class="certificate-tabs">
+                        <button class="tab-btn active" data-tab="all">Todos</button>
+                        <button class="tab-btn" data-tab="recent">Recientes</button>
+                    </div>
+
+                </div>
+
+                <!-- CERTIFICADOS GRID -->
+                <div class="certificates-container" id="certificatesContainer">
+                    <!-- Los certificados se cargarán dinámicamente -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- OVERLAY PARA MÓVIL -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Modal para vista previa de certificado -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div class="modal-body">
+                <img id="modalImage" src="" alt="">
+                <div class="modal-info">
+                    <h3 id="modalTitle"></h3>
+                    <p id="modalDate"></p>
+                    <div class="modal-actions">
+                        <button class="btn-primary" id="downloadBtn">
+                            <i class="fas fa-download"></i> Descargar
+                        </button>
+                        <button class="btn-secondary" id="shareBtn">
+                            <i class="fas fa-share"></i> Compartir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="../../static/js/certificados.js"></script>
+</body>
+</html>

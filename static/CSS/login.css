@@ -1,0 +1,366 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --azul-oscuro: rgb(62, 67, 216);
+    --celeste: rgb(164, 72, 218);
+    --azul-intermedio: rgb(86, 45, 235);
+    --azul-violeta: rgb(180, 118, 239);
+    --fondo-claro: rgb(250, 250, 250);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+
+body {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--fondo-claro);
+    color: var(--azul-oscuro);
+    padding: 20px;
+}
+
+.login-container {
+    width: 800px;
+    max-width: 100%;
+    height: 500px;
+    display: flex;
+    position: relative;
+    background-color: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.13);
+}
+
+/* Formularios */
+.container-form {
+    width: 100%;
+    overflow: hidden;
+}
+
+.container-form form {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.5s ease-in-out;
+    padding: 20px;
+    text-align: center;
+}
+
+.container-form h2 {
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+.social-networks {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.social-networks ion-icon {
+    border: 1px solid #c9ccc9;
+    border-radius: 6px;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.container-form span {
+    font-size: 12px;
+    color: #a2a2a2;
+    margin-bottom: 15px;
+}
+
+.container-input {
+    position: relative;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 300px;
+    height: 40px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 15px;
+    background-color: rgba(72, 187, 250, 0.1);
+    border: 1px solid var(--celeste);
+    color: var(--azul-oscuro);
+}
+
+.container-input input::placeholder {
+    color: rgba(3, 6, 119, 0.6);
+}
+
+.container-input input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    padding-right: 40px; /* espacio para icono */
+}
+
+.password-eye {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    padding-left: 5px;
+}
+.password-eye ion-icon {
+    font-size: 20px;
+    color: var(--azul-intermedio);
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.password-eye:active {
+    transform: scale(0.9);
+    opacity: 0.7;
+}
+
+.container-form a {
+    font-size: 14px;
+    color: var(--azul-intermedio);
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+.container-form a:hover {
+    color: var(--azul-violeta);
+}
+
+/* Botones */
+.button {
+    width: 170px;
+    height: 45px;
+    background: var(--azul-intermedio);
+    color: white;
+    border: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+    font-size: 16px;
+    border-radius: 5%;
+    cursor: pointer;
+    margin-top: 15px;
+    animation: pulseButton 3s infinite;
+}
+@keyframes pulseButton {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+.button:hover {
+    background: var(--azul-violeta);
+    transform: scale(1.05);
+}
+.button.gray {
+    background: gray;
+}
+.button.gray:hover {
+    background: #555;
+}
+
+.container-form p {
+    font-size: 14px;
+    color: #a2a2a2;
+    margin-top: 15px;
+}
+
+/* Animación de formularios (desktop) */
+.sign-up {
+    transform: translateX(-100%);
+}
+.login-container.toggle .sign-in {
+    transform: translateX(100%);
+}
+.login-container.toggle .sign-up {
+    transform: translateX(0);
+}
+
+/* Panel de bienvenida */
+.container-welcome {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateX(100%);
+    background: linear-gradient(270deg, var(--azul-oscuro), var(--celeste));
+    background-size: 400% 400%;
+    animation: gradientMove 8s ease infinite;
+    overflow: hidden;
+    transition: transform 0.5s ease-in-out, border-radius 0.5s ease-in-out;
+    border-radius: 50% 0 0 50%;
+}
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+.login-container.toggle .container-welcome {
+    transform: translateX(0);
+    border-radius: 0 50% 50% 0;
+}
+
+/* Contenido del panel */
+.container-welcome .welcome {
+    position: absolute;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 0 50px;
+    color: white;
+    text-align: center;
+    transition: transform 0.5s ease-in-out;
+}
+
+.welcome-sign-in {
+    transform: translateX(100%);
+}
+.welcome-sign-up {
+    transform: translateX(0);
+}
+
+.container-welcome h3 {
+    font-size: 40px;
+}
+.container-welcome p {
+    font-size: 14px;
+    text-align: center;
+}
+.container-welcome .button {
+    border: 2px solid white;
+    background-color: transparent;
+}
+
+.login-container.toggle .welcome-sign-in {
+    transform: translateX(0);
+}
+.login-container.toggle .welcome-sign-up {
+    transform: translateX(-100%);
+}
+
+/* Indicador de pasos */
+.step-indicator {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: var(--azul-intermedio);
+    font-weight: bold;
+}
+.step {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+.step.active {
+    display: flex;
+}
+
+/* Mensajes */
+.mensaje-error {
+    color: red;
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+/* ======================================================= */
+/* ====================== RESPONSIVE ===================== */
+/* ======================================================= */
+
+@media (max-width: 768px) {
+    /* permitir scroll vertical natural */
+    body {
+        height: auto;
+        min-height: 100vh;
+        align-items: flex-start;
+        padding-top: 16px;
+    }
+
+    .login-container {
+        flex-direction: column;
+        width: 100%;
+        max-width: 420px;
+        height: auto;
+    }
+
+    /* El panel ya no es absoluto para que no tape elementos */
+    .container-welcome {
+        position: relative;
+        width: 100%;
+        height: auto;
+        border-radius: 0;
+        transform: none !important;
+        animation: gradientMove 8s ease infinite;
+        order: 2;
+        overflow: visible;
+    }
+
+    /* El contenido del panel toma flujo normal */
+    .container-welcome .welcome {
+        position: static;
+        padding: 24px 20px;
+        transform: none !important;
+    }
+
+    /* Formularios arriba */
+    .container-form {
+        order: 1;
+        overflow: visible;
+    }
+
+    /* Desactivar los slides (desktop) y usar display para mostrar sólo el que corresponda */
+    .sign-in,
+    .sign-up {
+        transform: none !important;
+        width: 100%;
+        display: block;
+    }
+
+    /* Mostrar sólo el formulario activo (misma lógica que tu JS con .toggle):
+       - Si NO existe la clase .toggle -> ocultar .sign-up (mostramos sign-in)
+       - Si existe .toggle -> ocultar .sign-in (mostramos sign-up)
+    */
+    .login-container:not(.toggle) .sign-up { display: none; }   /* default: mostrar sign-in */
+    .login-container.toggle .sign-in { display: none; }         /* con toggle: mostrar sign-up */
+
+    /* Bienvenida: por defecto (sin toggle) mostramos "Bienvenido" (.welcome-sign-up)
+       con toggle mostramos "¡Hola!" (.welcome-sign-in). Esto respeta la lógica original.
+    */
+    /* Primero ocultamos ambos y luego mostramos sólo el correspondiente */
+    .welcome-sign-in, .welcome-sign-up {
+        display: none;
+        transform: none !important;
+    }
+
+    /* Sin toggle -> mostrar Bienvenido (registro) en el panel */
+    .login-container:not(.toggle) .welcome-sign-up { display: block; }
+    .login-container:not(.toggle) .welcome-sign-in { display: none; }
+
+    /* Con toggle -> mostrar ¡Hola! (iniciar sesión) en el panel */
+    .login-container.toggle .welcome-sign-in { display: block; }
+    .login-container.toggle .welcome-sign-up { display: none; }
+
+    /* Ajustes visuales en móvil sin alterar estilo base */
+    .container-form h2 { font-size: 24px; }
+    .container-input { max-width: 100%; }
+    .button { width: 100%; }
+    .container-welcome h3 { font-size: 28px; }
+}
+
+/* Móviles muy pequeños */
+@media (max-width: 420px) {
+    .login-container { max-width: 100%; border-radius: 12px; }
+    .container-welcome .welcome { padding: 20px 16px; }
+    .container-welcome h3 { font-size: 24px; }
+    .container-welcome p { font-size: 13px; }
+}

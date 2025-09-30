@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario - Tech Script</title>
+    <link rel="stylesheet" href="../../static/CSS/perfilEstudiante.css">
+    <link rel="icon" type="image/png" href="../static/img/logof.png">
+</head>
+<body>
+          <div class="layout">
+    
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar" id="sidebar">
+      <button id="toggleSidebar" class="toggle-btn">☰</button>
+
+      <div class="logo">
+        <div class="logo-content">
+          <img src="../../static/img/logo.png" alt="Logo">
+          <h2>Tech-script</h2>
+        </div>
+      </div>
+  
+      <nav>
+        <a href="{{ url_for('student') }}" class="nav-item active" id="Inicio">
+          <i class="fas fa-chart-line icon"></i><span class="text">Inicio</span>
+        </a>
+        <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
+          <i class="fas fa-book icon"></i><span class="text">Diplomados</span>
+        </a>
+        <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
+          <i class="fas fa-video icon"></i><span class="text">Mi progreso</span>
+        </a>
+        <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
+          <i class="fas fa-credit-card icon"></i><span class="text">Pagos</span>
+        </a>
+        <a href="{{ url_for('mensajes') }}" class="nav-item" id="mensajes">
+          <i class="fas fa-envelope icon"></i><span class="text">Mensajes</span>
+        </a>
+        <a href="{{ url_for('certificados') }}" class="nav-item" id="certificados">
+          <i class="fas fa-certificate icon"></i><span class="text">Certificados</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user">
+            <img src="https://i.pravatar.cc/40" alt="foto de perfil" class="user-avatar">
+            <div class="user-info">
+              <span class="name">María González</span>
+              <span class="email">maria.gonzalez@email.com</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+        <!-- ========== MAIN ========== -->
+    <main class="main">
+      <!-- TOPBAR -->
+      <div class="topbar">
+        <button id="toggleSidebarTop" class="toggle-btn">☰</button>
+                
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" placeholder="¿Qué quieres aprender?">
+        </div>
+                
+        <div class="topbar-right">
+          <div class="notification-icon">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">3</span>
+          </div>
+                    
+          <div class="profile-dropdown">
+            <div class="profile-pic" id="profile">
+              <img src="../static/img/user.jpg" alt="Usuario">
+            </div>
+          </div>
+        </div>
+      </div>
+   
+
+           <div class="content-grid">
+    <!-- Profile Section -->
+    <div class="profile-card">
+        <div class="profile-info">
+            <div class="profile-avatar">
+                <img src="https://i.pravatar.cc/120" alt="Прохорова Наталь">
+                <div class="status-indicator"></div>
+            </div>
+            <div class="profile-details">
+                <h2>Прохорова Наталь</h2>
+                <p class="profile-subtitle">UI/UX Designer</p>
+                <div class="profile-contact">
+                    <p class="profile-location">📍 Ukraine, Kharkiv</p>
+                    <p class="profile-phone">📞 +380 63 456 78 91</p>
+                    <p class="profile-email">📧 prokhorova@gmail.com</p>
+                </div>
+                <div class="social-links">
+                    <a href="#" class="social-link" title="LinkedIn">💼</a>
+                    <a href="#" class="social-link" title="Behance">🎨</a>
+                    <a href="#" class="social-link" title="Dribbble">🏀</a>
+                    <a href="#" class="social-link" title="Instagram">📷</a>
+                    <a href="#" class="social-link" title="Twitter">🐦</a>
+                    <a href="#" class="social-link" title="GitHub">💻</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Points System -->
+    <div class="points-card">
+        <h3>Sistema de Puntos</h3>
+        <div class="points-circle">
+            <div class="points-inner">
+                <span class="points-number" id="totalPoints">2,450</span>
+                <span class="points-label">Puntos</span>
+            </div>
+            <svg class="progress-ring" width="120" height="120">
+                <circle class="progress-ring-circle" 
+                        stroke="#e0e0e0" 
+                        stroke-width="8"
+                        fill="transparent"
+                        r="52"
+                        cx="60"
+                        cy="60"/>
+                <circle class="progress-ring-circle progress" 
+                        stroke="#6366f1" 
+                        stroke-width="8"
+                        fill="transparent"
+                        r="52"
+                        cx="60"
+                        cy="60"
+                        id="progressCircle"/>
+            </svg>
+        </div>
+        <div class="points-breakdown">
+            <div class="points-item">
+                <span class="points-source">UX/UI Design - Básico</span>
+                <span class="points-value">+500 pts</span>
+            </div>
+            <div class="points-item">
+                <span class="points-source">UX/UI Design - Intermedio</span>
+                <span class="points-value">+750 pts</span>
+            </div>
+            <div class="points-item">
+                <span class="points-source">UX/UI Design - Avanzado</span>
+                <span class="points-value">+1200 pts</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Courses Progress -->
+    <div class="courses-card">
+        <h3>Mis Cursos</h3>
+        <div class="course-timeline">
+            <div class="course-item completed">
+                <div class="course-status"></div>
+                <div class="course-content">
+                    <h4>UX/UI Design - Básico</h4>
+                    <p>Diseño de interfaces y experiencia de usuario</p>
+                    <span class="course-badge completado">Completado</span>
+                </div>
+            </div>
+            <div class="course-item completed">
+                <div class="course-status"></div>
+                <div class="course-content">
+                    <h4>UX/UI Design - Intermedio</h4>
+                    <p>Prototipado y metodologías avanzadas</p>
+                    <span class="course-badge completado">Completado</span>
+                </div>
+            </div>
+            <div class="course-item in-progress">
+                <div class="course-status"></div>
+                <div class="course-content">
+                    <h4>UX/UI Design - Avanzado</h4>
+                    <p>Investigación y estrategias de UX</p>
+                    <span class="course-badge progreso">75% Completado</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="achievements-card">
+        <h3>Logros y Certificaciones</h3>
+        <div class="achievements-grid">
+            <div class="achievement-item">
+                <div class="achievement-icon">🏆</div>
+                <div class="achievement-info">
+                    <h4>Primer Diplomado</h4>
+                    <p>Completaste tu primer curso</p>
+                </div>
+            </div>
+            <div class="achievement-item">
+                <div class="achievement-icon">🎯</div>
+                <div class="achievement-info">
+                    <h4>Estudiante Dedicado</h4>
+                    <p>2 cursos completados</p>
+                </div>
+            </div>
+            <div class="achievement-item">
+                <div class="achievement-icon">⭐</div>
+                <div class="achievement-info">
+                    <h4>Próximo Objetivo</h4>
+                    <p>Completa 3 diplomados</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script src="../../static/JS/perfilEstudiante.js"></script>
+</body>
+</html>

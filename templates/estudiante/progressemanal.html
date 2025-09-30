@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Progreso - Tech-script</title>
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="../../static/css/progressemanal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- LAYOUT PRINCIPAL -->
+  <div class="layout">
+    <!-- ===== Sidebar ===== -->
+    <aside class="sidebar" id="sidebar">
+      <button id="toggleSidebar" class="toggle-btn">☰</button>
+      <div class="logo">
+        <div class="logo-content">
+          <img src="../../static/img/logo.png" alt="Logo">
+          <h2>Tech-script</h2>
+        </div>
+      </div>
+
+      <nav>
+        <a href="{{ url_for('student') }}" class="nav-item"><i class="fas fa-chart-line icon"></i><span>Inicio</span></a>
+        <a href="{{ url_for('diplomados') }}" class="nav-item"><i class="fas fa-book icon"></i><span>Diplomados</span></a>
+        <a href="{{ url_for('progreso_semanal') }}" class="nav-item active"><i class="fas fa-video icon"></i><span>Mi progreso</span></a>
+        <a href="{{ url_for('pagos') }}" class="nav-item"><i class="fas fa-credit-card icon"></i><span>Pagos</span></a>
+        <a href="{{ url_for('mensajes') }}" class="nav-item"><i class="fas fa-envelope icon"></i><span>Mensajes</span></a>
+        <a href="{{ url_for('certificados') }}" class="nav-item"><i class="fas fa-certificate icon"></i><span>Certificados</span></a>
+      </nav>
+    </aside>
+
+    <!-- ===== Main Content ===== -->
+    <main class="main">
+      <!-- Topbar -->
+      <div class="topbar">
+        <button id="toggleSidebarTop" class="toggle-btn">☰</button>
+
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" placeholder="¿Qué quieres aprender?">
+        </div>
+
+        <div class="topbar-right">
+          <div class="notification-icon">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">3</span>
+          </div>
+          <div class="profile-dropdown">
+            <div class="profile-pic"><img src="../static/img/user.jpg" alt="Usuario"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progreso -->
+      <div class="progress-section">
+        <!-- Gráfico -->
+        <div class="progress-main">
+          <h1>Mi Progreso</h1>
+          <div class="progress-chart-container">
+            <div class="chart-header">
+              <h3>Progreso</h3>
+              <div class="classes-counter">
+                <span class="counter-label">Clases vistas</span>
+                <span class="counter-number">1</span>
+              </div>
+            </div>
+            <canvas id="progressChart"></canvas>
+            <div class="chart-legend">
+              <div class="legend-item"><span class="legend-dot past"></span><span>Días anteriores</span></div>
+              <div class="legend-item"><span class="legend-dot today"></span><span>Hoy</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Posición semanal -->
+        <div class="weekly-position-card">
+          <div class="card-header">
+            <h3>Tu posición semanal</h3>
+            <i class="fas fa-info-circle info-icon"></i>
+          </div>
+          <div class="date-range">Del 1 - 7 de septiembre</div>
+
+          <div class="position-badges">
+            <span class="position-badge active">Secretaria de la</span>
+            <span class="position-badge">general</span>
+          </div>
+
+          <div class="user-avatars">
+            <div class="avatar-row">
+              <img src="../static/img/user1.jpg" class="user-avatar-small">
+              <img src="../static/img/user2.jpg" class="user-avatar-small">
+              <img src="../static/img/user3.jpg" class="user-avatar-small">
+            </div>
+            <div class="avatar-row">
+              <img src="../static/img/user4.jpg" class="user-avatar-small">
+              <img src="../static/img/user5.jpg" class="user-avatar-small">
+              <img src="../static/img/user6.jpg" class="user-avatar-small">
+            </div>
+          </div>
+
+          <p class="motivational-text">Únete al top de estudiantes de esta semana tomando una clase o aportando a la comunidad.</p>
+          <button class="view-courses-btn">Ver mis cursos <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Scripts -->
+  <script src="../static/js/progressemanal.js"></script>
+  <script src="../static/js/progress-chart.js"></script>
+</body>
+</html>

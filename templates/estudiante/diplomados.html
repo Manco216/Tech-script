@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diplomados - tech-script</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../../static/CSS/diplomados.css">
+    <link rel="icon" type="image/png" href="../../static/img/logof.png">
+</head>
+<body>
+    <div class="layout">
+        <!-- ========== SIDEBAR ========== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-content">
+                    <img src="../../static/img/logo.png" alt="Logo">
+                    <h2>tech-script</h2>
+                </div>
+                <button id="toggleSidebar" class="toggle-btn">☰</button>
+            </div>
+           <nav>
+  <a href="{{ url_for('student') }}" class="nav-item active" id="Inicio">
+    <i class="fas fa-chart-line icon"></i>
+    <span class="text">Inicio</span>
+  </a>
+  <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
+    <i class="fas fa-book icon"></i>
+    <span class="text">Diplomados</span>
+  </a>
+  <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
+    <i class="fas fa-video icon"></i>
+    <span class="text">Mi progreso</span>
+  </a>
+  <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
+    <i class="fas fa-credit-card icon"></i>
+    <span class="text">Pagos</span>
+  </a>
+  <a href="{{ url_for('mensajes') }}" class="nav-item" id="mensajes">
+    <i class="fas fa-envelope icon"></i>
+    <span class="text">Mensajes</span>
+  </a>
+  <a href="{{ url_for('certificados') }}" class="nav-item" id="certificados">
+    <i class="fas fa-certificate icon"></i>
+    <span class="text">Certificados</span>
+  </a>
+</nav>
+            <div class="sidebar-footer">
+                <div class="nav-item" id="configuracion"><i class="fas fa-cog icon"></i><span class="text">Configuración</span></div>
+                <div class="nav-item" id="mi-cuenta"><i class="fas fa-user icon"></i><span class="text">Mi cuenta</span></div>
+            </div>
+        </aside>
+
+        <!-- ========== MAIN CONTENT ========== -->
+        <main class="main">
+            <div class="topbar">
+                <button id="toggleSidebarMobile" class="toggle-btn">☰</button>
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Buscar diplomados, módulos...">
+                </div>
+                <div class="topbar-right">
+                    <div class="notification-icon"><i class="fas fa-bell"></i><span class="notification-badge">3</span></div>
+                    <div class="notification-icon"><i class="fas fa-envelope"></i><span class="notification-badge">5</span></div>
+                    <span class="user-info">Maria González</span>
+                    <div class="profile-pic" id="profile">
+                        <img src="../static/img/profile.jpg" alt="Profile">
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="page-header">
+                    <h1>Diplomados</h1>
+                    <p>Descubre y matricúlate en nuestros diplomados especializados</p>
+                </div>
+
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <select id="categoryFilter" class="filter-select">
+                            <option value="">Categoría</option>
+                            <option value="desarrollo-web">Desarrollo Web</option>
+                            <option value="inteligencia-artificial">Inteligencia Artificial</option>
+                            <option value="ciberseguridad">Ciberseguridad</option>
+                            <option value="data-science">Data Science</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <select id="levelFilter" class="filter-select">
+                            <option value="">Nivel</option>
+                            <option value="principiante">Principiante</option>
+                            <option value="intermedio">Intermedio</option>
+                            <option value="avanzado">Avanzado</option>
+                        </select>
+                    </div>
+                    <button class="filter-btn" id="applyFilters">
+                        <i class="fas fa-filter"></i>
+                        Filtros
+                    </button>
+                </div>
+
+                <!-- GRID DE DIPLOMADOS -->
+                <div class="diplomados-grid" id="diplomadosGrid">
+                    <!-- JS generará las tarjetas aquí -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JS externo -->
+    <script src="../../static/JS/diplomados.js"></script>
+</body>
+</html>

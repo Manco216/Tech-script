@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Subir contenido - tech-script</title>
+
+  <!-- ICONOS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <link rel="icon" type="image/png" href="../../static/img/logof.png"/>
+
+  <!-- CSS PRINCIPAL -->
+  <link rel="stylesheet" href="../../static/CSS/admin/subirContenido.css"/>
+</head>
+<body>
+  <div class="layout">
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="logo">
+        <div class="logo-content">
+          <img src="../../static/img/logo.png" alt="Logo"/>
+          <h2>tech-script</h2>
+        </div>
+        <button id="toggleSidebar" class="toggle-btn">☰</button>
+      </div>
+
+       <nav>
+        <a href="{{ url_for('instructor') }}" class="nav-item active" id="Inicio">
+          <i class="fas fa-chart-line icon"></i>
+          <span class="text">Panel</span>
+        </a>
+         <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
+          <i class="fas fa-chart-bar icon"></i>
+          <span class="text">Reportes</span>
+        </a>
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="mis-cursos">
+          <i class="fas fa-book icon"></i>
+          <span class="text">Gestion Diplomados</span>
+        </a>
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="estudiantes">
+          <i class="fas fa-users icon"></i>
+          <span class="text"> Gestion Usuarios</span>
+        </a>
+        <a href="{{ url_for('subirContenido') }}" class="nav-item" id="contenido">
+          <i class="fas fa-upload icon"></i>
+          <span class="text">Contenido</span>
+        </a>
+         <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
+          <i class="fas fa-chart-bar icon"></i>
+          <span class="text">Metricas</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="nav-item"><i class="fas fa-cog icon"></i><span class="text">Configuración</span></div>
+        <div class="nav-item"><i class="fas fa-user icon"></i><span class="text">Mi cuenta</span></div>
+      </div>
+    </aside>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="main">
+      <!-- Topbar -->
+      <div class="topbar">
+        <button id="toggleSidebarMobile" class="toggle-btn">☰</button>
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" placeholder="Buscar diplomados, módulos..."/>
+        </div>
+        <div class="topbar-right">
+          <div class="notification-icon">
+            <i class="fas fa-bell"></i><span class="notification-badge">3</span>
+          </div>
+          <div class="profile-pic" id="profile">
+            <img src="../static/img/profile.jpg" alt="Profile"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenido principal -->
+      <div class="container">
+        <div class="page-header">
+          <div class="header-content">
+            <div>
+              <h1>Subir Contenido</h1>
+              <p>Crea y administra el contenido educativo para tus cursos</p>
+            </div>
+            <button class="btn btn-primary" id="createNewBtn">
+               Crear Nuevo Contenido
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs-container">
+          <button class="tab-btn active" data-tab="upload">
+            <i class="fas fa-upload"></i> Subir Archivo
+          </button>
+          <button class="tab-btn" data-tab="content">
+            <i class="fas fa-folder"></i> Mi Contenido
+          </button>
+        </div>
+
+        <!-- Tab Content: Upload -->
+        <div class="tab-content active" id="upload">
+          <div class="content-grid">
+            <div class="info-card">
+              <div class="card-header">
+                <h3><i class="fas fa-info-circle"></i> Tipos de Contenido Soportados</h3>
+                <p>Diferentes formatos que puedes subir para enriquecer tus cursos</p>
+              </div>
+              <div class="card-content">
+                <div class="content-types-grid">
+                  <div class="content-type-item">
+                    <div class="content-type-icon video">
+                      <i class="fas fa-video"></i>
+                    </div>
+                    <div class="content-type-info">
+                      <h4>Videos</h4>
+                      <p>MP4, AVI, MOV hasta 500MB</p>
+                      <small>Ideal para clases y tutoriales</small>
+                    </div>
+                  </div>
+                  <div class="content-type-item">
+                    <div class="content-type-icon document">
+                      <i class="fas fa-file-text"></i>
+                    </div>
+                    <div class="content-type-info">
+                      <h4>Documentos</h4>
+                      <p>PDF, DOCX, PPTX hasta 50MB</p>
+                      <small>Guías y presentaciones</small>
+                    </div>
+                  </div>
+                  <div class="content-type-item">
+                    <div class="content-type-icon image">
+                      <i class="fas fa-image"></i>
+                    </div>
+                    <div class="content-type-info">
+                      <h4>Imágenes</h4>
+                      <p>PNG, JPG, SVG hasta 10MB</p>
+                      <small>Diagramas e infografías</small>
+                    </div>
+                  </div>
+                  <div class="content-type-item">
+                    <div class="content-type-icon quiz">
+                      <i class="fas fa-question-circle"></i>
+                    </div>
+                    <div class="content-type-info">
+                      <h4>Evaluaciones</h4>
+                      <p>Quizzes interactivos</p>
+                      <small>Evalúa el progreso</small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tips-section">
+                  <h4><i class="fas fa-lightbulb"></i> Consejos para Crear Contenido de Calidad</h4>
+                  <div class="tips-grid">
+                    <div class="tip-item">
+                      <i class="fas fa-check-circle"></i>
+                      <span>Usa títulos descriptivos y claros</span>
+                    </div>
+                    <div class="tip-item">
+                      <i class="fas fa-check-circle"></i>
+                      <span>Organiza el contenido secuencialmente</span>
+                    </div>
+                    <div class="tip-item">
+                      <i class="fas fa-check-circle"></i>
+                      <span>Incluye descripciones detalladas</span>
+                    </div>
+                    <div class="tip-item">
+                      <i class="fas fa-check-circle"></i>
+                      <span>Verifica la calidad antes de publicar</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Content -->
+        <div class="tab-content" id="content">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-upload"></i>
+              </div>
+              <div class="stat-info">
+                <h4>Total Contenido</h4>
+                <p>24</p>
+                <small>18 publicados, 6 borradores</small>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-video"></i>
+              </div>
+              <div class="stat-info">
+                <h4>Videos</h4>
+                <p>12</p>
+                <small>8.5 horas de contenido</small>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-file-text"></i>
+              </div>
+              <div class="stat-info">
+                <h4>Documentos</h4>
+                <p>8</p>
+                <small>Guías y recursos</small>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-eye"></i>
+              </div>
+              <div class="stat-info">
+                <h4>Total Visualizaciones</h4>
+                <p>1,247</p>
+                <small>+23% esta semana</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="content-library-card">
+            <div class="card-header">
+              <h3><i class="fas fa-folder-open"></i> Mi Biblioteca de Contenido</h3>
+              <p>Gestiona todo tu contenido educativo desde aquí</p>
+              <div class="content-filters">
+                <select id="content-filter" class="filter-select">
+                  <option value="all">Todos los tipos</option>
+                  <option value="video">Videos</option>
+                  <option value="document">Documentos</option>
+                  <option value="image">Imágenes</option>
+                  <option value="quiz">Evaluaciones</option>
+                </select>
+                <select id="status-filter" class="filter-select">
+                  <option value="all">Todos los estados</option>
+                  <option value="published">Publicado</option>
+                  <option value="draft">Borrador</option>
+                  <option value="private">Privado</option>
+                </select>
+              </div>
+            </div>
+            <div class="card-content">
+              <div id="contentList" class="content-list">
+                <!-- El contenido se carga dinámicamente -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ========== MODAL CREAR CONTENIDO ========== -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2><i class="fas fa-plus-circle"></i> Crear Nuevo Contenido</h2>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+
+      <!-- Navegación de pestañas (modal) -->
+      <div class="modal-tabs">
+        <button class="modal-tab active" data-tab="tipo">
+          <i class="fas fa-th-large"></i> Tipo
+        </button>
+        <button class="modal-tab" data-tab="detalles">
+          <i class="fas fa-edit"></i> Detalles
+        </button>
+        <button class="modal-tab" data-tab="archivo">
+          <i class="fas fa-upload"></i> Archivo
+        </button>
+        <button class="modal-tab" data-tab="configuracion">
+          <i class="fas fa-cogs"></i> Configuración
+        </button>
+      </div>
+
+      <!-- Contenido del modal -->
+      <div class="modal-body">
+        <!-- Pestaña 1: Tipo de Contenido -->
+        <div id="tab-tipo" class="tab-panel active">
+          <div class="content-type-selection">
+            <h3>Selecciona el Tipo de Contenido</h3>
+            <p class="selection-description">Elige qué tipo de material educativo vas a crear</p>
+            
+            <div class="content-types-modal-grid">
+              <div class="content-type-card" data-type="video">
+                <div class="type-icon video">
+                  <i class="fas fa-video"></i>
+                </div>
+                <h4>Video</h4>
+                <p>Clases grabadas, tutoriales, explicaciones detalladas</p>
+                <div class="type-specs">
+                  <span><i class="fas fa-file"></i> MP4, AVI, MOV</span>
+                  <span><i class="fas fa-weight-hanging"></i> Máx 500MB</span>
+                </div>
+              </div>
+              
+              <div class="content-type-card" data-type="document">
+                <div class="type-icon document">
+                  <i class="fas fa-file-text"></i>
+                </div>
+                <h4>Documento</h4>
+                <p>PDFs, presentaciones, guías de estudio</p>
+                <div class="type-specs">
+                  <span><i class="fas fa-file"></i> PDF, DOCX, PPTX</span>
+                  <span><i class="fas fa-weight-hanging"></i> Máx 50MB</span>
+                </div>
+              </div>
+              
+              <div class="content-type-card" data-type="image">
+                <div class="type-icon image">
+                  <i class="fas fa-image"></i>
+                </div>
+                <h4>Imagen</h4>
+                <p>Diagramas, infografías, capturas de pantalla</p>
+                <div class="type-specs">
+                  <span><i class="fas fa-file"></i> PNG, JPG, SVG</span>
+                  <span><i class="fas fa-weight-hanging"></i> Máx 10MB</span>
+                </div>
+              </div>
+              
+              <div class="content-type-card" data-type="quiz">
+                <div class="type-icon quiz">
+                  <i class="fas fa-question-circle"></i>
+                </div>
+                <h4>Evaluación</h4>
+                <p>Quizzes interactivos, exámenes</p>
+                <div class="type-specs">
+                  <span><i class="fas fa-clock"></i> Personalizable</span>
+                  <span><i class="fas fa-chart-line"></i> Con métricas</span>
+                </div>
+              </div>
+            </div>
+            
+            <div id="selected-type-info" class="selected-type-info">
+              <div class="selection-indicator">
+                <i class="fas fa-check-circle"></i>
+                <span>Has seleccionado: <strong id="selected-type-name">Ninguno</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pestaña 2: Detalles -->
+        <div id="tab-detalles" class="tab-panel">
+          <div class="form-sections">
+            <div class="form-section">
+              <h3><i class="fas fa-info-circle"></i> Información Básica</h3>
+              <div class="form-grid">
+                <div class="form-group full-width">
+                  <label for="title">Título del Contenido *</label>
+                  <input type="text" id="title" placeholder="Ej: Introducción a React Hooks" required>
+                  <div class="field-hint">Usa un título descriptivo y claro</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="course">Diplomado *</label>
+                  <select id="course" required>
+                    <option value="">Seleccionar Diplomado</option>
+                    <option value="react">Desarrollo Web con React</option>
+                    <option value="python">Python para Data Science</option>
+                    <option value="spring">Microservicios con Spring Boot</option>
+                    <option value="ux">Diseño UX/UI</option>
+                    <option value="ml">Machine Learning Básico</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="lesson">Lección *</label>
+                  <select id="lesson" required>
+                    <option value="">Seleccionar lección</option>
+                    <option value="intro">Introducción</option>
+                    <option value="lesson1">Lección 1: Fundamentos</option>
+                    <option value="lesson2">Lección 2: Conceptos Intermedios</option>
+                    <option value="lesson3">Lección 3: Práctica</option>
+                    <option value="lesson4">Lección 4: Proyecto</option>
+                    <option value="eval">Evaluación Final</option>
+                  </select>
+                </div>
+
+                <div class="form-group full-width">
+                  <label for="description">Descripción</label>
+                  <textarea id="description" rows="4" placeholder="Describe el contenido que estás creando..."></textarea>
+                  <div class="field-hint">Explica qué aprenderán los estudiantes</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3><i class="fas fa-tags"></i> Organización</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="order">Orden en la Lección</label>
+                  <select id="order">
+                    <option value="">Seleccionar posición</option>
+                    <option value="1">1 - Primero</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5 - Último</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="difficulty">Nivel de Dificultad</label>
+                  <select id="difficulty">
+                    <option value="">Seleccionar nivel</option>
+                    <option value="beginner">🟢 Principiante</option>
+                    <option value="intermediate">🟡 Intermedio</option>
+                    <option value="advanced">🟠 Avanzado</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pestaña 3: Archivo -->
+        <div id="tab-archivo" class="tab-panel">
+          <div class="upload-section">
+            <div class="upload-area">
+              <div id="upload-zone" class="upload-zone">
+                <div class="upload-content">
+                  <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                  </div>
+                  <h4>Arrastra y suelta tu archivo aquí</h4>
+                  <p>o <button type="button" class="link-btn" id="browse-files">haz clic para seleccionar</button></p>
+                  <div class="upload-info" id="upload-info">
+                    Selecciona primero el tipo de contenido
+                  </div>
+                </div>
+                <div class="upload-overlay" id="upload-overlay">
+                  <div class="overlay-content">
+                    <i class="fas fa-download"></i>
+                    <span>Suelta el archivo para subir</span>
+                  </div>
+                </div>
+              </div>
+
+              <input type="file" id="file-input" style="display: none;">
+
+              <div id="upload-progress" class="upload-progress">
+                <div class="progress-header">
+                  <span class="progress-filename">archivo.ext</span>
+                  <span class="progress-size">0 MB</span>
+                </div>
+                <div class="progress-bar">
+                  <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <div class="progress-status">
+                  <span id="progress-text">Preparando...</span>
+                  <span id="progress-percent">0%</span>
+                </div>
+              </div>
+
+              <div id="upload-success" class="upload-success">
+                <div class="success-content">
+                  <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                  </div>
+                  <div class="success-info">
+                    <h4>Archivo subido exitosamente</h4>
+                    <p id="file-details">archivo.ext (0 MB)</p>
+                    <div class="success-actions">
+                      <button type="button" class="btn-preview" id="preview-btn">
+                        <i class="fas fa-eye"></i> Vista previa
+                      </button>
+                      <button type="button" class="btn-change" id="change-file-btn">
+                        <i class="fas fa-sync"></i> Cambiar archivo
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quiz Configuration -->
+            <div id="quiz-config" class="quiz-configuration">
+              <h3><i class="fas fa-cogs"></i> Configuración del Quiz</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="quiz-questions">Número de Preguntas</label>
+                  <input type="number" id="quiz-questions" placeholder="10" min="1" max="50">
+                </div>
+                <div class="form-group">
+                  <label for="quiz-time">Tiempo Límite (minutos)</label>
+                  <input type="number" id="quiz-time" placeholder="15" min="1" max="120">
+                </div>
+                <div class="form-group">
+                  <label for="quiz-score">Puntuación Mínima (%)</label>
+                  <input type="number" id="quiz-score" placeholder="70" min="0" max="100">
+                </div>
+                <div class="form-group">
+                  <label for="quiz-attempts">Intentos Permitidos</label>
+                  <select id="quiz-attempts">
+                    <option value="1">1 intento</option>
+                    <option value="2">2 intentos</option>
+                    <option value="3">3 intentos</option>
+                    <option value="unlimited">Sin límite</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pestaña 4: Configuración -->
+        <div id="tab-configuracion" class="tab-panel">
+          <div class="form-sections">
+            <div class="form-section">
+              <h3><i class="fas fa-eye"></i> Visibilidad y Acceso</h3>
+              <div class="settings-grid">
+                <div class="setting-item">
+                  <div class="setting-info">
+                    <label>Contenido Público</label>
+                    <p>Visible para todos los estudiantes del curso</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="is-public" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <div class="setting-item">
+                  <div class="setting-info">
+                    <label>Permitir Descargas</label>
+                    <p>Los estudiantes pueden descargar el archivo</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="allow-download">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <div class="setting-item">
+                  <div class="setting-info">
+                    <label>Habilitar Comentarios</label>
+                    <p>Los estudiantes pueden comentar este contenido</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="enable-comments" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3><i class="fas fa-calendar"></i> Programación</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="publish-date">Fecha de Publicación</label>
+                  <input type="datetime-local" id="publish-date">
+                  <div class="field-hint">Deja vacío para publicar inmediatamente</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="expire-date">Fecha de Vencimiento</label>
+                  <input type="datetime-local" id="expire-date">
+                  <div class="field-hint">Opcional: el contenido se ocultará después de esta fecha</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3><i class="fas fa-bell"></i> Notificaciones</h3>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="notify-students">Notificar a Estudiantes</label>
+                  <select id="notify-students">
+                    <option value="immediately">Inmediatamente</option>
+                    <option value="never">No notificar</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="prerequisites">Prerrequisitos</label>
+                  <select id="prerequisites">
+                    <option value="none">Sin prerrequisitos</option>
+                    <option value="intro">Introducción completada</option>
+                    <option value="lesson1">Lección completada</option>
+                    <option value="quiz1">Quiz aprobado</option>
+                  </select>
+                </div>
+            </div>
+
+            <div class="tips-card">
+              <div class="tips-header">
+                <i class="fas fa-lightbulb"></i>
+                <h4>Consejos de Configuración</h4>
+              </div>
+              <ul class="tips-list">
+                <li>Programa el contenido para liberar gradualmente el material</li>
+                <li>Usa prerrequisitos para crear un flujo de aprendizaje estructurado</li>
+                <li>Habilita las descargas solo para material de referencia</li>
+                <li>Los comentarios fomentan la participación de los estudiantes</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-btn">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="create-publish-btn">
+            <i class="fas fa-upload"></i> Crear y Publicar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../static/JS/admin/subirContenido.js"></script>
+</body>
+</html>

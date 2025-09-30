@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Métricas en Tiempo Real - TechScript</title>
+  <link rel="icon" type="image/png" href="../../static/img/logof.png"/>
+  <link rel="stylesheet" href="../../static/CSS/admin/metricas.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+      <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <button id="toggleSidebar" class="toggle-btn">☰</button>
+      <div class="logo">
+        <div class="logo-content">
+          <img src="../../static/img/logo.png" alt="Logo">
+          <h2>Tech-script</h2>
+        </div>
+      </div>
+
+       <nav>
+        <a href="{{ url_for('instructor') }}" class="nav-item active" id="Inicio">
+          <i class="fas fa-chart-line icon"></i>
+          <span class="text">Panel</span>
+        </a>
+         <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
+          <i class="fas fa-chart-bar icon"></i>
+          <span class="text">Reportes</span>
+        </a>
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="mis-cursos">
+          <i class="fas fa-book icon"></i>
+          <span class="text">Gestion Diplomados</span>
+        </a>
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="estudiantes">
+          <i class="fas fa-users icon"></i>
+          <span class="text"> Gestion Usuarios</span>
+        </a>
+        <a href="{{ url_for('subirContenido') }}" class="nav-item" id="contenido">
+          <i class="fas fa-upload icon"></i>
+          <span class="text">Contenido</span>
+        </a>
+         <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
+          <i class="fas fa-chart-bar icon"></i>
+          <span class="text">Metricas</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user">
+            <img src="https://i.pravatar.cc/40?img=6" alt="foto de perfil" class="user-avatar">
+            <div class="user-info">
+              <span class="name">Prof. Martínez</span>
+              <span class="email">martinez@techscript.com</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main">
+      <!-- BARRA SUPERIOR -->
+      <header class="topbar">
+        <button id="toggleSidebarTop" class="toggle-btn"><i class="fas fa-bars"></i></button>
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" placeholder="Buscar estudiantes, cursos, contenido..." id="search-input">
+        </div>
+        <div class="topbar-right">
+          <div class="notification-icon" id="notifications">
+            <i class="fas fa-bell"></i>
+            <div class="notification-badge">5</div>
+          </div>
+          
+          <div class="profile-dropdown" id="profileDropdown">
+            <div class="profile-pic" id="profile">
+              <img src="https://i.pravatar.cc/40?img=6" alt="Foto de perfil">
+            </div>
+            <div class="dropdown-menu" id="dropdownMenu">
+              <div class="dropdown-header">
+                <div class="dropdown-avatar">
+                  <img src="https://i.pravatar.cc/40?img=6" alt="Avatar">
+                </div>
+                <div class="dropdown-user-info">
+                  <h4>Prof. Martínez</h4>
+                  <span>Instructor</span>
+                </div>
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-content">
+                <a href="#" class="dropdown-item">
+                  <i class="fas fa-user"></i>
+                  <span>Mi Perfil</span>
+                </a>
+                <a href="#" class="dropdown-item">
+                  <i class="fas fa-cog"></i>
+                  <span>Configuración</span>
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item logout">
+                  <i class="fas fa-sign-out-alt"></i>
+                  <span>Cerrar Sesión</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      
+  <div class="container">
+    <!-- Header con controles -->
+    <div class="header">
+      <div class="header-info">
+        <h1>Métricas en Tiempo Real</h1>
+        <p>Monitoreo en vivo del rendimiento de la plataforma</p>
+      </div>
+      <div class="header-controls">
+        <div class="auto-refresh">
+          <label class="switch">
+            <input type="checkbox" id="autoRefresh" checked>
+            <span class="slider"></span>
+          </label>
+          <span>Auto-actualizar</span>
+        </div>
+        <button class="btn-refresh" id="refreshBtn">
+          <i class="fas fa-sync-alt"></i>
+          Actualizar
+        </button>
+        <p class="last-update">Última actualización: <span id="lastUpdateTime"></span></p>
+      </div>
+    </div>
+
+    <!-- Alertas del Sistema -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-exclamation-triangle text-warning"></i>
+          Alertas del Sistema
+        </h3>
+      </div>
+      <div class="card-content">
+        <div class="alerts-list" id="alertsList">
+          <!-- Las alertas se cargan dinámicamente -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Métricas del Sistema -->
+    <div class="metrics-grid">
+
+      <div class="metric-card">
+        <div class="metric-content">
+          <div class="metric-info">
+            <p class="metric-label">Tasa de Error</p>
+            <p class="metric-value" id="errorValue">0.2%</p>
+            <div class="metric-status success">
+              <i class="fas fa-check-circle"></i>
+              <span>Bajo</span>
+            </div>
+          </div>
+          <div class="metric-icon success">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-content">
+          <div class="metric-info">
+            <p class="metric-label">Carga del Sistema</p>
+            <p class="metric-value" id="cargaValue">67%</p>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 67%"></div>
+            </div>
+          </div>
+          <div class="metric-icon primary">
+            <i class="fas fa-activity"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Métricas de Usuarios -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-content">
+          <div class="metric-info">
+            <p class="metric-label">Usuarios Online</p>
+            <p class="metric-value" id="usersOnline">234</p>
+            <div class="metric-status">
+              <div class="status-dot online"></div>
+              <span>En vivo</span>
+            </div>
+          </div>
+          <div class="metric-icon success">
+            <i class="fas fa-users"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-content">
+          <div class="metric-info">
+            <p class="metric-label">DAU</p>
+            <p class="metric-value" id="dauValue">1,247</p>
+            <p class="metric-description">Usuarios activos diarios</p>
+          </div>
+          <div class="metric-icon primary">
+            <i class="fas fa-eye"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-content">
+          <div class="metric-info">
+            <p class="metric-label">WAU</p>
+            <p class="metric-value" id="wauValue">5,678</p>
+            <p class="metric-description">Usuarios activos semanales</p>
+          </div>
+          <div class="metric-icon purple">
+            <i class="fas fa-trending-up"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-content">
+          <div class="metric-info">
+            <p class="metric-label">MAU</p>
+            <p class="metric-value" id="mauValue">18,934</p>
+            <p class="metric-description">Usuarios activos mensuales</p>
+          </div>
+          <div class="metric-icon orange">
+            <i class="fas fa-users"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Engagement y Conversión -->
+    <div class="two-column-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Engagement de Usuarios</h3>
+        </div>
+        <div class="card-content">
+          <div class="engagement-metrics" id="engagementMetrics">
+            <!-- Se llena dinámicamente -->
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Embudo de Conversión</h3>
+        </div>
+        <div class="card-content">
+          <div class="conversion-funnel" id="conversionFunnel">
+            <!-- Se llena dinámicamente -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido y Dispositivos -->
+    <div class="two-column-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Análisis de Contenido</h3>
+        </div>
+        <div class="card-content">
+          <div class="content-analysis" id="contentAnalysis">
+            <!-- Se llena dinámicamente -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+   
+  </div>
+
+  <script src="../../static/JS/admin/metricas.js"></script>
+</body>
+</html>

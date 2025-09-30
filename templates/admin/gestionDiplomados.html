@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Diplomados - tech-script</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../../static/CSS/admin/gestionDiplomados.css">
+    <link rel="icon" type="image/png" href="../../static/img/logof.png"/>
+</head>
+<body>
+    <div class="layout">
+        <!-- ========== SIDEBAR ========== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-content">
+                    <img src="../../static/img/logo.png" alt="Logo">
+                    <h2>tech-script</h2>
+                </div>
+                <button id="toggleSidebar" class="toggle-btn">☰</button>
+            </div>
+
+        <nav>
+        <a href="{{ url_for('instructor') }}" class="nav-item active" id="Inicio">
+          <i class="fas fa-chart-line icon"></i>
+          <span class="text">Panel</span>
+        </a>
+         <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
+          <i class="fas fa-chart-bar icon"></i>
+          <span class="text">Reportes</span>
+        </a>
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="mis-cursos">
+          <i class="fas fa-book icon"></i>
+          <span class="text">Gestion Diplomados</span>
+        </a>
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="estudiantes">
+          <i class="fas fa-users icon"></i>
+          <span class="text"> Gestion Usuarios</span>
+        </a>
+        <a href="{{ url_for('subirContenido') }}" class="nav-item" id="contenido">
+          <i class="fas fa-upload icon"></i>
+          <span class="text">Contenido</span>
+        </a>
+         <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
+          <i class="fas fa-chart-bar icon"></i>
+          <span class="text">Metricas</span>
+        </a>
+      </nav>
+
+            <div class="sidebar-footer">
+                <div class="nav-item" id="configuracion"><i class="fas fa-cog icon"></i><span class="text">Configuración</span></div>
+                <div class="nav-item" id="mi-cuenta"><i class="fas fa-user icon"></i><span class="text">Mi cuenta</span></div>
+            </div>
+        </aside>
+
+        <!-- ========== MAIN CONTENT ========== -->
+        <main class="main">
+            <div class="topbar">
+                <button id="toggleSidebarMobile" class="toggle-btn">☰</button>
+                
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Buscar diplomados, contenido...">
+                </div>
+                <div class="topbar-right">
+                    <div class="notification-icon"><i class="fas fa-bell"></i><span class="notification-badge">3</span></div>
+                    <div class="profile-pic" id="profile">
+                        <img src="https://i.pravatar.cc/40" alt="Profile">
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- VISTA: Lise Diplomados -->
+                <div id="diplomados-view" class="view-container active">
+                    <div class="page-header">
+                        <div class="header-content">
+                            <div>
+                                <h1>Mis Diplomados</h1>
+                                <p>Gestiona y administra tus Diplomados</p>
+                            </div>
+                            <button class="btn btn-primary" id="createCourseBtn">
+                                <i class="fas fa-plus"></i>
+                                Crear Nuevo Diplomado
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Estadísticas -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4>Total Diplomados</h4>
+                                <p id="total-courses">4</p>
+                                <small id="active-courses">3 activos</small>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4>Total Estudiantes</h4>
+                                <p id="total-students">437</p>
+                                <small>Promedio 109/Diplomado</small>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4>Total Contenidos</h4>
+                                <p id="total-content">127</p>
+                                <small>Todos los diplomados</small>
+                            </div>
+                        </div>    
+                    </div>
+
+                    <!-- Sección de Aprobaciones -->
+                    <div class="approvals-section">
+                        <div class="section-header">
+                            <h3>Aprobaciones Pendientes</h3>
+                            <p>Elementos que requieren tu aprobación</p>
+                        </div>
+                        <div id="approvals-list" class="approvals-list">
+                            <!-- Se llenará dinámicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Filtros -->
+                    <div class="filters-container">
+                        <div class="filter-group">
+                            <input type="text" id="search" placeholder="Buscar diplomados..." class="filter-input">
+                        </div>
+                        <div class="filter-group">
+                            <select id="status-filter" class="filter-select">
+                                <option value="all">Todos los estados</option>
+                                <option value="active">Activo</option>
+                                <option value="draft">Borrador</option>
+                                <option value="archived">Archivado</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <select id="category-filter" class="filter-select">
+                                <option value="all">Todas las categorías</option>
+                                <option value="Frontend">Frontend</option>
+                                <option value="Backend">Backend</option>
+                                <option value="Data Science">Data Science</option>
+                                <option value="DevOps">DevOps</option>
+                            </select>
+                        </div>
+                        <button id="clear-filters" class="filter-btn">
+                            <i class="fas fa-times"></i>
+                            Limpiar
+                        </button>
+                    </div>
+
+                    <!-- Grid de Diplomados -->
+                    <div id="courses-list" class="courses-grid"></div>
+                </div>
+
+                <!-- VISTA: Contenido del Diplomado -->
+                <div id="content-view" class="view-container">
+                    <div class="page-header">
+                        <div class="header-content">
+                            <div>
+                                <h1 id="course-title-header">Contenido del Diplomado</h1>
+                                <p id="course-description-header">Gestiona el contenido educativo</p>
+                            </div>
+                            <div class="header-actions">
+                                <button class="btn btn-secondary" id="backToDiplomados">
+                                    <i class="fas fa-arrow-left"></i>
+                                    Volver a Diplomados
+                                </button> 
+                                <button class="btn btn-primary" id="addContentBtn">
+                                    <i class="fas fa-plus"></i>
+                                    Subir Contenido
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Info del diplomado seleccionado -->
+                    <div class="course-info-bar" id="courseInfoBar">
+                        <div class="course-info-item">
+                            <i class="fas fa-book"></i>
+                            <span id="selected-course-name">Nombre del Diplomado</span>
+                        </div>
+                        <div class="course-info-item">
+                            <i class="fas fa-users"></i>
+                            <span id="selected-course-students">0 estudiantes</span>
+                        </div>
+                        <div class="course-info-item">
+                            <i class="fas fa-file-alt"></i>
+                            <span id="selected-course-content">0 contenidos</span>
+                        </div>
+                    </div>
+
+                    <!-- Tabs de contenido -->
+                    <div class="tabs-container">
+                        <button class="tab-btn active" data-tab="content-list">
+                            <i class="fas fa-list"></i> Lista de Contenido
+                        </button>
+                        <button class="tab-btn" data-tab="content-analytics">
+                            <i class="fas fa-chart-bar"></i> Estadísticas
+                        </button>
+                    </div>
+
+                    <!-- Lista de contenido -->
+                    <div class="tab-content active" id="content-list">
+                        <!-- Filtros de contenido -->
+                        <div class="content-filters-bar">
+                            <div class="filter-group">
+                                <select id="content-type-filter" class="filter-select">
+                                    <option value="all">Todos los tipos</option>
+                                    <option value="video">Videos</option>
+                                    <option value="document">Documentos</option>
+                                    <option value="image">Imágenes</option>
+                                    <option value="quiz">Evaluaciones</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <select id="content-status-filter" class="filter-select">
+                                    <option value="all">Todos los estados</option>
+                                    <option value="published">Publicado</option>
+                                    <option value="processing">Procesando</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <input type="text" id="content-search" placeholder="Buscar contenido..." class="filter-input">
+                            </div>
+                        </div>
+
+                        <!-- Grid de contenidos -->
+                        <div id="content-grid" class="content-grid"></div>
+                    </div>     
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal para Crear/Editar Diplomado -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modal-title">Crear Nuevo Diplomado</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+
+            <!-- Tabs del Modal -->
+            <div class="modal-tabs">
+                <button class="modal-tab active" data-tab="basic">Información Básica</button>
+                <button class="modal-tab" data-tab="content">Contenido</button>
+                <button class="modal-tab" data-tab="pricing">Precio y Configuración</button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Tab: Información Básica -->
+                <div class="tab-panel active" id="tab-basic">
+                    <div class="form-section">
+                        <h3><i class="fas fa-file-alt"></i> Información General</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Título *</label>
+                                <input type="text" id="courseTitle" placeholder="ej. Desarrollo Web con React" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Categoría *</label>
+                                <select id="courseCategory" class="form-select">
+                                    <option value="">Selecciona una categoría</option>
+                                    <option value="Frontend">Frontend Development</option>
+                                    <option value="Backend">Backend Development</option>
+                                    <option value="Data Science">Data Science</option>
+                                    <option value="DevOps">DevOps</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Descripción *</label>
+                            <textarea id="courseDescription" rows="3" placeholder="Describe brevemente el diplomado..." class="form-textarea"></textarea>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Nivel</label>
+                                <select id="courseLevel" class="form-select">
+                                    <option value="Principiante">Principiante</option>
+                                    <option value="Intermedio">Intermedio</option>
+                                    <option value="Avanzado">Avanzado</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Duración (horas)</label>
+                                <input type="number" id="courseDuration" placeholder="40" class="form-input">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Contenido -->
+                <div class="tab-panel" id="tab-content">
+                    <div class="form-section">
+                        <h3><i class="fas fa-video"></i> Estructura del Diplomado</h3>
+                        <div class="form-group">
+                            <label>Número de lecciones estimadas</label>
+                            <input type="number" id="courseLessons" placeholder="24" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Objetivos del diplomado</label>
+                            <div class="input-with-btn">
+                                <input type="text" id="newObjective" placeholder="Agregar objetivo..." class="form-input">
+                                <button type="button" class="btn-add" id="addObjective">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="tags-container" id="objectivesList"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Precio -->
+                <div class="tab-panel" id="tab-pricing">
+                    <div class="form-section">
+                        <h3><i class="fas fa-dollar-sign"></i> Configuración</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Precio (COP)</label>
+                                <input type="number" id="coursePrice" placeholder="150000" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Estado</label>
+                                <select id="courseStatus" class="form-select">
+                                    <option value="draft">Borrador</option>
+                                    <option value="active">Activo</option>
+                                    <option value="archived">Archivado</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelBtn">Cancelar</button>
+                <button class="btn btn-primary" id="saveBtn">
+                    <i class="fas fa-save"></i>
+                    <span id="save-btn-text">Crear Diplomado</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Gestión de Contenido -->
+    <div class="modal-overlay" id="contentModalOverlay">
+        <div class="modal large-modal">
+            <div class="modal-header">
+                <h2 id="content-modal-title">Gestión de Contenido</h2>
+                <button class="modal-close" id="closeContentModal">&times;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel de Notificaciones -->
+    <div class="notifications-panel" id="notificationsPanel">
+        <div class="notifications-header">
+            <h3>
+                <i class="fas fa-bell"></i>
+                Solicitudes de Diplomados
+            </h3>
+            <button class="close-notifications" id="closeNotifications">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notifications-content" id="notificationsContent">
+            <!-- Se llenarán dinámicamente -->
+        </div>
+    </div>
+
+    <!-- Overlay para notificaciones -->
+    <div class="notifications-overlay" id="notificationsOverlay"></div>
+
+    <script src="../../static/JS/admin/gestionDiplomados.js"></script>
+</body>
+</html>

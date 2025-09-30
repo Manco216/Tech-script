@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - Plataforma</title>
+    <link rel="icon" type="image/png" href="../../static/img/logof.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../static/CSS/admin/gestionUsuarios.css">
+</head>
+<body>
+     <div class="layout">
+        <!-- ========== SIDEBAR ========== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-content">
+                    <img src="../../static/img/logo.png" alt="Logo">
+                    <h2>tech-script</h2>
+                </div>
+                <button id="toggleSidebar" class="toggle-btn">☰</button>
+            </div>
+             <nav>
+        <a href="{{ url_for('instructor') }}" class="nav-item active" id="Inicio">
+          <i class="fas fa-chart-line icon"></i>
+          <span class="text">Panel</span>
+        </a>
+         <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
+          <i class="fas fa-chart-bar icon"></i>
+          <span class="text">Reportes</span>
+        </a>
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="mis-cursos">
+          <i class="fas fa-book icon"></i>
+          <span class="text">Gestion Diplomados</span>
+        </a>
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="estudiantes">
+          <i class="fas fa-users icon"></i>
+          <span class="text"> Gestion Usuarios</span>
+        </a>
+        <a href="{{ url_for('subirContenido') }}" class="nav-item" id="contenido">
+          <i class="fas fa-upload icon"></i>
+          <span class="text">Contenido</span>
+        </a>
+         <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
+          <i class="fas fa-chart-bar icon"></i>
+          <span class="text">Metricas</span>
+        </a>
+      </nav>
+            
+            <div class="sidebar-footer">
+                <div class="nav-item" id="configuracion"><i class="fas fa-cog icon"></i><span class="text">Configuración</span></div>
+                <div class="nav-item" id="mi-cuenta"><i class="fas fa-user icon"></i><span class="text">Mi cuenta</span></div>
+            </div>
+        </aside>
+
+        <!-- ========== MAIN CONTENT ========== -->
+        <main class="main">
+            <div class="topbar">
+                <button id="toggleSidebarMobile" class="toggle-btn">☰</button>
+                
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Buscar diplomados, contenido...">
+                </div>
+                <div class="topbar-right">
+                    <div class="notification-icon"><i class="fas fa-bell"></i><span class="notification-badge">3</span></div>
+                    <div class="profile-pic" id="profile">
+                        <img src="https://i.pravatar.cc/40" alt="Profile">
+                    </div>
+                </div>
+            </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <div>
+                <div class="page-title">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Gestión de Usuarios</span>
+                </div>
+                <p class="page-description">Administra todos los usuarios de la plataforma</p>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="stats-grid">
+            <div class="stat-card primary">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <p>Total Usuarios</p>
+                        <h3>6</h3>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card success">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <p>Estudiantes</p>
+                        <h3>2</h3>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <p>Instructores</p>
+                        <h3>3</h3>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card info">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <p>Administradores</p>
+                        <h3>1</h3>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros y Búsqueda -->
+        <div class="filters-card">
+            <div class="filters-container">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="Buscar por nombre o email..." class="search-input">
+                </div>
+
+                <select id="filterRole" class="filter-select">
+                    <option value="todos">Todos los roles</option>
+                    <option value="estudiante">Estudiante</option>
+                    <option value="instructor">Instructor</option>
+                    <option value="admin">Admin</option>
+                </select>
+
+                <select id="filterStatus" class="filter-select">
+                    <option value="todos">Todos los estados</option>
+                    <option value="activo">Activo</option>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="inactivo">Inactivo</option>
+                    <option value="suspendido">Suspendido</option>
+                </select>
+
+                <select id="filterCity" class="filter-select">
+                    <option value="todas">Todas las ciudades</option>
+                    <option value="Bogotá">Bogotá</option>
+                    <option value="Medellín">Medellín</option>
+                    <option value="Cali">Cali</option>
+                    <option value="Barranquilla">Barranquilla</option>
+                    <option value="Cartagena">Cartagena</option>
+                </select>
+            </div>
+        </div>
+        <!-- Tabs de navegación -->
+<div class="tabs-container">
+    <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="usuarios">
+            <i class="fas fa-users"></i>
+            <span>Gestión de Usuarios</span>
+            <span class="tab-badge" id="usersBadge">6</span>
+        </button>
+        <button class="tab-btn" data-tab="solicitudes">
+            <i class="fas fa-user-clock"></i>
+            <span>Solicitudes Pendientes</span>
+            <span class="tab-badge pending" id="requestsBadge">3</span>
+        </button>
+    </div>
+</div>
+
+<!-- Contenido de las pestañas -->
+<div class="tabs-content">
+    <!-- Tab: Usuarios -->
+    <div class="tab-content active" id="usuarios-tab">
+        <!-- Lista de Usuarios -->
+        <div class="users-card">
+            <div class="card-header-users">
+                <h3><i class="fas fa-list"></i> Usuarios (<span id="userCount">6</span>)</h3>
+            </div>
+            <div class="card-content-users" id="usersList">
+                <!-- Los usuarios se cargarán dinámicamente con JS -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tab: Solicitudes -->
+    <div class="tab-content" id="solicitudes-tab">
+        <div class="approvals-section">
+            <div class="section-header">
+                <h3><i class="fas fa-user-clock"></i> Solicitudes de Instructores Pendientes</h3>
+                <p>Usuarios que desean convertirse en instructores</p>
+            </div>
+            <div id="approvalsList" class="approvals-list"></div>
+        </div>
+    </div>
+</div>
+
+   
+    </div>
+
+    <!-- Modal para detalles de usuario -->
+    <div id="userModal" class="modal-overlay" style="display: none;">
+        <div class="modal-container">
+            <button class="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <h3><i class="fas fa-user"></i> Detalles del Usuario</h3>
+            </div>
+            <div class="modal-content" id="modalContent">
+                <!-- Contenido dinámico -->
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificación -->
+    <div id="notification" class="notification" style="display: none;">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText"></span>
+        <button onclick="closeNotification()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <script src="../../static/JS/admin/gestionUsuarios.js"></script>
+</body>
+</html>

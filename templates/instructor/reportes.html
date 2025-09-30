@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes Administrativos - Plataforma</title>
+    <link rel="icon" type="image/png" href="../../static/img/logof.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../static/CSS/admin/reportes.css">
+</head>
+<body>
+     <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <button id="toggleSidebar" class="toggle-btn">☰</button>
+      <div class="logo">
+        <div class="logo-content">
+          <img src="../../static/img/logo.png" alt="Logo">
+          <h2>Tech-script</h2>
+        </div>
+      </div>
+
+      <nav>
+        <a href="{{ url_for('instructor') }}" class="nav-item" id="Inicio">
+          <i class="fas fa-chart-line icon"></i>
+          <span class="text">Panel</span>
+        </a>
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="mis-cursos">
+          <i class="fas fa-book icon"></i>
+          <span class="text">Mis Diplomados</span>
+        </a>
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="estudiantes">
+          <i class="fas fa-users icon"></i>
+          <span class="text">Estudiantes</span>
+        </a>
+        <a href="{{ url_for('subirContenido') }}" class="nav-item" id="contenido">
+          <i class="fas fa-upload icon"></i>
+          <span class="text">Contenido</span>
+        </a>
+     
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item active" id="reportes">
+          <i class="fas fa-chart-bar icon"></i>
+          <span class="text">Reportes</span>
+        </a>
+      </nav>
+
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user">
+            <img src="https://i.pravatar.cc/40?img=6" alt="foto de perfil" class="user-avatar">
+            <div class="user-info">
+              <span class="name">Prof. Martínez</span>
+              <span class="email">martinez@techscript.com</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="container">
+      <!-- BARRA SUPERIOR -->
+      <header class="topbar">
+        <button id="toggleSidebarTop" class="toggle-btn"><i class="fas fa-bars"></i></button>
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" placeholder="Buscar estudiantes, cursos, contenido..." id="search-input">
+        </div>
+        <div class="topbar-right">
+          <div class="notification-icon" id="notifications">
+            <i class="fas fa-bell"></i>
+            <div class="notification-badge">5</div>
+          </div>
+          
+          <div class="profile-dropdown" id="profileDropdown">
+            <div class="profile-pic" id="profile">
+              <img src="https://i.pravatar.cc/40?img=6" alt="Foto de perfil">
+            </div>
+            <div class="dropdown-menu" id="dropdownMenu">
+              <div class="dropdown-header">
+                <div class="dropdown-avatar">
+                  <img src="https://i.pravatar.cc/40?img=6" alt="Avatar">
+                </div>
+                <div class="dropdown-user-info">
+                  <h4>Prof. Martínez</h4>
+                  <span>Instructor</span>
+                </div>
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-content">
+                <a href="#" class="dropdown-item">
+                  <i class="fas fa-user"></i>
+                  <span>Mi Perfil</span>
+                </a>
+                <a href="#" class="dropdown-item">
+                  <i class="fas fa-cog"></i>
+                  <span>Configuración</span>
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item logout">
+                  <i class="fas fa-sign-out-alt"></i>
+                  <span>Cerrar Sesión</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+
+    <div class="main">
+        <!-- Page Header -->
+         <div class="page-header">
+    <div>
+        <div class="page-title">
+            <i class="fas fa-chart-line"></i>
+            <span>Reportes Administrativos</span>
+        </div>
+        <p class="page-description">Análisis completo del rendimiento de la plataforma</p>
+    </div>
+    <div class="header-right">
+        <div class="header-badge">
+        </div>
+        <select id="filterPeriod" class="filter-select-header">
+            <option value="6">Últimos 6 meses</option>
+            <option value="3">Últimos 3 meses</option>
+            <option value="12">Últimos 12 meses</option>
+        </select>
+        <button class="btn-export" onclick="exportarPDF()">
+            <i class="fas fa-file-pdf"></i>
+            Exportar PDF
+        </button>
+    </div>
+</div>
+
+        <!-- KPIs Grid -->
+         <!-- KPIs Grid con nuevos diseños -->
+<div class="stats-grid">
+    <div class="stat-card-new blue-bg">
+        <div class="stat-content-new">
+            <div class="stat-icon-new">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info-new">
+                <p class="stat-label">Total Estudiantes</p>
+                <h3 class="stat-number">1,247</h3>
+                <div class="stat-growth positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+15%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="stat-card-new green-bg">
+        <div class="stat-content-new">
+            <div class="stat-icon-new">
+                <i class="fas fa-sack-dollar"></i>
+            </div>
+            <div class="stat-info-new">
+                <p class="stat-label">Ingresos Totales</p>
+                <h3 class="stat-number">45,600</h3>
+                <div class="stat-growth positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+18% vs anterior</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="stat-card-new yellow-bg">
+        <div class="stat-content-new">
+            <div class="stat-icon-new">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="stat-info-new">
+                <p class="stat-label">Calificación Promedio</p>
+                <h3 class="stat-number">4.8</h3>
+                <div class="stat-badge">
+                    <i class="fas fa-medal"></i>
+                    <span>Excelente</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="stat-card-new purple-bg">
+        <div class="stat-content-new">
+            <div class="stat-icon-new">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="stat-info-new">
+                <p class="stat-label">Tasa Finalización</p>
+                <h3 class="stat-number">87%</h3>
+                <div class="stat-badge">
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>Muy buena</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- Tabs Container -->
+        <div class="tabs-container">
+            <nav class="tabs-nav">
+                <button class="tab-button active" data-tab="usuarios">
+                    <i class="fas fa-users"></i>
+                    <span>Usuarios</span>
+                </button>
+                <button class="tab-button" data-tab="ingresos">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Ingresos</span>
+                </button>
+                <button class="tab-button" data-tab="cursos">
+                    <i class="fas fa-book"></i>
+                    <span>Diplomados</span>
+                </button>
+            </nav>
+
+            <!-- Tab Usuarios -->
+            <div class="tab-content active" id="usuarios">
+                <div class="methods-grid">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-bar"></i> Crecimiento de Usuarios</h3>
+                            <p>Evolución mensual de la comunidad</p>
+                        </div>
+                        <div class="card-content" id="usuarios-chart"></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-pie"></i> Métricas de Engagement</h3>
+                            <p>Indicadores de participación</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="metric-row">
+                                <span class="metric-label">Tiempo promedio por sesión</span>
+                                <span class="metric-value">2.4h</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-label">Sesiones totales</span>
+                                <span class="metric-value">8,934</span>
+                            </div>
+                            <div class="progress-group">
+                                <div class="progress-header">
+                                    <span class="metric-label">Tasa de retención</span>
+                                    <span class="metric-value">68.2%</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width: 68.2%"></div>
+                                </div>
+                            </div>
+                            <div class="progress-group">
+                                <div class="progress-header">
+                                    <span class="metric-label">Usuarios activos</span>
+                                    <span class="metric-value">71.5%</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width: 71.5%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Ingresos -->
+            <div class="tab-content" id="ingresos">
+                <div class="methods-grid">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-line"></i> Ingresos por Categoría</h3>
+                            <p>Distribución de ingresos por área</p>
+                        </div>
+                        <div class="card-content" id="ingresos-chart"></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-bullseye"></i> Proyecciones Financieras</h3>
+                            <p>Metas y avances mensuales</p>
+                        </div>
+                        <div class="card-content">
+                            <div class="projection-card green-bg">
+                                <div class="projection-info">
+                                    <p class="projection-label">Ingresos este mes</p>
+                                    <p class="projection-value">$45,200</p>
+                                </div>
+                                <div class="projection-icon">
+                                    <i class="fas fa-arrow-trend-up"></i>
+                                </div>
+                            </div>
+
+                            <div class="projection-card blue-bg">
+                                <div class="projection-info">
+                                    <p class="projection-label">Proyección anual</p>
+                                    <p class="projection-value">$320,000</p>
+                                </div>
+                                <div class="projection-icon">
+                                    <i class="fas fa-bullseye"></i>
+                                </div>
+                            </div>
+
+                            <div class="progress-group">
+                                <div class="progress-header">
+                                    <span class="metric-label">Progreso hacia meta anual</span>
+                                    <span class="metric-value">89.0%</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width: 89%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Cursos -->
+            <div class="tab-content" id="cursos">
+                <div class="chart-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-book-open"></i> Rendimiento por Diplomados</h3>
+                        <p>Análisis de completación y progreso</p>
+                    </div>
+                    <div class="card-content" id="cursos-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../static/JS/admin/reportes.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</body>
+</html>

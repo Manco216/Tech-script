@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil de Instructor - Tech Script</title>
+  <link rel="stylesheet" href="../../static/CSS/instructor/perifilinstructor.css">
+  <link rel="icon" type="image/png" href="../../static/img/logof.png"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <button id="toggleSidebar" class="toggle-btn">☰</button>
+    
+    <div class="logo">
+      <div class="logo-content">
+        <img src="../static/img/logo.png" alt="Logo">
+        <h2>Tech-script</h2>
+      </div>
+    </div>
+
+    <nav>
+        <a href="{{ url_for('instructor') }}" class="nav-item active" id="Inicio">
+          <i class="fas fa-chart-line icon"></i>
+          <span class="text">Panel</span>
+        </a>
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="mis-cursos">
+          <i class="fas fa-book icon"></i>
+          <span class="text">Mis Diplomados</span>
+        </a>
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="estudiantes">
+          <i class="fas fa-users icon"></i>
+          <span class="text">Estudiantes</span>
+        </a>
+        <a href="{{ url_for('subirContenido') }}" class="nav-item" id="contenido">
+          <i class="fas fa-upload icon"></i>
+          <span class="text">Contenido</span>
+        </a>
+     
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
+          <i class="fas fa-chart-bar icon"></i>
+          <span class="text">Reportes</span>
+        </a>
+      </nav>
+ 
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <button id="toggleSidebarTop" class="toggle-btn">☰</button>
+      
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" placeholder="Buscar estudiantes, cursos...">
+      </div>
+      
+      <div class="topbar-right">
+        <div class="notification-icon">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge">5</span>
+        </div>
+        
+        <div class="user-info">Carlos Rodríguez</div>
+        
+        <div class="profile-pic">
+          <img src="https://i.pravatar.cc/150?u=carlos@example.com" alt="Instructor">
+        </div>
+      </div>
+    </div>
+
+    <!-- COVER IMAGE -->
+    <div class="cover-image">
+      <div class="cover-overlay"></div>
+      <button class="change-cover-btn">
+        <i class="fas fa-camera"></i>
+        Cambiar Portada
+      </button>
+    </div>
+
+    <!-- PROFILE HEADER -->
+    <div class="profile-header-card">
+      <div class="profile-main-info">
+        <div class="profile-avatar-section">
+          <div class="profile-avatar-large">
+            <img src="https://i.pravatar.cc/150?u=carlos@example.com" alt="Carlos Rodríguez">
+            <button class="edit-avatar-btn">
+              <i class="fas fa-camera"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="profile-details">
+          <div class="profile-header-content">
+            <h1 class="profile-name">Carlos Rodríguez</h1>
+            <div class="profile-badges">
+              <span class="badge verified">Instructor Verificado</span>
+              <span class="badge rating">⭐ 4.8</span>
+            </div>
+            <p class="profile-email">carlos.rodriguez@techscript.com</p>
+            
+            <div class="profile-meta">
+              <span class="meta-item">
+                <i class="fas fa-map-marker-alt"></i>
+                Barcelona, España
+              </span>
+              <span class="meta-item">
+                <i class="fas fa-calendar"></i>
+                Instructor desde 2022
+              </span>
+              <span class="meta-item">
+                <i class="fas fa-clock"></i>
+                8+ años experiencia
+              </span>
+            </div>
+
+            <button class="edit-profile-btn" id="editProfileBtn">
+              <i class="fas fa-edit"></i>
+              Editar Perfil
+            </button>
+          </div>
+
+          <div class="specialties">
+            <h3>Especialidades</h3>
+            <div class="specialty-tags">
+              <span class="specialty-tag">React</span>
+              <span class="specialty-tag">Node.js</span>
+              <span class="specialty-tag">Python</span>
+              <span class="specialty-tag">AWS</span>
+              <span class="specialty-tag">Docker</span>
+              <span class="specialty-tag">MongoDB</span>
+            </div>
+          </div>
+
+          <div class="social-links">
+            <a href="#" class="social-btn"><i class="fas fa-globe"></i></a>
+            <a href="#" class="social-btn"><i class="fab fa-linkedin"></i></a>
+            <a href="#" class="social-btn"><i class="fab fa-github"></i></a>
+            <a href="#" class="social-btn"><i class="fab fa-twitter"></i></a>
+          </div>
+
+          <div class="bio">
+            <p>Desarrollador Senior Full Stack con más de 8 años de experiencia. Especializado en React, Node.js, Python y arquitecturas cloud. Apasionado por enseñar y compartir conocimiento con la próxima generación de desarrolladores.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  
+    
+        <button class="tab-btn" data-tab="settings">Configuración</button>
+      </div>
+
+      
+
+      <div class="tab-content" id="settings">
+        <div class="settings-content">
+          <div class="settings-section">
+            <h3>Información Personal</h3>
+            <form class="profile-form" id="profileForm">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Nombre</label>
+                  <input type="text" id="firstName" value="Carlos">
+                </div>
+                <div class="form-group">
+                  <label>Apellido</label>
+                  <input type="text" id="lastName" value="Rodríguez">
+                </div>
+                <div class="form-group">
+                  <label>Email</label>
+                  <input type="email" id="email" value="carlos.rodriguez@techscript.com">
+                </div>
+                <div class="form-group">
+                  <label>Teléfono</label>
+                  <input type="tel" id="phone" value="+34 612 345 678">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Biografía</label>
+                <textarea id="bio">Desarrollador Senior Full Stack con más de 8 años de experiencia.</textarea>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="cancel-btn">Cancelar</button>
+                <button type="submit" class="save-btn">Guardar Cambios</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../../static/JS/instructor/perfilInstructor.js"></script>
+</body>
+</html>
