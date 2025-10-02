@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Curso de Prompt Engineering - Platzi</title>
-  <link rel="stylesheet" href="../../static/CSS/modulos.css">
-  <link rel="icon" type="image/png" href="../static/img/logof.png">
+  <link rel="stylesheet" href="../../static/CSS/estudiante/modulos.css">
+  <link rel="icon" type="image/png" href="../../static/img/logof.png"/>
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -22,27 +22,29 @@
           <h2>Tech-script</h2>
         </div>
       </div>
-  
-      <nav>
-        <a href="{{ url_for('student') }}" class="nav-item active" id="Inicio">
-          <i class="fas fa-chart-line icon"></i><span class="text">Inicio</span>
-        </a>
-        <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
-          <i class="fas fa-book icon"></i><span class="text">Diplomados</span>
-        </a>
-        <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
-          <i class="fas fa-video icon"></i><span class="text">Mi progreso</span>
-        </a>
-        <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
-          <i class="fas fa-credit-card icon"></i><span class="text">Pagos</span>
-        </a>
-        <a href="{{ url_for('mensajes') }}" class="nav-item" id="mensajes">
-          <i class="fas fa-envelope icon"></i><span class="text">Mensajes</span>
-        </a>
-        <a href="{{ url_for('certificados') }}" class="nav-item" id="certificados">
-          <i class="fas fa-certificate icon"></i><span class="text">Certificados</span>
-        </a>
-      </nav>
+
+        <nav>
+  <a href="{{ url_for('student') }}" class="nav-item" id="Inicio">
+    <i class="fas fa-chart-line icon"></i>
+    <span class="text">Inicio</span>
+  </a>
+  <a href="{{ url_for('diplomados') }}" class="nav-item active" id="diplomados">
+    <i class="fas fa-book icon"></i>
+    <span class="text">Diplomados</span>
+  </a>
+  <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
+    <i class="fas fa-video icon"></i>
+    <span class="text">Mi progreso</span>
+  </a>
+  <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
+    <i class="fas fa-credit-card icon"></i>
+    <span class="text">Pagos</span>
+  </a>
+  <a href="{{ url_for('certificados') }}" class="nav-item" id="certificados">
+    <i class="fas fa-certificate icon"></i>
+    <span class="text">Certificados</span>
+  </a>
+</nav>
 
       <div class="sidebar-footer">
         <div class="user-card">
@@ -76,7 +78,7 @@
                     
           <div class="profile-dropdown">
             <div class="profile-pic" id="profile">
-              <img src="../static/img/user.jpg" alt="Usuario">
+              <img src="https://i.pravatar.cc/40" alt="Usuario">
             </div>
           </div>
         </div>
@@ -138,7 +140,8 @@
 
       <!-- COURSE CONTENT -->
       <div class="course-content">
-        <h2>Clases del curso</h2>
+
+        <h2><i class="fas fa-list-ul"></i> Clases del curso</h2>
                 
         <!-- Módulo 1 -->
         <div class="lesson-section">
@@ -221,6 +224,6 @@
     </main>
   </div>
 
-  <script src="../../static/JS/modulos.js"></script>
+  <script src="../../static/JS/estudiante/modulos.js"></script>
 </body>
 </html>

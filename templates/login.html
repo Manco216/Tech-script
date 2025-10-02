@@ -2,12 +2,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tech script</title>
+    <title>Tech Script</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/login.css') }}"> 
     {% if mensaje_registro %}
     <p style="color: green;">{{ mensaje_registro }}</p>
     {% endif %}
-
 </head>
 <body>
     <div class="login-container">
@@ -15,25 +14,31 @@
         <!-- Formulario Iniciar Sesión -->
         <div class="container-form">
             <form class="sign-in" action="/login" method="POST">
-                <h2>Iniciar Sesion</h2>
+                <h2>Iniciar Sesión</h2>
                 <div class="social-networks">
-                    <ion-icon name="logo-google"></ion-icon>
-                    <ion-icon name="logo-facebook"></ion-icon>
-                   
+                    <!-- Icono de Google como botón -->
+<a href="{{ url_for('login_google') }}" class="google-login">
+    <ion-icon name="logo-google"></ion-icon>
+</a>
+
+   
                 </div>
                 <span>Use su correo y contraseña</span>
+
+                <!-- Tipo de usuario -->
                 <div class="container-input">
-                    <ion-icon name="person-outline"></ion-icon>
-                    <select name="txtRol" required>
-                        <option value="">Seleccione un rol</option>
-                        {% for rol in roles %}
-                            <option value="{{ rol.id_rol_us  }}">{{ rol.nom_tipous }}</option>
-                        {% endfor %}
+                    <label for="tipo_usuario">Tipo de Usuario</label>
+                    <select name="tipo_usuario" id="tipo_usuario" required>
+                        <option value="">Seleccione tipo de usuario</option>
+                        <option value="estudiante">Estudiante</option>
+                        <option value="docente">Docente</option>
+                        <option value="admin">Administrador</option>
                     </select>
                 </div>
+
                 <div class="container-input">
                     <ion-icon name="mail-outline"></ion-icon>
-                    <input type="text" name="txtCorreo" placeholder="Correo electronico" required>
+                    <input type="text" name="txtCorreo" placeholder="Correo electrónico" required>
                 </div>
 
                 <div class="container-input">
@@ -43,20 +48,15 @@
                         <ion-icon name="eye-outline"></ion-icon>
                     </span>
                 </div>
+
                 <!-- Mensaje de error -->
                 {% if mensaje %}
                  <div class="mensaje-error">{{ mensaje }}</div>
                 {% endif %}
 
+                <a href="">¿Olvidaste tu contraseña?</a>
 
-
-                <a href="{{ url_for('recuperar_contrasena') }}">¿Olvidaste tu contraseña?</a>
-
-                <button class="button" type="submit">
-                   
-                 Iniciar Sesión
-                </button>
-        
+                <button class="button" type="submit">Iniciar Sesión</button>
             </form>
         </div>
 
@@ -73,15 +73,6 @@
 
                 <!-- Paso 1 -->
                 <div class="step step-1 active">
-                    <div class="container-input">
-                        <ion-icon name="person-outline"></ion-icon>
-                        <select name="txtRol" required>
-                            <option value="">Seleccione un rol</option>
-                            {% for rol in roles %}
-                                <option value="{{ rol.id_rol_us  }}">{{ rol.nom_tipous }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
                     <div class="container-input">
                         <ion-icon name="person-outline"></ion-icon>
                         <input type="text" name="txtNombre" placeholder="Nombre" required>
@@ -114,26 +105,7 @@
                         <ion-icon name="call-outline"></ion-icon>
                         <input type="text" name="txtTelefono" placeholder="Celular / WhatsApp" required>
                     </div>
-                    <div class="container-input">
-                        <ion-icon name="location-outline"></ion-icon>
-                        <select name="txtCiudad" required>
-                            <option value="">Seleccione una ciudad</option>
-                            {% for ciudad in ciudades %}
-                                <option value="{{ ciudad.id_ciudad }}">{{ ciudad.nom_ciudad }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <!-- Tipo de Documento -->
-                    <div class="container-input">
-                        <ion-icon name="id-card-outline"></ion-icon>
-                        <select name="txtTipoDoc" required>
-                            <option value="">Seleccione un tipo de documento</option>
-                            {% for doc in tipos_doc %}
-                                <option value="{{ doc.id_idoc }}">{{ doc.nom_tipo }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+            
                     <div style="display: flex; gap: 10px;">
                         <button type="button" class="button gray" id="btn-prev">Anterior</button>
                         <button type="submit" value="Registrarse" class="button">Registrar</button>
@@ -147,14 +119,13 @@
             <div class="welcome-sign-up welcome">
                 <h3>Bienvenido</h3>
                 <p>Ingrese sus datos personales para usar todas las funciones del sitio</p>
-               
                 <button class="button" id="btn-sign-up">Registrarse</button>
             </div>
 
             <div class="welcome-sign-in welcome">
                 <h3>¡Hola!</h3>
                 <p>Regístrate con tus datos personales para usar todas las funciones del sitio</p>
-                <button class="button" id="btn-sign-in">Iniciar Sesion</button>
+                <button class="button" id="btn-sign-in">Iniciar Sesión</button>
             </div>
         </div>
 
@@ -165,4 +136,3 @@
     <script src="{{ url_for('static', filename='JS/login.js') }}"></script>
 </body>
 </html>
-

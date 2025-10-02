@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechScript - Plataforma de Diplomados Profesionales</title>
+    <link rel="stylesheet" href="../static/CSS/index.css">
+        <link rel="icon" type="image/png" href="../../static/img/logof.png"/>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <img src="../static/img/logoF.png" alt="" class="logo">
+                <span class="brand-name">Tech Script</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#inicio" class="nav-link active">Inicio</a>
+                <a href="#diplomados" class="nav-link">Diplomados</a>
+                <a href="#empleos" class="nav-link">Empleos</a>
+                <a href="#sobre-nosotros" class="nav-link">Nosotros</a>
+                <a href="#contacto" class="nav-link">Contacto</a>
+            </div>
+            <div class="nav-actions">
+              <a href="{{ url_for('login') }}" class="button">Iniciar sesión con Google</a>
+            </div>
+        
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="hero-background">
+            <div class="floating-elements">
+                <div class="float-element element-1"></div>
+                <div class="float-element element-2"></div>
+                <div class="float-element element-3"></div>
+            </div>
+        </div>
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-rocket"></i>
+                    <span>Impulsa tu carrera profesional</span>
+                </div>
+                <h1 class="hero-title">
+                    Transforma tu futuro con
+                    <span class="gradient-text">diplomados profesionales</span>
+                </h1>
+                <p class="hero-description">
+                    Accede a más de 50 programas especializados diseñados por expertos de la industria. 
+                    Obtén certificaciones reconocidas y conecta con oportunidades laborales exclusivas.
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <strong>15,000+</strong>
+                        <span>Estudiantes activos</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>95%</strong>
+                        <span>Tasa de empleabilidad</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>200+</strong>
+                        <span>Empresas aliadas</span>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <button class="btn-hero-primary" onclick="scrollToSection('diplomados')">
+                        Explorar Diplomados
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-card">
+                    <div class="card-header">
+                        <div class="card-avatar"></div>
+                        <div class="card-info">
+                            <h4>María González</h4>
+                            <p>Data Scientist en Google</p>
+                        </div>
+                    </div>
+                    <div class="card-progress">
+                        <div class="progress-label">Machine Learning Avanzado</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%"></div>
+                        </div>
+                        <span class="progress-text">85% completado</span>
+                    </div>
+                </div>
+                <div class="floating-icons">
+                    <div class="tech-icon python"><i class="fab fa-python"></i></div>
+                    <div class="tech-icon react"><i class="fab fa-react"></i></div>
+                    <div class="tech-icon aws"><i class="fab fa-aws"></i></div>
+                    <div class="tech-icon js"><i class="fab fa-js-square"></i></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Diplomados Section -->
+    <section class="diplomados" id="diplomados">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Diplomados por Categorías</h2>
+                <p class="section-subtitle">Programas especializados diseñados para las demandas del mercado actual</p>
+            </div>
+            <div class="categories-grid">
+                <div class="category-card tech">
+                    <div class="card-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Desarrollo de Software</h3>
+                    <p>Full Stack, Frontend, Backend, DevOps y más</p>
+                    <div class="card-stats">
+                        <span><i class="fas fa-graduation-cap"></i> 12 diplomados</span>
+                        <span><i class="fas fa-clock"></i> 6-8 meses</span>
+                    </div>
+                    <button class="card-btn">Ver Programas</button>
+                </div>
+
+                <div class="category-card data">
+                    <div class="card-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Data Science & IA</h3>
+                    <p>Machine Learning, Big Data, Análisis Predictivo</p>
+                    <div class="card-stats">
+                        <span><i class="fas fa-graduation-cap"></i> 8 diplomados</span>
+                        <span><i class="fas fa-clock"></i> 4-6 meses</span>
+                    </div>
+                    <button class="card-btn">Ver Programas</button>
+                </div>
+
+                <div class="category-card marketing">
+                    <div class="card-icon">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <h3>Marketing Digital</h3>
+                    <p>SEO, SEM, Social Media, Analytics</p>
+                    <div class="card-stats">
+                        <span><i class="fas fa-graduation-cap"></i> 10 diplomados</span>
+                        <span><i class="fas fa-clock"></i> 3-5 meses</span>
+                    </div>
+                    <button class="card-btn">Ver Programas</button>
+                </div>
+
+                <div class="category-card business">
+                    <div class="card-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Gestión Empresarial</h3>
+                    <p>Project Management, Liderazgo, Finanzas</p>
+                    <div class="card-stats">
+                        <span><i class="fas fa-graduation-cap"></i> 15 diplomados</span>
+                        <span><i class="fas fa-clock"></i> 4-7 meses</span>
+                    </div>
+                    <button class="card-btn">Ver Programas</button>
+                </div>
+
+                <div class="category-card design">
+                    <div class="card-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>Diseño & UX</h3>
+                    <p>UI/UX Design, Diseño Gráfico, Branding</p>
+                    <div class="card-stats">
+                        <span><i class="fas fa-graduation-cap"></i> 9 diplomados</span>
+                        <span><i class="fas fa-clock"></i> 3-5 meses</span>
+                    </div>
+                    <button class="card-btn">Ver Programas</button>
+                </div>
+
+                <div class="category-card security">
+                    <div class="card-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Ciberseguridad</h3>
+                    <p>Ethical Hacking, Pentesting, Seguridad en Red</p>
+                    <div class="card-stats">
+                        <span><i class="fas fa-graduation-cap"></i> 7 diplomados</span>
+                        <span><i class="fas fa-clock"></i> 5-8 meses</span>
+                    </div>
+                    <button class="card-btn">Ver Programas</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Jobs Section -->
+    <section class="jobs" id="empleos">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Oportunidades Laborales</h2>
+                <p class="section-subtitle">Conectamos tu talento con las mejores empresas del mercado</p>
+            </div>
+            <div class="jobs-content">
+                <div class="jobs-info">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h3>Conexión Directa</h3>
+                        <p>Te conectamos directamente con recruiters de empresas líderes en tecnología</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h3>Salarios Competitivos</h3>
+                        <p>Accede a posiciones con salarios 40% por encima del promedio del mercado</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3>Trabajo Remoto</h3>
+                        <p>85% de nuestras ofertas incluyen modalidad remota o híbrida</p>
+                    </div>
+                </div>
+                <div class="jobs-preview">
+                    <h3>Últimas Ofertas</h3>
+                    <div class="job-cards">
+                        <div class="job-card">
+                            <div class="company-logo google"></div>
+                            <div class="job-details">
+                                <h4>Senior Full Stack Developer</h4>
+                                <p>Google • Remoto • $4,500 - $6,000</p>
+                                <div class="job-tags">
+                                    <span>React</span>
+                                    <span>Node.js</span>
+                                    <span>AWS</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="job-card">
+                            <div class="company-logo microsoft"></div>
+                            <div class="job-details">
+                                <h4>Data Scientist</h4>
+                                <p>Microsoft • Híbrido • $3,800 - $5,200</p>
+                                <div class="job-tags">
+                                    <span>Python</span>
+                                    <span>ML</span>
+                                    <span>Azure</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="job-card">
+                            <div class="company-logo amazon"></div>
+                            <div class="job-details">
+                                <h4>UX Designer</h4>
+                                <p>Amazon • Presencial • $3,200 - $4,500</p>
+                                <div class="job-tags">
+                                    <span>Figma</span>
+                                    <span>Prototyping</span>
+                                    <span>Research</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-primary">Ver Todas las Ofertas</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="sobre-nosotros">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2 class="section-title">¿Por qué elegir Tech Script?</h2>
+                    <p>Somos la plataforma líder en formación profesional especializada, con más de 5 años conectando talento con oportunidades.</p>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Certificaciones reconocidas internacionalmente</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Instructores con experiencia en empresas Fortune 500</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Metodología práctica y orientada a proyectos</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Soporte personalizado durante todo el programa</span>
+                        </div>
+                    </div>
+                    <button class="btn-primary">Conoce Más</button>
+                </div>
+                <div class="about-visual">
+                    <div class="stats-dashboard">
+                        <div class="dashboard-header">
+                            <h4>Panel de Progreso</h4>
+                        </div>
+                        <div class="dashboard-stats">
+                            <div class="stat-circle">
+                                <div class="circle-progress" data-progress="85">
+                                    <span>85%</span>
+                                </div>
+                                <label>Completado</label>
+                            </div>
+                            <div class="stat-bars">
+                                <div class="bar-item">
+                                    <span>HTML/CSS</span>
+                                    <div class="bar"><div class="bar-fill" style="width: 95%"></div></div>
+                                </div>
+                                <div class="bar-item">
+                                    <span>JavaScript</span>
+                                    <div class="bar"><div class="bar-fill" style="width: 88%"></div></div>
+                                </div>
+                                <div class="bar-item">
+                                    <span>React</span>
+                                    <div class="bar"><div class="bar-fill" style="width: 75%"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Lo que dicen nuestros estudiantes</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"Gracias al diplomado de Full Stack conseguí mi trabajo soñado en una startup. La metodología es increíble."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4>Carlos Mendoza</h4>
+                            <span>Full Stack Developer en TechCorp</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"El programa de Data Science me abrió las puertas a un mundo completamente nuevo. Ahora trabajo en Microsoft."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4>Ana Rivera</h4>
+                            <span>Data Scientist en Microsoft</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"La plataforma es intuitiva y los profesores están siempre disponibles. Recomiendo EduPro al 100%."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div class="author-info">
+                            <h4>Luis García</h4>
+                            <span>UX Designer en Amazon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>¿Listo para transformar tu carrera?</h2>
+                <p>Únete a miles de profesionales que han impulsado su carrera con nuestros programas especializados.</p>
+                <div class="cta-actions">
+                    <button class="btn-cta-primary" onclick="window.location.href='login.html'">
+                        Comenzar Ahora
+                        <i class="fas fa-rocket"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <img src="../static/img/logo.png" alt="EduPro" class="footer-logo">
+                        <span class="footer-brand-name">tech-script</span>
+                    </div>
+                    <p>Transformando carreras profesionales a través de la educación especializada y la conexión con oportunidades laborales.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Diplomados</h4>
+                    <a href="#">Desarrollo de Software</a>
+                    <a href="#">Data Science & IA</a>
+                    <a href="#">Marketing Digital</a>
+                    <a href="#">Gestión Empresarial</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Empresa</h4>
+                    <a href="#">Sobre Nosotros</a>
+                    <a href="#">Empleos</a>
+                    <a href="#">Blog</a>
+                    <a href="#">Contacto</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Soporte</h4>
+                    <a href="#">Centro de Ayuda</a>
+                    <a href="#">Términos y Condiciones</a>
+                    <a href="#">Política de Privacidad</a>
+                    <a href="#">FAQ</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 TechScript. Todos los derechos reservados.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../static/JS/index.js"></script>
+</body>
+</html>
