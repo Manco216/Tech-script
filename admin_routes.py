@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from extensions import mysql
 from gestionUsuarios import contar_usuarios, contar_por_rol
 from MySQLdb.cursors import DictCursor
-from datetime import datetime, timedelta
+from datetime import datetime
 from decimal import Decimal
 
 # Definimos el blueprint
@@ -17,7 +17,6 @@ admin_bp = Blueprint("admin", __name__, template_folder="templates/admin")
 @login_required
 def home_admin():
     return render_template("admin/home.html")
-
 
 # ---------------------
 # Gestión de Usuarios
@@ -41,7 +40,6 @@ def actualizar_usuario(user_id):
 
     return jsonify({"message": "Usuario actualizado correctamente"})
 
-
 @admin_bp.route("/admin/usuarios/toggle_estado/<int:user_id>", methods=["POST"])
 @login_required
 def toggle_estado_usuario(user_id):
@@ -59,7 +57,6 @@ def toggle_estado_usuario(user_id):
     cur.close()
     return redirect(url_for("admin.gestion_usuarios"))
 
-
 @admin_bp.route("/admin/usuarios/eliminar/<int:user_id>", methods=["POST"])
 @login_required
 def eliminar_usuario(user_id):
@@ -69,7 +66,6 @@ def eliminar_usuario(user_id):
     cur.close()
     flash("Usuario eliminado correctamente", "success")
     return redirect(url_for("admin.gestion_usuarios"))
-
 
 @admin_bp.route("/api/usuarios/filtrar", methods=["GET"])
 def filtrar_usuarios():
@@ -104,11 +100,10 @@ def filtrar_usuarios():
     cur.close()
     return jsonify(usuarios)
 
-
 @admin_bp.route("/admin/usuarios")
 @login_required
 def gestion_usuarios():
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor(DictCursor)
 
     cur.execute("SELECT COUNT(*) AS total FROM usuarios")
     total_usuarios = cur.fetchone()["total"]
@@ -140,7 +135,6 @@ def gestion_usuarios():
                         administradores=administradores,
                         usuarios=usuarios)
 
-
 @admin_bp.route("/api/usuarios/stats")
 def usuarios_stats():
     total = contar_usuarios(mysql)
@@ -155,243 +149,6 @@ def usuarios_stats():
         "administradores": administradores,
     })
 
-
-# ---------------------
-# REPORTES - Nuevos Endpoints
-# ---------------------
-
-@admin_bp.route("/admin/reportes")
-@login_required
-def reportes():
-    return render_template("admin/reportes.html", user=current_user)
-
-
-@admin_bp.route("/api/reportes/kpis")
-@login_required
-def reportes_kpis():
-    """Obtiene los KPIs principales para el dashboard de reportes"""
-    cur = mysql.connection.cursor(DictCursor)
-    
-    # Total de estudiantes
-    cur.execute("SELECT COUNT(*) as total FROM usuarios WHERE fk_rol = 1")
-    total_estudiantes = cur.fetchone()['total']
-    
-    # Calcular crecimiento (comparando con mes anterior)
-    cur.execute("""
-        SELECT COUNT(*) as total 
-        FROM usuarios 
-        WHERE fk_rol = 1 
-        AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 1 MONTH)
-    """)
-    nuevos_mes_actual = cur.fetchone()['total']
-    
-    cur.execute("""
-        SELECT COUNT(*) as total 
-        FROM usuarios 
-        WHERE fk_rol = 1 
-        AND fecha_creacion >= DATE_SUB(NOW(), INTERVAL 2 MONTH)
-        AND fecha_creacion < DATE_SUB(NOW(), INTERVAL 1 MONTH)
-    """)
-    nuevos_mes_anterior = cur.fetchone()['total']
-    
-    crecimiento_estudiantes = 0
-    if nuevos_mes_anterior > 0:
-        crecimiento_estudiantes = round(((nuevos_mes_actual - nuevos_mes_anterior) / nuevos_mes_anterior) * 100, 1)
-    
-    # Ingresos totales (suma de montos pagados en matrículas)
-    cur.execute("""
-        SELECT COALESCE(SUM(monto_pagado), 0) as total 
-        FROM matriculas
-    """)
-    ingresos_totales = float(cur.fetchone()['total'])
-    
-    # Tasa de finalización REAL basada en matrículas
-    cur.execute("""
-        SELECT 
-            COUNT(*) as total_matriculas,
-            COUNT(CASE WHEN estado = 'completado' THEN 1 END) as completados
-        FROM matriculas
-    """)
-    resultado = cur.fetchone()
-    
-    tasa_finalizacion = 0
-    if resultado['total_matriculas'] > 0:
-        tasa_finalizacion = round((resultado['completados'] / resultado['total_matriculas']) * 100, 1)
-    
-    cur.close()
-    
-    return jsonify({
-        "total_estudiantes": total_estudiantes,
-        "crecimiento_estudiantes": crecimiento_estudiantes,
-        "ingresos_totales": ingresos_totales,
-        "tasa_finalizacion": tasa_finalizacion
-    })
-
-
-@admin_bp.route("/api/reportes/usuarios-crecimiento")
-@login_required
-def reportes_usuarios_crecimiento():
-    """Obtiene el crecimiento de usuarios por mes"""
-    meses = request.args.get('meses', 6, type=int)
-    
-    cur = mysql.connection.cursor(DictCursor)
-    
-    cur.execute("""
-        SELECT 
-            DATE_FORMAT(fecha_creacion, '%%Y-%%m') as mes,
-            COUNT(*) as total
-        FROM usuarios
-        WHERE fecha_creacion >= DATE_SUB(NOW(), INTERVAL %s MONTH)
-        GROUP BY DATE_FORMAT(fecha_creacion, '%%Y-%%m')
-        ORDER BY mes ASC
-    """, (meses,))
-    
-    resultados = cur.fetchall()
-    cur.close()
-    
-    # Formatear datos para el gráfico
-    datos = []
-    for row in resultados:
-        mes_nombre = datetime.strptime(row['mes'], '%Y-%m').strftime('%B')
-        datos.append({
-            "mes": mes_nombre,
-            "total": row['total']
-        })
-    
-    # Si no hay datos suficientes, generar meses vacíos
-    if len(datos) < meses:
-        meses_faltantes = []
-        fecha_actual = datetime.now()
-        for i in range(meses):
-            fecha = fecha_actual - timedelta(days=30*i)
-            mes_nombre = fecha.strftime('%B')
-            existe = any(d['mes'] == mes_nombre for d in datos)
-            if not existe:
-                meses_faltantes.append({
-                    "mes": mes_nombre,
-                    "total": 0
-                })
-        datos.extend(meses_faltantes)
-        datos = sorted(datos, key=lambda x: datetime.strptime(x['mes'], '%B'))
-    
-    return jsonify(datos)
-
-
-@admin_bp.route("/api/reportes/ingresos-categoria")
-@login_required
-def reportes_ingresos_categoria():
-    """Obtiene ingresos por categoría de diplomado"""
-    cur = mysql.connection.cursor(DictCursor)
-    
-    cur.execute("""
-        SELECT 
-            categoria,
-            COUNT(*) as cantidad,
-            COALESCE(SUM(precio), 0) as total_ingresos
-        FROM diplomados
-        WHERE estado = 'active'
-        GROUP BY categoria
-        ORDER BY total_ingresos DESC
-    """)
-    
-    resultados = cur.fetchall()
-    cur.close()
-    
-    datos = []
-    for row in resultados:
-        datos.append({
-            "categoria": row['categoria'],
-            "cantidad": row['cantidad'],
-            "ingresos": float(row['total_ingresos'])
-        })
-    
-    return jsonify(datos)
-
-
-@admin_bp.route("/api/reportes/diplomados-rendimiento")
-@login_required
-def reportes_diplomados_rendimiento():
-    """Obtiene el rendimiento de cada diplomado"""
-    cur = mysql.connection.cursor(DictCursor)
-    
-    cur.execute("""
-        SELECT 
-            d.id,
-            d.titulo,
-            d.categoria,
-            d.nivel,
-            d.precio,
-            d.duracion_horas,
-            d.lecciones_estimadas,
-            d.estado,
-            COUNT(c.id) as total_contenidos,
-            d.fecha_creacion
-        FROM diplomados d
-        LEFT JOIN contenidos c ON d.id = c.diplomado_id
-        GROUP BY d.id
-        ORDER BY d.fecha_creacion DESC
-    """)
-    
-    resultados = cur.fetchall()
-    cur.close()
-    
-    datos = []
-    for row in resultados:
-        # Calcular progreso (basado en contenidos vs lecciones estimadas)
-        progreso = 0
-        if row['lecciones_estimadas'] > 0:
-            progreso = min(100, round((row['total_contenidos'] / row['lecciones_estimadas']) * 100))
-        
-        datos.append({
-            "id": row['id'],
-            "titulo": row['titulo'],
-            "categoria": row['categoria'],
-            "nivel": row['nivel'],
-            "precio": float(row['precio']),
-            "duracion": row['duracion_horas'],
-            "lecciones": row['lecciones_estimadas'],
-            "estado": row['estado'],
-            "contenidos": row['total_contenidos'],
-            "progreso": progreso
-        })
-    
-    return jsonify(datos)
-
-
-@admin_bp.route("/api/reportes/metricas-engagement")
-@login_required
-def reportes_metricas_engagement():
-    """Obtiene métricas de engagement de usuarios"""
-    cur = mysql.connection.cursor(DictCursor)
-    
-    # Usuarios activos (últimos 30 días)
-    cur.execute("""
-        SELECT COUNT(*) as total 
-        FROM usuarios 
-        WHERE estado = 'activo' 
-        AND fecha_actualizacion >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-    """)
-    usuarios_activos = cur.fetchone()['total']
-    
-    # Total usuarios
-    cur.execute("SELECT COUNT(*) as total FROM usuarios WHERE fk_rol = 1")
-    total_usuarios = cur.fetchone()['total']
-    
-    tasa_retencion = 0
-    if total_usuarios > 0:
-        tasa_retencion = round((usuarios_activos / total_usuarios) * 100, 1)
-    
-    cur.close()
-    
-    # Datos simulados (puedes ajustar según tu lógica real)
-    return jsonify({
-        "tiempo_promedio_sesion": "2.4h",
-        "sesiones_totales": 8934,
-        "tasa_retencion": tasa_retencion,
-        "usuarios_activos_porcentaje": 71.5
-    })
-
-
 # ---------------------
 # Gestión de diplomados
 # ---------------------
@@ -399,7 +156,6 @@ def reportes_metricas_engagement():
 @login_required
 def gestion_diplomados():
     return render_template("admin/gestionDiplomados.html", user=current_user)
-
 
 # ---------------------
 # Métricas
@@ -409,7 +165,6 @@ def gestion_diplomados():
 def metricas():
     return render_template("admin/metricas.html", user=current_user)
 
-
 # ---------------------
 # Subir contenido
 # ---------------------
@@ -417,7 +172,6 @@ def metricas():
 @login_required
 def subir_contenido():
     return render_template("admin/subirContenido.html", user=current_user)
-
 
 # =====================================================
 # ENDPOINTS PARA MATRÍCULAS Y PROGRESO
@@ -478,7 +232,6 @@ def listar_matriculas():
     
     return jsonify(matriculas)
 
-
 @admin_bp.route("/api/matriculas/<int:matricula_id>", methods=["GET"])
 @login_required
 def obtener_matricula(matricula_id):
@@ -538,7 +291,6 @@ def obtener_matricula(matricula_id):
     
     return jsonify(matricula)
 
-
 @admin_bp.route("/api/matriculas", methods=["POST"])
 @login_required
 def crear_matricula():
@@ -580,7 +332,6 @@ def crear_matricula():
         "message": "Matrícula creada exitosamente",
         "matricula_id": matricula_id
     }), 201
-
 
 @admin_bp.route("/api/matriculas/<int:matricula_id>/progreso", methods=["PUT"])
 @login_required
@@ -639,66 +390,12 @@ def actualizar_progreso_contenido(matricula_id):
               datetime.now() if completado else None))
     
     mysql.connection.commit()
-    
-    # El trigger actualizará automáticamente el progreso de la matrícula
-    
     cur.close()
     
     return jsonify({"message": "Progreso actualizado exitosamente"})
 
-
-@admin_bp.route("/api/reportes/tasa-finalizacion-detallada")
+@admin_bp.route("/admin/reportes")
 @login_required
-def tasa_finalizacion_detallada():
-    """Obtiene estadísticas detalladas de finalización"""
-    cur = mysql.connection.cursor(DictCursor)
-    
-    # Estadísticas generales
-    cur.execute("""
-        SELECT 
-            COUNT(*) as total_matriculas,
-            COUNT(CASE WHEN estado = 'completado' THEN 1 END) as completados,
-            COUNT(CASE WHEN estado = 'en_curso' THEN 1 END) as en_curso,
-            COUNT(CASE WHEN estado = 'abandonado' THEN 1 END) as abandonados,
-            ROUND(AVG(progreso_porcentaje), 2) as progreso_promedio,
-            ROUND(AVG(CASE WHEN estado = 'completado' THEN calificacion_final END), 2) as calificacion_promedio
-        FROM matriculas
-    """)
-    
-    estadisticas = cur.fetchone()
-    
-    # Tasa por diplomado
-    cur.execute("""
-        SELECT 
-            d.id,
-            d.titulo,
-            d.categoria,
-            COUNT(m.id) as total_inscritos,
-            COUNT(CASE WHEN m.estado = 'completado' THEN 1 END) as completados,
-            ROUND(AVG(m.progreso_porcentaje), 2) as progreso_promedio
-        FROM diplomados d
-        LEFT JOIN matriculas m ON d.id = m.diplomado_id
-        WHERE d.estado = 'active'
-        GROUP BY d.id
-    """)
-    
-    por_diplomado = cur.fetchall()
-    cur.close()
-    
-    # Calcular tasas
-    tasa_general = 0
-    if estadisticas['total_matriculas'] > 0:
-        tasa_general = round((estadisticas['completados'] / estadisticas['total_matriculas']) * 100, 1)
-    
-    for dip in por_diplomado:
-        if dip['total_inscritos'] > 0:
-            dip['tasa_finalizacion'] = round((dip['completados'] / dip['total_inscritos']) * 100, 1)
-        else:
-            dip['tasa_finalizacion'] = 0
-        dip['progreso_promedio'] = float(dip['progreso_promedio']) if dip['progreso_promedio'] else 0
-    
-    return jsonify({
-        "tasa_general": tasa_general,
-        "estadisticas": estadisticas,
-        "por_diplomado": por_diplomado
-    })
+def reportes():
+    return render_template("admin/reportes.html", user=current_user)
+
