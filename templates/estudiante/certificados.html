@@ -4,78 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Certificados - Tech-script</title>
-    <link rel="stylesheet" href="../../static/css/certificados.css">
+    <link rel="stylesheet" href="../../static/css/estudiante/certificados.css">
+    <link rel="icon" type="image/png" href="../../static/img/logof.png"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <!-- CONTENEDOR PRINCIPAL DEL LAYOUT -->
     <div class="layout">
-        <!-- ========== SIDEBAR - BARRA LATERAL ========== -->
-        <aside class="sidebar" id="sidebar">
-            <!-- BOTÓN HAMBURGUESA ARRIBA -->
-            <button id="toggleSidebar" class="toggle-btn">☰</button>
-            
-            <!-- LOGO -->
-            <div class="logo">
-                <div class="logo-content">
-                    <img src="../static/img/logo.png" alt="Logo">
-                    <h2>Tech-script</h2>
-                </div>
-            </div>
-            
-            <!-- NAVEGACIÓN PRINCIPAL -->
-            <nav>
-                <a href="{{ url_for('student') }}" class="nav-item" id="Inicio">
-                    <i class="fas fa-chart-line icon"></i>
-                    <span class="text">Inicio</span>
-                </a>
-                <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
-                    <i class="fas fa-book icon"></i>
-                    <span class="text">Diplomados</span>
-                </a>
-                <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
-                    <i class="fas fa-video icon"></i>
-                    <span class="text">Mi progreso</span>
-                </a>
-                <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
-                    <i class="fas fa-credit-card icon"></i>
-                    <span class="text">Pagos</span>
-                </a>
-                <a href="{{ url_for('mensajes') }}" class="nav-item" id="mensajes">
-                    <i class="fas fa-envelope icon"></i>
-                    <span class="text">Mensajes</span>
-                </a>
-                <a href="{{ url_for('certificados') }}" class="nav-item active" id="certificados">
-                    <i class="fas fa-certificate icon"></i>
-                    <span class="text">Certificados</span>
-                </a>
-            </nav>
-        </aside>
+            <aside class="sidebar" id="sidebar">
 
-        <!-- ========== MAIN CONTENT ========== -->
-        <main class="main">
-            <!-- TOPBAR -->
-            <div class="topbar">
-                <button id="toggleSidebarTop" class="toggle-btn">☰</button>
-                
-                <div class="search-container">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" placeholder="¿Qué quieres aprender?">
-                </div>
-                
-                <div class="topbar-right">
-                    <div class="notification-icon">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
-                    </div>
-                    
-                    <div class="profile-dropdown">
-                        <div class="profile-pic" id="profile">
-                            <img src="../../static/img/user.jpg" alt="Usuario">
-                        </div>
-                    </div>
-                </div>
+  <!-- BOTÓN HAMBURGUESA ARRIBA -->
+  <button id="toggleSidebar" class="toggle-btn">☰</button>
+
+  <!-- LOGO -->
+  <div class="logo">
+    <div class="logo-content">
+      <img src="../../static/img/logo.png" alt="Logo">
+      <h2>Tech-script</h2>
+    </div>
+  </div>
+  
+  <!-- NAVEGACIÓN PRINCIPAL -->
+  <nav>
+  <a href="{{ url_for('student') }}" class="nav-item" id="Inicio">
+    <i class="fas fa-chart-line icon"></i>
+    <span class="text">Inicio</span>
+  </a>
+  <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
+    <i class="fas fa-book icon"></i>
+    <span class="text">Diplomados</span>
+  </a>
+  <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
+    <i class="fas fa-video icon"></i>
+    <span class="text">Mi progreso</span>
+  </a>
+  <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
+    <i class="fas fa-credit-card icon"></i>
+    <span class="text">Pagos</span>
+  </a>
+  <a href="{{ url_for('certificados') }}" class="nav-item active" id="certificados">
+    <i class="fas fa-certificate icon"></i>
+    <span class="text">Certificados</span>
+  </a>
+</nav>
+
+
+  <!-- FOOTER -->
+ <div class="sidebar-footer">
+  <div class="user-card">
+    <div class="user">
+      <img src="https://i.pravatar.cc/40" alt="foto de perfil" class="user-avatar">
+      <div class="user-info">
+        <span class="name">{{ user.nombre }}</span>
+        <span class="email">{{ user.correo }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+</aside>
+
+
+    <!-- ========== CONTENIDO PRINCIPAL ========== -->
+    <main class="main">
+      
+      <!-- BARRA SUPERIOR -->
+      <header class="topbar">
+        <button id="toggleSidebarTop" class="toggle-btn"><i class="fas fa-bars"></i></button>
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" placeholder="Buscar diplomados, cursos, tutorías..." id="search-input">
+        </div>
+        <div class="topbar-right">
+          <div class="notification-icon" id="notifications">
+            <i class="fas fa-bell"></i>
+            <div class="notification-badge">2</div>
+          </div>
+          
+          <div class="profile-dropdown" id="profileDropdown">
+        <div class="profile-pic" id="profile">
+          <img src="https://i.pravatar.cc/40" alt="Foto de perfil">
+        </div>
+        <div class="dropdown-menu" id="dropdownMenu">
+          <div class="dropdown-header">
+            <div class="dropdown-avatar">
+              <img src="https://i.pravatar.cc/40" alt="Avatar">
             </div>
+            <div class="dropdown-user-info">
+              <h4>María González</h4>
+              <span>Estudiante</span>
+            </div>
+          </div>
+
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-content">
+            <a href="perfilEstudiante.html" class="dropdown-item">
+              <i class="fas fa-user"></i>
+              <span>Mi Cuenta</span>
+            </a>
+            <a href="login.html" class="dropdown-item">
+              <i class="fas fa-cog"></i>
+              <span>Configuración</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item logout">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Cerrar Sesión</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      </div>
+      </header>
+
 
             <!-- CONTENIDO PRINCIPAL -->
             <div class="content">
@@ -148,6 +188,6 @@
     <!-- Toast notifications -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <script src="../../static/js/certificados.js"></script>
+    <script src="../../static/JS/estudiante/certificados.js"></script>
 </body>
 </html>

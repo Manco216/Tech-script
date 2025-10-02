@@ -4,222 +4,220 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagos y Facturación - Tech-script</title>
-    <link rel="stylesheet" href="../../static/CSS/pagos.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/CSS/estudiante/pagos.css">
+    <link rel="icon" type="image/png" href="../../static/img/logof.png"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-      <div class="layout">
-    
-    <!-- ========== SIDEBAR ========== -->
-    <aside class="sidebar" id="sidebar">
-      <button id="toggleSidebar" class="toggle-btn">☰</button>
-
-      <div class="logo">
-        <div class="logo-content">
-          <img src="../../static/img/logo.png" alt="Logo">
-          <h2>Tech-script</h2>
-        </div>
-      </div>
-  
-      <nav>
-        <a href="{{ url_for('student') }}" class="nav-item active" id="Inicio">
-          <i class="fas fa-chart-line icon"></i><span class="text">Inicio</span>
-        </a>
-        <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
-          <i class="fas fa-book icon"></i><span class="text">Diplomados</span>
-        </a>
-        <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
-          <i class="fas fa-video icon"></i><span class="text">Mi progreso</span>
-        </a>
-        <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
-          <i class="fas fa-credit-card icon"></i><span class="text">Pagos</span>
-        </a>
-        <a href="{{ url_for('mensajes') }}" class="nav-item" id="mensajes">
-          <i class="fas fa-envelope icon"></i><span class="text">Mensajes</span>
-        </a>
-        <a href="{{ url_for('certificados') }}" class="nav-item" id="certificados">
-          <i class="fas fa-certificate icon"></i><span class="text">Certificados</span>
-        </a>
-      </nav>
-
-      <div class="sidebar-footer">
-        <div class="user-card">
-          <div class="user">
-            <img src="https://i.pravatar.cc/40" alt="foto de perfil" class="user-avatar">
-            <div class="user-info">
-              <span class="name">María González</span>
-              <span class="email">maria.gonzalez@email.com</span>
+    <div class="layout">
+        <!-- ========== SIDEBAR ========== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-content">
+                    <img src="../../static/img/logo.png" alt="Logo">
+                    <h2>tech-script</h2>
+                </div>
+                <button id="toggleSidebar" class="toggle-btn">☰</button>
             </div>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-        <!-- ========== MAIN ========== -->
-    <main class="main">
-      <!-- TOPBAR -->
-      <div class="topbar">
-        <button id="toggleSidebarTop" class="toggle-btn">☰</button>
-                
-        <div class="search-container">
-          <i class="fas fa-search search-icon"></i>
-          <input type="text" placeholder="¿Qué quieres aprender?">
-        </div>
-                
-        <div class="topbar-right">
-          <div class="notification-icon">
-            <i class="fas fa-bell"></i>
-            <span class="notification-badge">3</span>
-          </div>
-                    
-          <div class="profile-dropdown">
-            <div class="profile-pic" id="profile">
-              <img src="../static/img/user.jpg" alt="Usuario">
+              <nav>
+  <a href="{{ url_for('student') }}" class="nav-item" id="Inicio">
+    <i class="fas fa-chart-line icon"></i>
+    <span class="text">Inicio</span>
+  </a>
+  <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
+    <i class="fas fa-book icon"></i>
+    <span class="text">Diplomados</span>
+  </a>
+  <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
+    <i class="fas fa-video icon"></i>
+    <span class="text">Mi progreso</span>
+  </a>
+  <a href="{{ url_for('pagos') }}" class="nav-item active" id="pagos">
+    <i class="fas fa-credit-card icon"></i>
+    <span class="text">Pagos</span>
+  </a>
+  <a href="{{ url_for('certificados') }}" class="nav-item" id="certificados">
+    <i class="fas fa-certificate icon"></i>
+    <span class="text">Certificados</span>
+  </a>
+</nav>
+            <div class="sidebar-footer">
+                <div class="nav-item" id="configuracion"><i class="fas fa-cog icon"></i><span class="text">Configuración</span></div>
+                <div class="nav-item" id="mi-cuenta"><i class="fas fa-user icon"></i><span class="text">Mi cuenta</span></div>
             </div>
-          </div>
-        </div>
-      </div>
+        </aside>
 
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="header-content">
-                <h1>Pagos y Facturación</h1>
-                <p>Gestiona tus pagos, métodos de pago y suscripciones</p>
-            </div>
-            <div class="header-badge">
-                <span class="badge badge-success">
-                    <i data-lucide="check-circle"></i>
-                    Plan Premium Activo
-                </span>
-            </div>
-        </div>
+        <!-- ========== MAIN CONTENT ========== -->
+        <main class="main">
 
-        <!-- Curso Seleccionado (si viene de Diplomado) -->
-        <div id="selected-course-container" class="selected-course-card" style="display:none; margin-bottom:20px; padding:15px; border:1px solid #ccc; border-radius:8px;">
-            <h3 id="selected-course"></h3>
-            <button id="pay-course-btn" class="btn btn-primary btn-full">Pagar Ahora</button>
-        </div>
-
-        <!-- Tabs Navigation -->
-        <div class="tabs">
-            <div class="tabs-list">
-                <button class="tab-trigger active" data-tab="history">Historial de Pagos</button>
-                <button class="tab-trigger" data-tab="methods">Métodos de Pago</button>
-                <button class="tab-trigger" data-tab="invoices">Facturas</button>
-            </div>
-
-            <!-- Tab Content: History -->
-            <div class="tab-content active" id="history">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Historial de Pagos</h2>
-                        <p>Todos tus pagos y transacciones realizadas</p>
+            <!-- ========== PAGOS CONTENT ========== -->
+            <div class="content-area">
+                <div class="page-header">
+                    <div class="header-content">
+                        <h1 class="page-title">
+                            <i class="fas fa-credit-card"></i>
+                            Pagos y Facturación
+                        </h1>
+                        <p class="page-description">Gestiona tus pagos, métodos de pago y suscripciones</p>
                     </div>
-                    <div class="card-content">
-                        <div id="payment-history-list" class="payment-list">
-                            <!-- Payment items se cargarán dinámicamente -->
-                        </div>
+                    <div class="header-badge">
                     </div>
                 </div>
-            </div>
 
-            <!-- Tab Content: Methods -->
-            <div class="tab-content" id="methods">
-                <div class="grid-layout">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="header-with-action">
-                                <div>
-                                    <h2>Métodos de Pago</h2>
-                                    <p>Gestiona tus tarjetas y métodos de pago</p>
-                                </div>
-                                <button class="btn btn-primary">
-                                    <i data-lucide="plus"></i>
-                                    Agregar
-                                </button>
-                            </div>
+                <!-- Curso Seleccionado (si viene de Diplomado) -->
+                <div id="selected-course-container" class="selected-course-card" style="display:none;">
+                    <div class="course-card">
+                        <div class="course-info">
+                            <h3 id="selected-course"></h3>
+                            <p>Curso seleccionado para pago</p>
                         </div>
-                        <div class="card-content">
-                            <div id="payment-methods-list" class="payment-methods">
-                                <!-- Métodos de pago se cargarán dinámicamente -->
+                        <button id="pay-course-btn" class="btn btn-primary">
+                            <i class="fas fa-credit-card"></i>
+                            Pagar Ahora
+                        </button>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs-container">
+                    <div class="tabs-nav">
+                        <button class="tab-button active" data-tab="history">
+                            <i class="fas fa-history"></i>
+                            Historial de Pagos
+                        </button>
+                        <button class="tab-button" data-tab="methods">
+                            <i class="fas fa-credit-card"></i>
+                            Métodos de Pago
+                        </button>
+                        <button class="tab-button" data-tab="invoices">
+                            <i class="fas fa-file-invoice"></i>
+                            Facturas
+                        </button>
+                    </div>
+
+                    <!-- Tab Content: Historial -->
+                    <div class="tab-content active" id="history-tab">
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-history"></i> Historial de Pagos</h3>
+                                <p>Todos tus pagos y transacciones realizadas</p>
+                            </div>
+                            <div class="card-content">
+                                <div id="payment-history-list" class="payment-list">
+                                    <!-- Payment items se cargarán dinámicamente -->
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card">
-                        <div class="card-header">
-                            <h2>Agregar Método de Pago</h2>
-                            <p>Añade una nueva tarjeta o método de pago</p>
-                        </div>
-                        <div class="card-content">
-                            <form class="payment-form">
-                                <div class="form-group">
-                                    <label for="cardNumber">Número de Tarjeta</label>
-                                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456">
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="expiryDate">Fecha de Expiración</label>
-                                        <input type="text" id="expiryDate" placeholder="MM/YY">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="cvv">CVV</label>
-                                        <input type="text" id="cvv" placeholder="123">
+                    <!-- Tab Content: Métodos -->
+                    <div class="tab-content" id="methods-tab">
+                        <div class="methods-grid">
+                            <div class="chart-card">
+                                <div class="card-header">
+                                    <div class="header-with-action">
+                                        <div>
+                                            <h3><i class="fas fa-credit-card"></i> Métodos de Pago</h3>
+                                            <p>Gestiona tus tarjetas y métodos de pago</p>
+                                        </div>
+                                        <button class="btn btn-primary" id="addPaymentMethodBtn">
+                                            <i class="fas fa-plus"></i>
+                                            Agregar
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="cardName">Nombre en la Tarjeta</label>
-                                    <input type="text" id="cardName" placeholder="María González">
+                                <div class="card-content">
+                                    <div id="payment-methods-list" class="payment-methods">
+                                        <!-- Métodos de pago se cargarán dinámicamente -->
+                                    </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-full">
-                                    <i data-lucide="credit-card"></i>
-                                    Agregar Tarjeta
-                                </button>
-                            </form>
+                            </div>
+
+                            <div class="chart-card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-plus-circle"></i> Agregar Método de Pago</h3>
+                                    <p>Añade una nueva tarjeta o método de pago</p>
+                                </div>
+                                <div class="card-content">
+                                    <form class="payment-form">
+                                        <div class="form-group">
+                                            <label for="cardNumber">Número de Tarjeta</label>
+                                            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456">
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="expiryDate">Fecha de Expiración</label>
+                                                <input type="text" id="expiryDate" placeholder="MM/YY">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="cvv">CVV</label>
+                                                <input type="text" id="cvv" placeholder="123">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="cardName">Nombre en la Tarjeta</label>
+                                            <input type="text" id="cardName" placeholder="María González">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-full">
+                                            <i class="fas fa-plus"></i>
+                                            Agregar Tarjeta
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content: Facturas -->
+                    <div class="tab-content" id="invoices-tab">
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <div class="header-with-filters">
+                                    <div>
+                                        <h3><i class="fas fa-file-invoice"></i> Facturas</h3>
+                                        <p>Descarga y gestiona tus facturas</p>
+                                    </div>
+                                    <div class="filters">
+                                        <select id="yearFilter" class="form-select">
+                                            <option value="">Año</option>
+                                            <option value="2024">2024</option>
+                                            <option value="2023">2023</option>
+                                        </select>
+                                        <select id="monthFilter" class="form-select">
+                                            <option value="">Mes</option>
+                                            <option value="all">Todos</option>
+                                            <option value="01">Enero</option>
+                                            <option value="02">Febrero</option>
+                                            <option value="03">Marzo</option>
+                                            <option value="04">Abril</option>
+                                            <option value="05">Mayo</option>
+                                            <option value="06">Junio</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div id="invoices-list" class="invoices-list">
+                                    <!-- Facturas se cargarán dinámicamente -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-         
-
-            <!-- Tab Content: Invoices -->
-            <div class="tab-content" id="invoices">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="header-with-filters">
-                            <div>
-                                <h2>Facturas</h2>
-                                <p>Descarga y gestiona tus facturas</p>
-                            </div>
-                            <div class="filters">
-                                <select id="yearFilter">
-                                    <option value="">Año</option>
-                                    <option value="2024">2024</option>
-                                    <option value="2023">2023</option>
-                                </select>
-                                <select id="monthFilter">
-                                    <option value="">Mes</option>
-                                    <option value="all">Todos</option>
-                                    <option value="01">Enero</option>
-                                    <option value="02">Febrero</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-content">
-                        <div id="invoices-list" class="invoices-list">
-                            <!-- Facturas se cargarán dinámicamente -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </main>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
-    <script src="../../static/JS/pagos.js"></script>
+    <button id="toggleSidebarMobile" class="toggle-btn-mobile">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    </button>
+
+<!-- Overlay para cerrar sidebar en móvil -->
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <script src="../../static/JS/estudiante/pagos.js"></script>
 </body>
 </html>

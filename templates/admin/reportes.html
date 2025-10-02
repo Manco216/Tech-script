@@ -21,27 +21,27 @@
       </div>
       
        <nav>
-        <a href="{{ url_for('instructor') }}" class="nav-item active" id="Inicio">
+        <a href="{{ url_for('admin.home') }}" class="nav-item active" id="Inicio">
           <i class="fas fa-chart-line icon"></i>
           <span class="text">Panel</span>
         </a>
-         <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
+        <a href="{{ url_for('admin.reportes') }}" class="nav-item">
           <i class="fas fa-chart-bar icon"></i>
           <span class="text">Reportes</span>
         </a>
-        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="mis-cursos">
+        <a href="{{ url_for('admin.gestion_diplomados') }}" class="nav-item">
           <i class="fas fa-book icon"></i>
           <span class="text">Gestion Diplomados</span>
         </a>
-        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="estudiantes">
+        <a href="{{ url_for('admin.gestion_usuarios') }}" class="nav-item">
           <i class="fas fa-users icon"></i>
           <span class="text"> Gestion Usuarios</span>
         </a>
-        <a href="{{ url_for('subirContenido') }}" class="nav-item" id="contenido">
+        <a href="{{ url_for('admin.subir_contenido') }}" class="nav-item">
           <i class="fas fa-upload icon"></i>
           <span class="text">Contenido</span>
         </a>
-         <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
+        <a href="{{ url_for('admin.metricas') }}" class="nav-item">
           <i class="fas fa-chart-bar icon"></i>
           <span class="text">Metricas</span>
         </a>
@@ -172,21 +172,6 @@
         </div>
     </div>
 
-    <div class="stat-card-new yellow-bg">
-        <div class="stat-content-new">
-            <div class="stat-icon-new">
-                <i class="fas fa-star"></i>
-            </div>
-            <div class="stat-info-new">
-                <p class="stat-label">Calificación Promedio</p>
-                <h3 class="stat-number">4.8</h3>
-                <div class="stat-badge">
-                    <i class="fas fa-medal"></i>
-                    <span>Excelente</span>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="stat-card-new purple-bg">
         <div class="stat-content-new">
@@ -333,6 +318,89 @@
             </div>
         </div>
     </div>
+
+    <div class="modal-progreso" id="modalProgreso" style="display: none;">
+    <div class="modal-overlay" onclick="cerrarModalProgreso()"></div>
+    <div class="modal-content-progreso">
+        <div class="modal-header-progreso">
+            <div>
+                <h2 id="nombreEstudiante">Cargando...</h2>
+                <p id="diplomadoTitulo" class="subtitle">Diplomado</p>
+            </div>
+            <button onclick="cerrarModalProgreso()" class="btn-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-body-progreso">
+            <!-- Tarjetas de estadísticas -->
+            <div class="stats-cards">
+                <div class="stat-card-small">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-percent"></i>
+                    </div>
+                    <div class="stat-details">
+                        <span class="stat-label">Progreso Total</span>
+                        <span class="stat-value" id="progresoTotal">0%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card-small">
+                    <div class="stat-icon green">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-details">
+                        <span class="stat-label">Completados</span>
+                        <span class="stat-value" id="completados">0/0</span>
+                    </div>
+                </div>
+
+                <div class="stat-card-small">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-details">
+                        <span class="stat-label">Tiempo Dedicado</span>
+                        <span class="stat-value" id="tiempoDedicado">0h</span>
+                    </div>
+                </div>
+
+                <div class="stat-card-small">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-details">
+                        <span class="stat-label">Calificación</span>
+                        <span class="stat-value" id="calificacionFinal">N/A</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de contenidos -->
+            <div class="contenidos-list" id="contenidosList">
+                <!-- Se llena dinámicamente -->
+            </div>
+
+            <!-- Timeline de actividad -->
+            <div class="timeline-section">
+                <h3><i class="fas fa-history"></i> Historial de Actividad</h3>
+                <div id="timelineActividad">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer-progreso">
+            <button onclick="exportarReporteEstudiante()" class="btn-secondary">
+                <i class="fas fa-download"></i> Exportar Reporte
+            </button>
+            <button onclick="enviarRecordatorio()" class="btn-primary">
+                <i class="fas fa-bell"></i> Enviar Recordatorio
+            </button>
+        </div>
+    </div>
+</div>
+
 
     <script src="../../static/JS/admin/reportes.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
