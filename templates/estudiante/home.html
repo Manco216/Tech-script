@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - TechScript</title>
+  
+  <link rel="icon" type="image/png" href="../../static/img/logof.png">
+
+  <!-- CSS personalizado -->
+  <link rel="stylesheet" href="../../static/CSS/estudiante/student.css">
+  
+  <!-- FullCalendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet" />
+  
+  <!-- FullCalendar JS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <!-- CONTENEDOR PRINCIPAL DEL LAYOUT -->
+  <div class="layout">
+    
+    <!-- ========== SIDEBAR - BARRA LATERAL ========== -->
+    <aside class="sidebar" id="sidebar">
+
+  <!-- BOTÓN HAMBURGUESA ARRIBA -->
+  <button id="toggleSidebar" class="toggle-btn">☰</button>
+
+  <!-- LOGO -->
+  <div class="logo">
+    <div class="logo-content">
+      <img src="../../static/img/logo.png" alt="Logo">
+      <h2>Tech-script</h2>
+    </div>
+  </div>
+  
+  <!-- NAVEGACIÓN PRINCIPAL -->
+  <nav>
+  <a href="{{ url_for('home') }}" class="nav-item active" id="Inicio">
+    <i class="fas fa-chart-line icon"></i>
+    <span class="text">Inicio</span>
+  </a>
+  <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
+    <i class="fas fa-book icon"></i>
+    <span class="text">Diplomados</span>
+  </a>
+  <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
+    <i class="fas fa-video icon"></i>
+    <span class="text">Mi progreso</span>
+  </a>
+  <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
+    <i class="fas fa-credit-card icon"></i>
+    <span class="text">Pagos</span>
+  </a>
+  <a href="{{ url_for('certificados') }}" class="nav-item" id="certificados">
+    <i class="fas fa-certificate icon"></i>
+    <span class="text">Certificados</span>
+  </a>
+</nav>
+
+
+  <!-- FOOTER -->
+ <div class="sidebar-footer">
+  <div class="user-card">
+    <div class="user">
+      <img src="https://i.pravatar.cc/40" alt="foto de perfil" class="user-avatar">
+      <div class="user-info">
+        <span class="name">{{ user.nombre }}</span>
+        <span class="email">{{ user.correo }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+</aside>
+
+
+    <!-- ========== CONTENIDO PRINCIPAL ========== -->
+    <main class="main">
+      
+      <!-- BARRA SUPERIOR -->
+      <header class="topbar">
+        <button id="toggleSidebarTop" class="toggle-btn"><i class="fas fa-bars"></i></button>
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" placeholder="Buscar diplomados, cursos, tutorías..." id="search-input">
+        </div>
+        <div class="topbar-right">
+          <div class="notification-icon" id="notifications">
+            <i class="fas fa-bell"></i>
+            <div class="notification-badge">2</div>
+          </div>
+          
+          <div class="profile-dropdown" id="profileDropdown">
+        <div class="profile-pic" id="profile">
+          <img src="https://i.pravatar.cc/40" alt="Foto de perfil">
+        </div>
+        <div class="dropdown-menu" id="dropdownMenu">
+          <div class="dropdown-header">
+            <div class="dropdown-avatar">
+              <img src="https://i.pravatar.cc/40" alt="Avatar">
+            </div>
+            <div class="dropdown-user-info">
+              <h4>María González</h4>
+              <span>Estudiante</span>
+            </div>
+          </div>
+
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-content">
+            <a href="perfilEstudiante.html" class="dropdown-item">
+              <i class="fas fa-user"></i>
+              <span>Mi Cuenta</span>
+            </a>
+            <a href="config.html" class="dropdown-item">
+              <i class="fas fa-cog"></i>
+              <span>Configuración</span>
+            </a>
+         <div class="dropdown-divider"></div>
+<a href="{{ url_for('logout') }}" class="dropdown-item logout">
+  <i class="fas fa-sign-out-alt"></i>
+  <span>Cerrar Sesión</span>
+</a>
+
+        </div>
+      </div>
+      </div>
+      </header>
+
+      <!-- ========== SECCIÓN WELCOME + CALENDARIO ========== -->
+      <section class="welcome-calendar">
+        <!-- TARJETA DE BIENVENIDA -->
+        <div class="welcome">
+          <div class="welcome-content">
+            <div class="welcome-main">
+              <div class="welcome-text">
+                <h1>¡Bienvenido de vuelta, María!</h1>
+                <p>Continúa tu camino hacia el éxito profesional. Tienes nuevos módulos esperándote.</p>
+                <a href="#" class="welcome-btn" id="continuar-aprendiendo">
+                  <i class="fas fa-play"></i>
+                  Continuar Aprendiendo
+                </a>
+              </div>
+              <div class="welcome-illustration">
+                <img src="../../static/img/Online learning.gif" alt="Ilustración de aprendizaje online">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TARJETA DEL CALENDARIO -->
+        <div class="calendar-card">
+          <div class="calendar-header">
+            <div class="calendar-title"> Septiembre 2025</div>
+            <div class="calendar-nav">
+              <button id="prevMonth">‹</button>
+              <button id="nextMonth">›</button>
+            </div>
+          </div>
+          <div id="calendar"></div>
+        </div>
+
+        <div id="eventModal" class="modal">
+  <div class="modal-content">
+    <span id="closeModal" class="close">&times;</span>
+    <h2 id="modalTitle"></h2>
+    <p id="modalDate"></p>
+  </div>
+</div>
+      </section> <!-- ✅ CIERRO AQUÍ -->
+
+      <!-- ========== SECCIÓN TU PROGRESO ========== -->
+      <section class="progress-section">
+  <h2 class="section-title">📈 Continua tu Aprendizaje </h2>
+  <div class="progress-grid">
+
+    <!-- CURSO 1 -->
+    <div class="progress-card purple" id="web-fullstack">
+      <div class="course-header">
+        <div class="course-info">
+          <h3>Desarrollo Web Full Stack</h3>
+          <div class="course-stats">
+            <div>📚 9/12 módulos</div>
+            <div>⏱️ Quiz React - 2 días</div>
+          </div>
+        </div>
+        <!-- 🎨 Ilustración Web/React -->
+        <div class="course-illustration">
+          <i class="fab fa-react"></i>
+          <div class="code-elements">
+            <div class="code-block"></div>
+            <div class="code-block"></div>
+            <div class="code-block small"></div>
+          </div>
+        </div>
+      </div>
+      <div class="progress-info">
+        <div class="progress-percentage">75%</div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 75%"></div>
+        </div>
+      </div>
+      <button class="continue-btn">Continuar Curso</button>
+    </div>
+
+    <!-- CURSO 2 -->
+    <div class="progress-card yellow" id="data-science">
+      <div class="course-header">
+        <div class="course-info">
+          <h3>Data Science con Python</h3>
+          <div class="course-stats">
+            <div>📚 4/10 módulos</div>
+            <div>⏱️ Proyecto ML - 5 días</div>
+          </div>
+        </div>
+        <!-- 🎨 Ilustración Python/Data -->
+        <div class="course-illustration">
+          <i class="fab fa-python"></i>
+          <div class="data-elements">
+            <div class="chart-bar"></div>
+            <div class="chart-bar tall"></div>
+            <div class="chart-bar medium"></div>
+            <div class="chart-line"></div>
+          </div>
+        </div>
+      </div>
+      <div class="progress-info">
+        <div class="progress-percentage">45%</div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 45%"></div>
+        </div>
+      </div>
+      <button class="continue-btn">Continuar Curso</button>
+    </div>
+
+    <!-- CURSO 3 -->
+    <div class="progress-card pink" id="cybersecurity">
+      <div class="course-header">
+        <div class="course-info">
+          <h3>Ciberseguridad Avanzada</h3>
+          <div class="course-stats">
+            <div>📚 7/8 módulos</div>
+            <div>⏱️ Examen Final - 1 día</div>
+          </div>
+        </div>
+        <!-- 🎨 Ilustración Seguridad -->
+        <div class="course-illustration">
+          <i class="fas fa-shield-alt"></i>
+          <div class="lock-elements">
+            <div class="lock-body"></div>
+            <div class="lock-shackle"></div>
+          </div>
+        </div>
+      </div>
+      <div class="progress-info">
+        <div class="progress-percentage">90%</div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 90%"></div>
+        </div>
+      </div>
+      <button class="continue-btn">Continuar Curso</button>
+    </div>
+
+    <!-- CURSO 4 -->
+    <div class="progress-card blue" id="ai-course">
+      <div class="course-header">
+        <div class="course-info">
+          <h3>Inteligencia Artificial</h3>
+          <div class="course-stats">
+            <div>📚 2/10 módulos</div>
+            <div>⏱️ Proyecto IA - 10 días</div>
+          </div>
+        </div>
+        <!-- 🎨 Ilustración Inteligencia Artificial -->
+        <div class="course-illustration">
+          <i class="fas fa-robot"></i>
+          <div class="ai-elements">
+            <div class="neuron"></div>
+            <div class="neuron"></div>
+            <div class="connection"></div>
+          </div>
+        </div>
+      </div>
+      <div class="progress-info">
+        <div class="progress-percentage">20%</div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 20%"></div>
+        </div>
+      </div>
+      <button class="continue-btn">Continuar Curso</button>
+    </div>
+
+  </div>
+</section>
+
+
+<section class="noti-reco">
+    <!-- TARJETA RECOMENDACIONES CON DISEÑO DE IMÁGENES GRANDES -->
+    <div class="recommendations-card-new">
+        <div class="recommendations-header">
+            <h3 class="card-title">Diplomados Recomendados</h3>
+                <p class="card-subtitle">Explora programas diseñados para potenciar tus habilidades y crecer profesionalmente.</p>
+        </div>
+        
+        <div class="articles-grid">
+            <!-- DIPLOMADO 1 - React -->
+            <div class="article-card" onclick="redirectToCourse('react-course')">
+                <div class="article-image react-gradient">
+                    <div class="article-illustration">
+                        <i class="fab fa-react"></i>
+                        <div class="code-elements">
+                            <div class="code-block"></div>
+                            <div class="code-block"></div>
+                            <div class="code-block small"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="article-info">
+                    <div class="article-meta">
+                        <span class="article-date">15 de enero de 2025</span>
+                        <span class="article-category">Frontend</span>
+                        <span class="reading-time">8 sem</span>
+                    </div>
+                    <h4 class="article-title">Desarrollo Frontend con React Avanzado</h4>
+                    <p class="article-excerpt">Domina React con hooks, context, testing y las mejores prácticas para crear aplicaciones modernas y escalables.</p>
+                    <div class="article-author">
+                        <span>👨‍💻 Carlos Mendez</span>
+                        <button class="view-explore-btn"> Explorar -></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DIPLOMADO 2 - Python/ML -->
+            <div class="article-card" onclick="redirectToCourse('python-ml')">
+                <div class="article-image python-gradient">
+                    <div class="article-illustration">
+                        <i class="fab fa-python"></i>
+                        <div class="data-elements">
+                            <div class="chart-bar"></div>
+                            <div class="chart-bar tall"></div>
+                            <div class="chart-bar medium"></div>
+                            <div class="chart-line"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="article-info">
+                    <div class="article-meta">
+                        <span class="article-date">12 de enero de 2025</span>
+                        <span class="article-category">Data Science</span>
+                        <span class="reading-time">12 sem</span>
+                    </div>
+                    <h4 class="article-title">Machine Learning con Python</h4>
+                    <p class="article-excerpt">Aprende algoritmos de ML, análisis de datos y crea modelos predictivos con Python, pandas y scikit-learn.</p>
+                    <div class="article-author">
+                        <span>👩‍🔬 Ana Rodriguez</span>
+                        <button class="view-explore-btn"> Explorar -></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DIPLOMADO 3 - DevOps/Cloud -->
+            <div class="article-card" onclick="redirectToCourse('devops-cloud')">
+                <div class="article-image cloud-gradient">
+                    <div class="article-illustration">
+                        <i class="fas fa-cloud"></i>
+                        <div class="cloud-elements">
+                            <div class="server-rack"></div>
+                            <div class="server-rack"></div>
+                            <div class="connection-line"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="article-info">
+                    <div class="article-meta">
+                        <span class="article-date">10 de enero de 2025</span>
+                        <span class="article-category">DevOps</span>
+                        <span class="reading-time">10 sem</span>
+                    </div>
+                    <h4 class="article-title">DevOps y Cloud Computing</h4>
+                    <p class="article-excerpt">Implementa pipelines CI/CD, containerización con Docker y despliegues en AWS para equipos de desarrollo.</p>
+                    <div class="article-author">
+                        <span>🚀 Luis Martinez</span>
+                        <button class="view-explore-btn"> Explorar -></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DIPLOMADO 4 - Mobile Development -->
+            <div class="article-card" onclick="redirectToCourse('mobile-dev')">
+                <div class="article-image mobile-gradient">
+                    <div class="article-illustration">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div class="mobile-elements">
+                            <div class="app-icon"></div>
+                            <div class="app-icon"></div>
+                            <div class="app-icon small"></div>
+                            <div class="notification-dot"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="article-info">
+                    <div class="article-meta">
+                        <span class="article-date">8 de enero de 2025</span>
+                        <span class="article-category">Mobile</span>
+                        <span class="reading-time">9 sem</span>
+                    </div>
+                    <h4 class="article-title">Desarrollo Mobile Multiplataforma</h4>
+                    <p class="article-excerpt">Crea aplicaciones nativas para iOS y Android con Flutter y React Native, desde cero hasta producción.</p>
+                    <div class="article-author">
+                        <span>📱 Sofia Chen</span>
+                         <button class="view-explore-btn"> Explorar -></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TARJETA NOTIFICACIONES -->
+     <!-- TARJETA NOTIFICACIONES MODERNA -->
+<div class="notifications-card-modern">
+  <div class="notifications-header">
+    <h3 class="card-title">Recordatorios</h3>
+    <span class="notification-count">7</span>
+  </div>
+
+  <div class="notifications-list">
+    <!-- Notificación 1 -->
+    <div class="notification-item-modern" data-tipo="rojo">
+      <div class="notification-icon-circle rojo">
+        <i class="fas fa-exclamation"></i>
+      </div>
+      <div class="notification-content">
+        <h4 class="notification-title">Eng - Vocabulary test</h4>
+        <p class="notification-date">24 Sep 2019, Friday</p>
+      </div>
+      <div class="notification-arrow">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+
+    <!-- Notificación 2 -->
+    <div class="notification-item-modern" data-tipo="azul">
+      <div class="notification-icon-circle azul">
+        <i class="fas fa-envelope"></i>
+      </div>
+      <div class="notification-content">
+        <h4 class="notification-title">Eng - Send grammar homework</h4>
+        <p class="notification-date">23 Sep 2019, Wednesday</p>
+      </div>
+      <div class="notification-arrow">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+
+    <!-- Notificación 3 -->
+    <div class="notification-item-modern" data-tipo="verde">
+      <div class="notification-icon-circle verde">
+        <i class="fas fa-file-alt"></i>
+      </div>
+      <div class="notification-content">
+        <h4 class="notification-title">Spanish - Send essay</h4>
+        <p class="notification-date">05 Oct 2019, Monday</p>
+      </div>
+      <div class="notification-arrow">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+
+    <!-- Notificaciones adicionales (inicialmente ocultas) -->
+    <div class="notification-item-modern hidden-notification" data-tipo="amarillo">
+      <div class="notification-icon-circle amarillo">
+        <i class="fas fa-book-open"></i>
+      </div>
+      <div class="notification-content">
+        <h4 class="notification-title">Spanish - Reading test</h4>
+        <p class="notification-date">07 Oct 2019, Wednesday</p>
+      </div>
+      <div class="notification-arrow">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+
+    <div class="notification-item-modern hidden-notification" data-tipo="azul">
+      <div class="notification-icon-circle azul">
+        <i class="fas fa-video"></i>
+      </div>
+      <div class="notification-content">
+        <h4 class="notification-title">Math - Online class reminder</h4>
+        <p class="notification-date">10 Oct 2019, Thursday</p>
+      </div>
+      <div class="notification-arrow">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+
+    <div class="notification-item-modern hidden-notification" data-tipo="verde">
+      <div class="notification-icon-circle verde">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="notification-content">
+        <h4 class="notification-title">Physics - Lab report submitted</h4>
+        <p class="notification-date">12 Oct 2019, Saturday</p>
+      </div>
+      <div class="notification-arrow">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+
+    <div class="notification-item-modern hidden-notification" data-tipo="rojo">
+      <div class="notification-icon-circle rojo">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="notification-content">
+        <h4 class="notification-title">Chemistry - Assignment overdue</h4>
+        <p class="notification-date">15 Oct 2019, Tuesday</p>
+      </div>
+      <div class="notification-arrow">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón Ver más -->
+  <div class="view-more-container">
+    <button class="view-more-btn" id="viewMoreNotifications">
+      <span class="view-more-text">Ver más</span>
+      <i class="fas fa-chevron-down view-more-icon"></i>
+    </button>
+  </div>
+</div>
+ 
+    
+</section>
+  </div>
+
+<button class="chatbot-btn" id="chatbot">💬</button>
+<!-- Modal de Notificaciones -->
+<div id="notificationsModal" class="modal-overlay">
+  <div class="modal-container notifications-modal">
+    <div class="modal-header">
+      <h3>Notificaciones</h3>
+      <button class="modal-close" id="closeNotifications">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="notifications-filter">
+        <button class="filter-btn active" data-filter="all">Todas</button>
+        <button class="filter-btn" data-filter="tasks">Tareas</button>
+        <button class="filter-btn" data-filter="info">Info</button>
+      </div>
+      <div class="notifications-content">
+        <div class="notification-item" data-type="urgent">
+          <button class="notification-action">
+            <i class="fas fa-check"></i>
+          </button>
+        </div>
+        
+        <div class="notification-item" data-type="tasks">
+          <div class="notification-icon tasks">
+            <i class="fas fa-tasks"></i>
+          </div>
+          <div class="notification-text">
+            <h4>Nueva tarea asignada</h4>
+            <p>Proyecto final de React Native</p>
+            <span class="notification-time">Hace 5 horas</span>
+          </div>
+          <button class="notification-action">
+            <i class="fas fa-check"></i>
+          </button>
+        </div>
+        
+        <div class="notification-item" data-type="info">
+          <div class="notification-icon info">
+            <i class="fas fa-info-circle"></i>
+          </div>
+          <div class="notification-text">
+            <h4>Nuevo material disponible</h4>
+            <p>Se ha subido el material del módulo 10</p>
+            <span class="notification-time">Hace 1 día</span>
+          </div>
+          <button class="notification-action">
+            <i class="fas fa-check"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Chatbot -->
+<div id="chatbotModal" class="modal-overlay">
+  <div class="modal-container chatbot-modal">
+    <div class="modal-header">
+      <h3>Asistente Virtual</h3>
+      <div class="chat-status">
+        <span class="status-dot online"></span>
+        <span>En línea</span>
+      </div>
+      <button class="modal-close" id="closeChatbot">&times;</button>
+    </div>
+    <div class="modal-body chat-body">
+      <div class="chat-messages" id="chatMessages">
+        <div class="message bot-message">
+          <div class="message-avatar">
+            <i class="fas fa-robot"></i>
+          </div>
+          <div class="message-content">
+            <p>¡Hola! Soy tu asistente virtual. ¿En qué puedo ayudarte hoy?</p>
+            <span class="message-time">Ahora</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer chat-input-container">
+      <div class="chat-input-wrapper">
+        <input type="text" id="chatInput" placeholder="Escribe tu mensaje...">
+        <button id="sendMessage" class="send-btn">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+      <div class="quick-actions">
+        <button class="quick-btn" data-message="¿Cuál es mi progreso actual?">Progreso</button>
+        <button class="quick-btn" data-message="¿Tengo tareas pendientes?">Tareas</button>
+        <button class="quick-btn" data-message="¿Cuándo es mi próximo examen?">Exámenes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- JavaScript personalizado -->
+  <script src="../../static/JS/estudiante/student.js"></script>
+  <div class="dropdown-overlay" id="dropdownOverlay"></div>
+</body>
+</html>

@@ -3,61 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plataforma de Clases</title>
-  <link rel="stylesheet" href="../../static/CSS/clases.css">
-   <link rel="icon" type="image/png" href="../static/img/logof.png">
- 
+  <title>Tech-script | Plataforma de Clases</title>
+  <link rel="stylesheet" href="../../static/CSS/estudiante/clases.css">
+  <link rel="icon" type="image/png" href="../../static/img/logof.png"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
+  <!-- Partículas de fondo animadas -->
+  <div class="particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+
   <div class="layout">
     
     <!-- ========== SIDEBAR - BARRA LATERAL ========== -->
     <aside class="sidebar" id="sidebar">
+      <!-- Efecto glassmorphism background -->
+      <div class="sidebar-blur-bg"></div>
+      
       <!-- BOTÓN HAMBURGUESA ARRIBA -->
-      <button id="toggleSidebar" class="toggle-btn">☰</button>
+      <button id="toggleSidebar" class="toggle-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
 
       <!-- LOGO -->
       <div class="logo">
         <div class="logo-content">
-          <img src="../../static/img/logo.png" alt="Logo">
+          <div class="logo-wrapper">
+            <img src="../../static/img/logo.png" alt="Logo">
+            <div class="logo-glow"></div>
+          </div>
           <h2>Tech-script</h2>
         </div>
       </div>
       
-      <!-- NAVEGACIÓN PRINCIPAL -->
       <nav>
-        <a href="{{ url_for('student') }}" class="nav-item active" id="Inicio">
-          <i class="fas fa-chart-line icon"></i>
-          <span class="text">Inicio</span>
-        </a>
-        <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
-          <i class="fas fa-book icon"></i>
-          <span class="text">Mis Diplomados</span>
-        </a>
-        <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
-          <i class="fas fa-video icon"></i>
-          <span class="text">Tutorías</span>
-        </a>
-        <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
-          <i class="fas fa-credit-card icon"></i>
-          <span class="text">Pagos</span>
-        </a>
-        <a href="{{ url_for('mensajes') }}" class="nav-item" id="mensajes">
-          <i class="fas fa-envelope icon"></i>
-          <span class="text">Mensajes</span>
-        </a>
-        <a href="{{ url_for('certificados') }}" class="nav-item" id="certificados">
-          <i class="fas fa-certificate icon"></i>
-          <span class="text">Certificados</span>
-        </a>
-      </nav>
+  <a href="{{ url_for('student') }}" class="nav-item " id="Inicio">
+    <i class="fas fa-chart-line icon"></i>
+    <span class="text">Inicio</span>
+  </a>
+  <a href="{{ url_for('diplomados') }}" class="nav-item active" id="diplomados">
+    <i class="fas fa-book icon"></i>
+    <span class="text">Diplomados</span>
+  </a>
+  <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
+    <i class="fas fa-video icon"></i>
+    <span class="text">Mi progreso</span>
+  </a>
+  <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
+    <i class="fas fa-credit-card icon"></i>
+    <span class="text">Pagos</span>
+  </a>
+  <a href="{{ url_for('certificados') }}" class="nav-item" id="certificados">
+    <i class="fas fa-certificate icon"></i>
+    <span class="text">Certificados</span>
+  </a>
+</nav>
 
       <!-- FOOTER -->
       <div class="sidebar-footer">
         <div class="user-card">
           <div class="user">
-            <img src="https://i.pravatar.cc/40" alt="foto de perfil" class="user-avatar">
+            <div class="user-avatar-wrapper">
+              <img src="https://i.pravatar.cc/40" alt="foto de perfil" class="user-avatar">
+              <div class="status-indicator online"></div>
+            </div>
             <div class="user-info">
               <span class="name">María González</span>
               <span class="email">maria.gonzalez@email.com</span>
@@ -72,20 +88,34 @@
       
       <!-- BARRA SUPERIOR -->
       <header class="topbar">
-        <button id="toggleSidebarTop" class="toggle-btn"><i class="fas fa-bars"></i></button>
+        <div class="topbar-blur-bg"></div>
+        <button id="toggleSidebarTop" class="toggle-btn">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        
         <div class="search-container">
-          <i class="fas fa-search search-icon"></i>
-          <input type="text" placeholder="Buscar diplomados, cursos, tutorías..." id="search-input">
+          <div class="search-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" placeholder="Buscar diplomados, cursos, tutorías..." id="search-input">
+            <div class="search-glow"></div>
+          </div>
         </div>
+        
         <div class="topbar-right">
           <div class="notification-icon" id="notifications">
             <i class="fas fa-bell"></i>
-            <div class="notification-badge">2</div>
+            <div class="notification-badge">
+              <span>2</span>
+              <div class="badge-pulse"></div>
+            </div>
           </div>
           
           <div class="profile-dropdown" id="profileDropdown">
             <div class="profile-pic" id="profile">
               <img src="https://i.pravatar.cc/40" alt="Foto de perfil">
+              <div class="profile-glow"></div>
             </div>
             <div class="dropdown-menu" id="dropdownMenu">
               <div class="dropdown-header">
@@ -123,12 +153,45 @@
 
         <!-- Header -->
         <header class="header">
-          <div class="header-left">
-            <div class="logo"><span class="logo-icon">🎓</span></div>
-            <div class="class-info">
-              <span class="class-number">Clase 1</span>
-              <span class="course-name">Curso de Frontend</span>
-              <h1 class="class-title">Introducción a la Interfaz</h1>
+          <div class="header-content">
+            <div class="header-left">
+              <div class="class-badge">
+                <div class="badge-glow"></div>
+                <span class="class-number">Clase 1</span>
+              </div>
+              <div class="class-info">
+                <span class="course-name">Curso de Frontend</span>
+                <h1 class="class-title">
+                  <span class="title-text">Introducción a la Interfaz</span>
+                  <div class="title-underline"></div>
+                </h1>
+              </div>
+            </div>
+            <div class="header-actions">
+              <div class="class-navigation">
+                <button class="nav-class-btn prev-btn" id="prevClass" disabled>
+                  <i class="fas fa-chevron-left"></i>
+                  <span>Anterior</span>
+                </button>
+                <button class="nav-class-btn next-btn" id="nextClass">
+                  <span>Siguiente</span>
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="header-stats">
+            <div class="stat-item">
+              <i class="fas fa-clock"></i>
+              <span>45 min</span>
+            </div>
+            <div class="stat-item">
+              <i class="fas fa-users"></i>
+              <span>124 estudiantes</span>
+            </div>
+            <div class="stat-item">
+              <i class="fas fa-star"></i>
+              <span>4.9</span>
             </div>
           </div>
         </header>
@@ -136,23 +199,50 @@
         <!-- Video -->
         <section class="video-section">
           <div class="video-container">
-            <video controls>
-              <source src="video.mp4" type="video/mp4">
-              Tu navegador no soporta video.
-            </video>
-            <div class="video-overlay">
-              <span class="overlay-text">✨ Aprende creando</span>
+            <div class="video-wrapper">
+              <video controls>
+                <source src="video.mp4" type="video/mp4">
+                Tu navegador no soporta video.
+              </video>
+              <div class="video-overlay">
+                <div class="overlay-content">
+                  <span class="overlay-icon">✨</span>
+                  <span class="overlay-text">Aprende creando</span>
+                </div>
+              </div>
+              <div class="video-glow"></div>
             </div>
           </div>
+          
           <div class="video-controls">
-            <div class="progress-bar"><div class="progress-fill"></div></div>
+            <div class="progress-section">
+              <div class="progress-bar">
+                <div class="progress-fill"></div>
+                <div class="progress-thumb"></div>
+              </div>
+              <div class="time-info">
+                <span class="current-time">00:00</span>
+                <span class="total-time">10:00</span>
+              </div>
+            </div>
+            
             <div class="controls-row">
               <div class="controls-left">
-                <button class="control-btn">⏯</button>
-                <span class="time-display">00:00 / 10:00</span>
+                <button class="control-btn play-pause">
+                  <i class="fas fa-play"></i>
+                </button>
+                <button class="control-btn volume">
+                  <i class="fas fa-volume-up"></i>
+                </button>
+                <div class="volume-slider">
+                  <div class="volume-fill"></div>
+                </div>
               </div>
               <div class="controls-right">
-                <span class="speed-control">1x</span>
+                <button class="control-btn speed">1x</button>
+                <button class="control-btn fullscreen">
+                  <i class="fas fa-expand"></i>
+                </button>
               </div>
             </div>
           </div>
@@ -161,47 +251,100 @@
         <!-- Materiales -->
         <section class="materials-section">
           <div class="materials-header">
-            <h2>📚 Materiales</h2>
-            <button class="download-all-btn">⬇️ Descargar todo</button>
+            <div class="header-title">
+              <h2>
+                <span class="materials-icon">📚</span>
+                Materiales de Estudio
+              </h2>
+              <span class="materials-count">3 archivos</span>
+            </div>
+            <button class="download-all-btn">
+              <i class="fas fa-download"></i>
+              <span>Descargar todo</span>
+              <div class="btn-glow"></div>
+            </button>
           </div>
-          <div class="files-list">
-            <div class="file-item"><span class="file-icon">📄</span><span class="file-name">Apuntes.pdf</span></div>
-            <div class="file-item"><span class="file-icon">📊</span><span class="file-name">Ejemplos.xlsx</span></div>
-            <div class="file-item"><span class="file-icon">🖼</span><span class="file-name">Recursos.png</span></div>
+          
+          <div class="files-grid">
+            <div class="file-card pdf">
+              <div class="file-icon">
+                <i class="fas fa-file-pdf"></i>
+              </div>
+              <div class="file-info">
+                <h3>Apuntes.pdf</h3>
+                <span class="file-size">2.3 MB</span>
+              </div>
+              <div class="file-actions">
+                <button class="file-btn view">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="file-btn download">
+                  <i class="fas fa-download"></i>
+                </button>
+              </div>
+              <div class="file-progress">
+                <div class="progress-bar small">
+                  <div class="progress-fill" style="width: 100%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="file-card excel">
+              <div class="file-icon">
+                <i class="fas fa-file-excel"></i>
+              </div>
+              <div class="file-info">
+                <h3>Ejemplos.xlsx</h3>
+                <span class="file-size">1.8 MB</span>
+              </div>
+              <div class="file-actions">
+                <button class="file-btn view">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="file-btn download">
+                  <i class="fas fa-download"></i>
+                </button>
+              </div>
+              <div class="file-progress">
+                <div class="progress-bar small">
+                  <div class="progress-fill" style="width: 100%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="file-card image">
+              <div class="file-icon">
+                <i class="fas fa-file-image"></i>
+              </div>
+              <div class="file-info">
+                <h3>Recursos.png</h3>
+                <span class="file-size">854 KB</span>
+              </div>
+              <div class="file-actions">
+                <button class="file-btn view">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="file-btn download">
+                  <i class="fas fa-download"></i>
+                </button>
+              </div>
+              <div class="file-progress">
+                <div class="progress-bar small">
+                  <div class="progress-fill" style="width: 75%"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        <!-- Comentarios -->
-        <aside class="comments-section">
-            
-          <!-- Botones de acción -->
-          <div class="comments-actions">
-            <button class="btn-secondary">Salir</button>
-            <button class="btn-primary">Continuar a la siguiente clase</button>
-          </div>
-          <div class="comment-tabs">
-          </div>
-          <div class="comments-list">
-            <div class="comment">
-              <span class="comment-number">#1</span>
-              <p class="comment-content">¡Excelente explicación!</p>
-            </div>
-            <div class="comment">
-              <span class="comment-number">#2</span>
-              <p class="comment-content">Me encantó el diseño de la interfaz 😍</p>
-            </div>
-          </div>
-
-          <!-- Botones de acción -->
-         <div class="comment-input">
-            <textarea placeholder="💬 Escribe un comentario..."></textarea>
-            <button class="btn-primary send-btn">Enviar</button>
-          </div>
-        </aside>
-
+       
       </div>
     </main>
   </div>
-  <script src="../../static/JS/clases.js"></script>
+
+  <!-- Overlay para sidebar móvil -->
+  <div class="sidebar-overlay" id="overlay"></div>
+
+  <script src="../../static/JS/estudiante/clases.js"></script>
 </body>
 </html>

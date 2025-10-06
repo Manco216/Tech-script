@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - Plataforma Educativa</title>
+    <link rel="stylesheet" href="../../static/CSS/estudiante/config.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="layout">
+    
+    <!-- ========== SIDEBAR - BARRA LATERAL ========== -->
+    <aside class="sidebar" id="sidebar">
+
+  <!-- BOTÓN HAMBURGUESA ARRIBA -->
+  <button id="toggleSidebar" class="toggle-btn">☰</button>
+
+  <!-- LOGO -->
+  <div class="logo">
+    <div class="logo-content">
+      <img src="../../static/img/logo.png" alt="Logo">
+      <h2>Tech-script</h2>
+    </div>
+  </div>
+  
+  <!-- NAVEGACIÓN PRINCIPAL -->
+  <nav>
+  <a href="{{ url_for('student') }}" class="nav-item active" id="Inicio">
+    <i class="fas fa-chart-line icon"></i>
+    <span class="text">Inicio</span>
+  </a>
+  <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
+    <i class="fas fa-book icon"></i>
+    <span class="text">Diplomados</span>
+  </a>
+  <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
+    <i class="fas fa-video icon"></i>
+    <span class="text">Mi progreso</span>
+  </a>
+  <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
+    <i class="fas fa-credit-card icon"></i>
+    <span class="text">Pagos</span>
+  </a>
+  <a href="{{ url_for('certificados') }}" class="nav-item" id="certificados">
+    <i class="fas fa-certificate icon"></i>
+    <span class="text">Certificados</span>
+  </a>
+</nav>
+
+
+  <!-- FOOTER -->
+ <div class="sidebar-footer">
+  <div class="user-card">
+    <div class="user">
+      <img src="https://i.pravatar.cc/40" alt="foto de perfil" class="user-avatar">
+      <div class="user-info">
+        <span class="name">{{ user.nombre }}</span>
+        <span class="email">{{ user.correo }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+</aside>
+
+
+    <!-- ========== CONTENIDO PRINCIPAL ========== -->
+    <main class="main">  
+      <!-- BARRA SUPERIOR -->
+        <div class="topbar-right">
+          <div class="profile-dropdown" id="profileDropdown">
+    </div>
+      </div>
+      </header>
+
+    <div class="container">
+        <div class="header">
+            <h1>Configuración</h1>
+            <p>Gestiona tu perfil y preferencias de la plataforma</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <nav class="nav-tabs">
+                    <button class="tab-button active" data-tab="perfil">
+                        <i data-lucide="user"></i>
+                        Perfil
+                    </button>
+                    <button class="tab-button" data-tab="notificaciones">
+                        <i data-lucide="bell"></i>
+                        Notificaciones
+                    </button>
+                    <button class="tab-button" data-tab="privacidad">
+                        <i data-lucide="shield"></i>
+                        Privacidad
+                    </button>
+                    <button class="tab-button" data-tab="cuenta">
+                        <i data-lucide="settings"></i>
+                        Cuenta
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Changes Alert -->
+                <div id="changes-alert" class="changes-alert hidden">
+                    <div class="alert-content">
+                        <div class="alert-info">
+                            <i data-lucide="alert-triangle"></i>
+                            <span>Tienes cambios sin guardar</span>
+                        </div>
+                        <div class="alert-actions">
+                            <button class="btn btn-outline" id="cancel-btn">Cancelar</button>
+                            <button class="btn btn-primary" id="save-btn">Guardar cambios</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Perfil Tab -->
+                <div id="perfil" class="tab-content active">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Información Personal</h3>
+                                <p>Actualiza tu información básica y foto de perfil</p>
+                            </div>
+                            <button class="btn btn-primary" id="edit-btn">Editar</button>
+                        </div>
+                        <div class="card-content">
+                            <!-- Avatar Section -->
+                            <div class="avatar-section">
+                                <div class="avatar-container">
+                                    <div class="avatar">
+                                        <img src="https://via.placeholder.com/96x96" alt="Avatar" id="avatar-img">
+                                        <div class="avatar-fallback">MG</div>
+                                    </div>
+                                    <button class="avatar-edit-btn hidden" id="avatar-edit">
+                                        <i data-lucide="camera"></i>
+                                    </button>
+                                </div>
+                                <div class="user-info">
+                                    <h3 id="user-name">María González Rodríguez</h3>
+                                    <p id="user-email">maria.gonzalez@email.com</p>
+                                    <span class="badge">Estudiante Activo</span>
+                                </div>
+                            </div>
+
+                            <div class="separator"></div>
+
+                            <!-- Basic Info -->
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="nombre">Nombre</label>
+                                    <input type="text" id="nombre" value="María" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="apellido">Apellido</label>
+                                    <input type="text" id="apellido" value="González Rodríguez" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" id="email" value="maria.gonzalez@email.com" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="telefono">Teléfono</label>
+                                    <input type="text" id="telefono" value="+52 55 1234 5678" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fecha-nacimiento">Fecha de Nacimiento</label>
+                                    <input type="date" id="fecha-nacimiento" value="1995-03-15" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pais">País</label>
+                                    <select id="pais" disabled>
+                                        <option value="México">México</option>
+                                        <option value="España">España</option>
+                                        <option value="Colombia">Colombia</option>
+                                        <option value="Argentina">Argentina</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="biografia">Biografía</label>
+                                <textarea id="biografia" rows="4" disabled placeholder="Cuéntanos sobre ti...">Estudiante apasionada por el desarrollo de software y las nuevas tecnologías. Actualmente cursando diplomados en programación web.</textarea>
+                            </div>
+
+                            <div class="separator"></div>
+
+                            <!-- Social Networks -->
+                            <div class="social-section">
+                                <h4>Redes Sociales</h4>
+                                <div class="social-links">
+                                    <div class="social-item">
+                                        <i data-lucide="globe"></i>
+                                        <div class="form-group">
+                                            <label for="sitio-web">Sitio Web</label>
+                                            <input type="text" id="sitio-web" value="https://mariagonzalez.dev" disabled placeholder="https://tu-sitio.com">
+                                        </div>
+                                    </div>
+                                    <div class="social-item">
+                                        <i data-lucide="github"></i>
+                                        <div class="form-group">
+                                            <label for="github">GitHub</label>
+                                            <input type="text" id="github" value="mariagonzalez" disabled placeholder="tu-usuario">
+                                        </div>
+                                    </div>
+                                    <div class="social-item">
+                                        <i data-lucide="linkedin"></i>
+                                        <div class="form-group">
+                                            <label for="linkedin">LinkedIn</label>
+                                            <input type="text" id="linkedin" value="maria-gonzalez-dev" disabled placeholder="tu-perfil-linkedin">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notificaciones Tab -->
+                <div id="notificaciones" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Preferencias de Notificaciones</h3>
+                                <p>Controla cómo y cuándo quieres recibir notificaciones</p>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <!-- Email Notifications -->
+                            <div class="notification-section">
+                                <div class="section-header">
+                                    <i data-lucide="mail" class="text-blue"></i>
+                                    <h4>Notificaciones por Email</h4>
+                                </div>
+                                <div class="notification-options">
+                                    <div class="notification-item">
+                                        <div>
+                                            <p class="item-title">Actualizaciones de cursos</p>
+                                            <p class="item-description">Nuevas lecciones, anuncios del instructor</p>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" checked data-setting="emailCursos">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="notification-item">
+                                        <div>
+                                            <p class="item-title">Tareas y evaluaciones</p>
+                                            <p class="item-description">Recordatorios de fechas límite</p>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" checked data-setting="emailTareas">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="notification-item">
+                                        <div>
+                                            <p class="item-title">Mensajes directos</p>
+                                            <p class="item-description">Mensajes de instructores y compañeros</p>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" checked data-setting="emailMensajes">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="notification-item">
+                                        <div>
+                                            <p class="item-title">Promociones y ofertas</p>
+                                            <p class="item-description">Descuentos en nuevos cursos</p>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" data-setting="emailPromocion">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="separator"></div>
+
+                            <!-- Push Notifications -->
+                            <div class="notification-section">
+                                <div class="section-header">
+                                    <i data-lucide="smartphone" class="text-green"></i>
+                                    <h4>Notificaciones Push</h4>
+                                </div>
+                                <div class="notification-options">
+                                    <div class="notification-item">
+                                        <div>
+                                            <p class="item-title">Actualizaciones de cursos</p>
+                                            <p class="item-description">Notificaciones instantáneas</p>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" checked data-setting="pushCursos">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="notification-item">
+                                        <div>
+                                            <p class="item-title">Recordatorios de tareas</p>
+                                            <p class="item-description">1 día antes del vencimiento</p>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" checked data-setting="pushTareas">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="separator"></div>
+
+                            <!-- SMS Notifications -->
+                            <div class="notification-section">
+                                <div class="section-header">
+                                    <i data-lucide="phone" class="text-purple"></i>
+                                    <h4>Notificaciones SMS</h4>
+                                </div>
+                                <div class="notification-options">
+                                    <div class="notification-item">
+                                        <div>
+                                            <p class="item-title">Recordatorios urgentes</p>
+                                            <p class="item-description">Solo para fechas límite críticas</p>
+                                        </div>
+                                        <label class="switch">
+                                            <input type="checkbox" checked data-setting="smsTareas">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Privacidad Tab -->
+                <div id="privacidad" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Configuración de Privacidad</h3>
+                                <p>Controla quién puede ver tu información y actividad</p>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="privacy-options">
+                                <div class="privacy-item">
+                                    <div class="privacy-info">
+                                        <i data-lucide="eye" class="text-blue"></i>
+                                        <div>
+                                            <p class="item-title">Perfil público</p>
+                                            <p class="item-description">Otros estudiantes pueden ver tu perfil</p>
+                                        </div>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked data-setting="perfilPublico">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="privacy-item">
+                                    <div class="privacy-info">
+                                        <i data-lucide="book-open" class="text-green"></i>
+                                        <div>
+                                            <p class="item-title">Mostrar progreso de cursos</p>
+                                            <p class="item-description">Visible en tu perfil público</p>
+                                        </div>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked data-setting="mostrarProgreso">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="privacy-item">
+                                    <div class="privacy-info">
+                                        <i data-lucide="graduation-cap" class="text-purple"></i>
+                                        <div>
+                                            <p class="item-title">Mostrar certificados</p>
+                                            <p class="item-description">Certificados obtenidos visibles públicamente</p>
+                                        </div>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked data-setting="mostrarCertificados">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="privacy-item">
+                                    <div class="privacy-info">
+                                        <i data-lucide="message-square" class="text-orange"></i>
+                                        <div>
+                                            <p class="item-title">Permitir mensajes directos</p>
+                                            <p class="item-description">Otros estudiantes pueden enviarte mensajes</p>
+                                        </div>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked data-setting="permitirMensajes">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="privacy-item">
+                                    <div class="privacy-info">
+                                        <i data-lucide="clock" class="text-red"></i>
+                                        <div>
+                                            <p class="item-title">Mostrar actividad reciente</p>
+                                            <p class="item-description">Última conexión y actividad</p>
+                                        </div>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" data-setting="mostrarActividad">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cuenta Tab -->
+                <div id="cuenta" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Seguridad de la Cuenta</h3>
+                                <p>Gestiona la seguridad y configuración de tu cuenta</p>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="security-options">
+                                <div class="security-item">
+                                    <div>
+                                        <p class="item-title">Cambiar contraseña</p>
+                                        <p class="item-description">Última actualización: hace 3 meses</p>
+                                    </div>
+                                    <button class="btn btn-outline">Cambiar</button>
+                                </div>
+
+                                <div class="security-item">
+                                    <div>
+                                        <p class="item-title">Autenticación de dos factores</p>
+                                        <p class="item-description">Añade una capa extra de seguridad</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" data-setting="twoFactor">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="security-item">
+                                    <div>
+                                        <p class="item-title">Sesiones activas</p>
+                                        <p class="item-description">3 dispositivos conectados</p>
+                                    </div>
+                                    <button class="btn btn-outline">Ver sesiones</button>
+                                </div>
+                            </div>
+
+                            <div class="separator"></div>
+
+                            <div class="danger-zone">
+                                <h4>Zona de Peligro</h4>
+                                <div class="danger-options">
+                                    <div class="danger-item">
+                                        <div class="danger-info">
+                                            <i data-lucide="download"></i>
+                                            <div>
+                                                <p class="item-title">Descargar mis datos</p>
+                                                <p class="item-description">Obtén una copia de toda tu información</p>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-outline btn-sm">Descargar</button>
+                                    </div>
+
+                                    <div class="danger-item">
+                                        <div class="danger-info">
+                                            <i data-lucide="trash-2"></i>
+                                            <div>
+                                                <p class="item-title">Eliminar cuenta</p>
+                                                <p class="item-description">Esta acción no se puede deshacer</p>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-danger btn-sm">Eliminar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
+    <script src="../../static/JS/estudiante/config.js"></script>
+</body>
+</html>
