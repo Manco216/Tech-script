@@ -13,6 +13,13 @@
   <link rel="stylesheet" href="../../static/CSS/instructor/subirContenido.css"/>
 </head>
 <body>
+       <!-- Botón hamburguesa flotante (solo móvil/tablet) -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Overlay para cerrar sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
   <div class="layout">
     <!-- ========== SIDEBAR ========== -->
     <aside class="sidebar" id="sidebar">
@@ -25,7 +32,7 @@
       </div>
 
       <nav>
-        <a href="{{ url_for('panel') }}" class="nav-item " id="Inicio">
+        <a href="{{ url_for('home') }}" class="nav-item " id="Inicio">
           <i class="fas fa-chart-line icon"></i>
           <span class="text">Panel</span>
         </a>
@@ -33,7 +40,7 @@
           <i class="fas fa-book icon"></i>
           <span class="text">Mis Diplomados</span>
         </a>
-        <a href="{{ url_for('seguimientoEstudiantes') }}" class="nav-item" id="estudiantes">
+        <a href="{{ url_for('home') }}" class="nav-item" id="estudiantes">
           <i class="fas fa-users icon"></i>
           <span class="text">Estudiantes</span>
         </a>
@@ -42,7 +49,7 @@
           <span class="text">Contenido</span>
         </a>
      
-        <a href="{{ url_for('reportes') }}" class="nav-item" id="reportes">
+        <a href="{{ url_for('reportesIns') }}" class="nav-item" id="reportes">
           <i class="fas fa-chart-bar icon"></i>
           <span class="text">Reportes</span>
         </a>
@@ -58,7 +65,6 @@
     <main class="main">
       <!-- Topbar -->
      <br><br/>
-
 
       <!-- Contenido principal -->
       <div class="container">
@@ -164,6 +170,7 @@
 
         <!-- Tab Content: Content -->
         <div class="tab-content" id="content">
+          <!-- Estadísticas -->
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-icon">
@@ -171,65 +178,67 @@
               </div>
               <div class="stat-info">
                 <h4>Total Contenido</h4>
-                <p>24</p>
-                <small>18 publicados, 6 borradores</small>
+                <p>0</p>
+                <small>0 publicados, 0 borradores</small>
               </div>
             </div>
+            
             <div class="stat-card">
               <div class="stat-icon">
                 <i class="fas fa-video"></i>
               </div>
               <div class="stat-info">
                 <h4>Videos</h4>
-                <p>12</p>
-                <small>8.5 horas de contenido</small>
+                <p>0</p>
+                <small>Videos del curso</small>
               </div>
             </div>
+            
             <div class="stat-card">
               <div class="stat-icon">
-                <i class="fas fa-file-text"></i>
+                <i class="fas fa-file-alt"></i>
               </div>
               <div class="stat-info">
                 <h4>Documentos</h4>
-                <p>8</p>
-                <small>Guías y recursos</small>
+                <p>0</p>
+                <small>0 imágenes, 0 quizzes</small>
               </div>
             </div>
+            
             <div class="stat-card">
               <div class="stat-icon">
-                <i class="fas fa-eye"></i>
+                <i class="fas fa-check-circle"></i>
               </div>
               <div class="stat-info">
-                <h4>Total Visualizaciones</h4>
-                <p>1,247</p>
-                <small>+23% esta semana</small>
+                <h4>Publicados</h4>
+                <p>0</p>
+                <small>0 pendientes</small>
               </div>
             </div>
           </div>
 
+          <!-- Biblioteca de Contenido -->
           <div class="content-library-card">
-            <div class="card-header">
-              <h3><i class="fas fa-folder-open"></i> Mi Biblioteca de Contenido</h3>
-              <p>Gestiona todo tu contenido educativo desde aquí</p>
-              <div class="content-filters">
-                <select id="content-filter" class="filter-select">
-                  <option value="all">Todos los tipos</option>
-                  <option value="video">Videos</option>
-                  <option value="document">Documentos</option>
-                  <option value="image">Imágenes</option>
-                  <option value="quiz">Evaluaciones</option>
-                </select>
-                <select id="status-filter" class="filter-select">
-                  <option value="all">Todos los estados</option>
-                  <option value="published">Publicado</option>
-                  <option value="draft">Borrador</option>
-                  <option value="private">Privado</option>
-                </select>
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div>
+                <h3><i class="fas fa-folder-open"></i> Mi Biblioteca de Contenido</h3>
+                <p>Gestiona todo tu contenido educativo desde aquí</p>
               </div>
+              
+              <!-- BOTÓN DE RECARGA -->
+              <button id="reload-content-btn" class="btn-reload" title="Actualizar contenido">
+                <i class="fas fa-sync-alt"></i> Actualizar
+              </button>
             </div>
+            
             <div class="card-content">
               <div id="contentList" class="content-list">
                 <!-- El contenido se carga dinámicamente -->
+                <div class="empty-state">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <h3>Cargando contenidos...</h3>
+                  <p>Por favor espera un momento</p>
+                </div>
               </div>
             </div>
           </div>
@@ -345,11 +354,6 @@
                   <label for="course">Diplomado *</label>
                   <select id="course" required>
                     <option value="">Seleccionar Diplomado</option>
-                    <option value="react">Desarrollo Web con React</option>
-                    <option value="python">Python para Data Science</option>
-                    <option value="spring">Microservicios con Spring Boot</option>
-                    <option value="ux">Diseño UX/UI</option>
-                    <option value="ml">Machine Learning Básico</option>
                   </select>
                 </div>
 
@@ -571,6 +575,7 @@
                     <option value="quiz1">Quiz aprobado</option>
                   </select>
                 </div>
+              </div>
             </div>
 
             <div class="tips-card">

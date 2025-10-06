@@ -1,543 +1,259 @@
-// reportes.js - VERSIÓN CORREGIDA
-const MESES_ES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
-                  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    // ======================================================
+// Variables globales
+// ======================================================
+let sidebarOpen = false;
+let currentWeek = new Date();
+let weeklyChart = null;
+let viewMode = 'hours'; // 'hours' o 'sessions'
+let weeklyGoal = 25; 
 
-// ===========================
-// INICIALIZACIÓN
-// ===========================
-document.addEventListener('DOMContentLoaded', function() {
-    inicializarTodo();
-});
-
-async function inicializarTodo() {
-    initSidebar();
-    initTabs();
-    initDropdown();
-    configurarFiltros();
-    
-    try {
-        await cargarKPIs();
-        await cargarUsuariosCrecimiento();
-        await cargarIngresosCategoria();
-        await cargarDiplomadosRendimiento();
-        await cargarMetricasEngagement();
-        
-        setTimeout(animateProgressBars, 300);
-    } catch (error) {
-        console.error('Error al inicializar reportes:', error);
-        mostrarNotificacion('Error al cargar los datos', 'error');
+// ======================================================
+// Datos simulados del estudiante
+// Cada semana empieza en domingo, y cada día contiene minutos, sesiones y logros
+// ======================================================
+const studentData = {
+    weeks: {
+        '2025-09-07': {
+            days: {
+                sunday: { totalMinutes: 60, sessions:[{name:'Music',minutes:60,icon:'fas fa-music'}], achievements:[] },
+                monday: { totalMinutes: 180, sessions:[{name:'Math',minutes:60,icon:'fas fa-book'}], achievements:['Repaso completado'] },
+                tuesday: { totalMinutes: 150, sessions:[{name:'English',minutes:50,icon:'fas fa-book'}], achievements:[] },
+                wednesday: { totalMinutes: 200, sessions:[{name:'Science',minutes:120,icon:'fas fa-flask'}], achievements:['Logro 1'] },
+                thursday: { totalMinutes: 0, sessions:[], achievements:[] },
+                friday: { totalMinutes: 240, sessions:[{name:'History',minutes:240,icon:'fas fa-book'}], achievements:['Excelente'] },
+                saturday: { totalMinutes: 90, sessions:[{name:'Art',minutes:90,icon:'fas fa-paint-brush'}], achievements:[] },
+            },
+            streak: 3,
+            efficiency: 8
+        },
+        '2025-09-14': {
+            days: {
+                sunday: { totalMinutes: 30, sessions:[{name:'Music',minutes:30,icon:'fas fa-music'}], achievements:[] },
+                monday: { totalMinutes: 120, sessions:[{name:'Math',minutes:60,icon:'fas fa-book'}], achievements:['Repaso'] },
+                tuesday: { totalMinutes: 180, sessions:[{name:'English',minutes:90,icon:'fas fa-book'}], achievements:[] },
+                wednesday: { totalMinutes: 0, sessions:[], achievements:[] },
+                thursday: { totalMinutes: 200, sessions:[{name:'Science',minutes:200,icon:'fas fa-flask'}], achievements:['Logro 2'] },
+                friday: { totalMinutes: 150, sessions:[{name:'History',minutes:150,icon:'fas fa-book'}], achievements:[] },
+                saturday: { totalMinutes: 100, sessions:[{name:'Art',minutes:100,icon:'fas fa-paint-brush'}], achievements:[] },
+            },
+            streak: 2,
+            efficiency: 7
+        }
     }
-}
+};
 
-// ===========================
-// SIDEBAR
-// ===========================
+// ======================================================
+// Sidebar - Gestión del menú lateral en móvil
+// ======================================================
 function initSidebar() {
     const sidebar = document.getElementById('sidebar');
-    const toggleBtn = document.getElementById('toggleSidebar');
-    const toggleBtnTop = document.getElementById('toggleSidebarTop');
-
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-        });
-    }
-
-    if (toggleBtnTop) {
-        toggleBtnTop.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-        });
-    }
-
-    const currentPath = window.location.pathname;
-    document.querySelectorAll('.nav-item').forEach(link => {
-        if (link.getAttribute('href') === currentPath) {
-            document.querySelectorAll('.nav-item').forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-        }
-    });
-
-    if (window.innerWidth <= 768) {
-        document.querySelectorAll('.nav-item').forEach(link => {
-            link.addEventListener('click', () => {
-                sidebar.classList.remove('active');
-            });
-        });
-    }
-}
-
-// ===========================
-// DROPDOWN PERFIL
-// ===========================
-function initDropdown() {
-    const profileDropdown = document.getElementById('profileDropdown');
-    const dropdownMenu = document.getElementById('dropdownMenu');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
     
-    if (profileDropdown && dropdownMenu) {
-        profileDropdown.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle('active');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!profileDropdown.contains(e.target)) {
-                dropdownMenu.classList.remove('active');
-            }
+    if (!sidebar) return;
+    
+    // Abrir sidebar con botón flotante
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            if (sidebarOverlay) sidebarOverlay.classList.add('active');
+            sidebarOpen = true;
         });
     }
-}
-
-// ===========================
-// TABS
-// ===========================
-function initTabs() {
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
-
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const tabName = button.getAttribute('data-tab');
-            
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-            
-            button.classList.add('active');
-            const targetTab = document.getElementById(tabName);
-            if (targetTab) {
-                targetTab.classList.add('active');
+    
+    // Cerrar sidebar al hacer click en el overlay
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+            sidebarOpen = false;
+        });
+    }
+    
+    // Cerrar sidebar al hacer click en un nav-item (solo en móvil)
+    const navItems = sidebar.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 1024) {
+                sidebar.classList.remove('open');
+                if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+                sidebarOpen = false;
             }
         });
     });
-}
-
-// ===========================
-// CARGAR KPIs
-// ===========================
-async function cargarKPIs() {
-    try {
-        const response = await fetch('/api/reportes/kpis');
-        if (!response.ok) throw new Error('Error al cargar KPIs');
-        
-        const data = await response.json();
-
-        // Total estudiantes
-        const totalEstudiantesEl = document.querySelector('.blue-bg .stat-number');
-        if (totalEstudiantesEl) {
-            totalEstudiantesEl.textContent = data.total_estudiantes.toLocaleString('es-CO');
-        }
-        
-        // Crecimiento
-        const growthEl = document.querySelector('.blue-bg .stat-growth span');
-        if (growthEl) {
-            growthEl.textContent = `${data.crecimiento_estudiantes >= 0 ? '+' : ''}${data.crecimiento_estudiantes}%`;
-        }
-        
-        const growthContainer = document.querySelector('.blue-bg .stat-growth');
-        if (growthContainer) {
-            growthContainer.className = `stat-growth ${data.crecimiento_estudiantes >= 0 ? 'positive' : 'negative'}`;
-        }
-
-        // Ingresos
-        const ingresosEl = document.querySelector('.green-bg .stat-number');
-        if (ingresosEl) {
-            ingresosEl.textContent = `$${formatearNumero(data.ingresos_totales)}`;
-        }
-
-        // Tasa finalización
-        const tasaEl = document.querySelector('.purple-bg .stat-number');
-        if (tasaEl) {
-            tasaEl.textContent = `${data.tasa_finalizacion}%`;
-        }
-    } catch (error) {
-        console.error('Error en cargarKPIs:', error);
-        mostrarNotificacion('Error al cargar estadísticas principales', 'error');
-    }
-}
-
-// ===========================
-// CRECIMIENTO USUARIOS
-// ===========================
-async function cargarUsuariosCrecimiento() {
-    try {
-        const meses = document.getElementById('filterPeriod')?.value || 6;
-        const response = await fetch(`/api/reportes/usuarios-crecimiento?meses=${meses}`);
-        if (!response.ok) throw new Error('Error al cargar usuarios');
-        
-        const data = await response.json();
-        renderizarGraficoUsuarios(data);
-    } catch (error) {
-        console.error('Error en cargarUsuariosCrecimiento:', error);
-        mostrarNotificacion('Error al cargar datos de usuarios', 'error');
-    }
-}
-
-function renderizarGraficoUsuarios(datos) {
-    const container = document.getElementById('usuarios-chart');
     
-    if (!container) return;
-    
-    if (!datos || datos.length === 0) {
-        container.innerHTML = '<p style="text-align:center; padding: 40px; color: #64748b;">No hay datos disponibles</p>';
-        return;
-    }
-
-    const maxValor = Math.max(...datos.map(d => d.total), 1);
-    const alturaGrafico = 300;
-
-    let html = '<div class="chart-bars" style="display: flex; align-items: flex-end; justify-content: space-around; height: ' + alturaGrafico + 'px; margin-top: 20px; padding: 0 10px;">';
-    
-    datos.forEach(item => {
-        const altura = (item.total / maxValor) * alturaGrafico * 0.8;
-        html += `
-            <div style="display: flex; flex-direction: column; align-items: center; flex: 1; max-width: 80px;">
-                <div style="text-align: center; margin-bottom: 8px; font-weight: 600; color: #2563eb; font-size: 14px;">
-                    ${item.total}
-                </div>
-                <div class="bar-animated" style="width: 40px; background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%); 
-                            border-radius: 8px 8px 0 0; transition: height 0.8s ease; cursor: pointer; height: 0;"
-                     data-altura="${altura}"
-                     onmouseover="this.style.opacity='0.8'"
-                     onmouseout="this.style.opacity='1'">
-                </div>
-                <div style="margin-top: 8px; font-size: 11px; color: #64748b; transform: rotate(-45deg); 
-                            white-space: nowrap; margin-left: -10px;">
-                    ${item.mes.substring(0, 3)}
-                </div>
-            </div>
-        `;
+    // Cerrar sidebar al presionar ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebarOpen && window.innerWidth <= 1024) {
+            sidebar.classList.remove('open');
+            if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+            sidebarOpen = false;
+        }
     });
-    
-    html += '</div>';
-    container.innerHTML = html;
+}
 
-    setTimeout(() => {
-        const barras = container.querySelectorAll('.bar-animated');
-        barras.forEach(barra => {
-            barra.style.height = barra.getAttribute('data-altura') + 'px';
+// ======================================================
+// Inicialización
+// ======================================================
+document.addEventListener('DOMContentLoaded', () => {
+    initSidebar();
+
+    // Inicializar datos de la semana
+    currentWeek = getStartOfWeek(new Date());
+    updateWeekDisplay();
+    initializeChart();
+    updateChart();
+
+    // Eventos para cambiar semana
+    document.getElementById('prevWeek')?.addEventListener('click', () => changeWeek(-1));
+    document.getElementById('nextWeek')?.addEventListener('click', () => changeWeek(1));
+
+    // Toggle gráfico horas/sesiones
+    document.querySelectorAll('.view-toggle .toggle-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.view-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            viewMode = this.dataset.view;
+            updateChart();
         });
-    }, 100);
-}
-
-// ===========================
-// INGRESOS POR CATEGORÍA
-// ===========================
-async function cargarIngresosCategoria() {
-    try {
-        const response = await fetch('/api/reportes/ingresos-categoria');
-        if (!response.ok) throw new Error('Error al cargar ingresos');
-        
-        const data = await response.json();
-        renderizarGraficoIngresos(data);
-    } catch (error) {
-        console.error('Error en cargarIngresosCategoria:', error);
-        mostrarNotificacion('Error al cargar ingresos por categoría', 'error');
-    }
-}
-
-function renderizarGraficoIngresos(datos) {
-    const container = document.getElementById('ingresos-chart');
-    
-    if (!container) return;
-    
-    if (!datos || datos.length === 0) {
-        container.innerHTML = '<p style="text-align:center; padding: 40px; color: #64748b;">No hay datos de ingresos disponibles</p>';
-        return;
-    }
-
-    const colores = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444'];
-    const total = datos.reduce((sum, item) => sum + item.ingresos, 0);
-
-    let html = '<div style="margin: 20px 0;">';
-    
-    datos.forEach((item, index) => {
-        const porcentaje = total > 0 ? (item.ingresos / total * 100).toFixed(1) : 0;
-        const color = colores[index % colores.length];
-        
-        html += `
-            <div style="margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="font-weight: 500; color: #1e293b;">${item.categoria}</span>
-                    <span style="font-weight: 600; color: ${color};">$${formatearNumero(item.ingresos)}</span>
-                </div>
-                <div style="background: #e2e8f0; height: 12px; border-radius: 6px; overflow: hidden;">
-                    <div class="progress-animated" style="width: 0%; background: ${color}; height: 100%; 
-                                transition: width 0.8s ease; border-radius: 6px;" data-width="${porcentaje}">
-                    </div>
-                </div>
-                <div style="text-align: right; margin-top: 4px; font-size: 12px; color: #64748b;">
-                    ${porcentaje}% del total
-                </div>
-            </div>
-        `;
     });
-    
-    html += '</div>';
-    container.innerHTML = html;
+});
 
-    setTimeout(() => {
-        const barras = container.querySelectorAll('.progress-animated');
-        barras.forEach(barra => {
-            barra.style.width = barra.getAttribute('data-width') + '%';
-        });
-    }, 100);
+// ======================================================
+// Funciones de Fechas
+// ======================================================
+function getStartOfWeek(date) {
+    const d = new Date(date);
+    const day = d.getDay(); // 0=domingo
+    const diff = d.getDate() - day;
+    return new Date(d.setDate(diff));
 }
 
-// ===========================
-// DIPLOMADOS RENDIMIENTO
-// ===========================
-async function cargarDiplomadosRendimiento() {
-    try {
-        const response = await fetch('/api/reportes/diplomados-rendimiento');
-        if (!response.ok) throw new Error('Error al cargar diplomados');
-        
-        const data = await response.json();
-        renderizarListaDiplomados(data);
-    } catch (error) {
-        console.error('Error en cargarDiplomadosRendimiento:', error);
-        mostrarNotificacion('Error al cargar diplomados', 'error');
-    }
+// Formatear clave de semana YYYY-MM-DD
+function formatWeekKey(date) {
+    const startOfWeek = getStartOfWeek(date);
+    const year = startOfWeek.getFullYear();
+    const month = String(startOfWeek.getMonth() + 1).padStart(2,'0');
+    const day = String(startOfWeek.getDate()).padStart(2,'0');
+    return `${year}-${month}-${day}`;
 }
 
-function renderizarListaDiplomados(diplomados) {
-    const container = document.getElementById('cursos-list');
-    
-    if (!container) return;
-    
-    if (!diplomados || diplomados.length === 0) {
-        container.innerHTML = '<p style="text-align:center; padding: 40px; color: #64748b;">No hay diplomados registrados</p>';
-        return;
-    }
-
-    let html = '<div class="diplomados-list">';
-    
-    diplomados.forEach(dip => {
-        const estadoBadge = dip.estado === 'active' ? 
-            '<span style="background: #dcfce7; color: #16a34a; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500;">Activo</span>' :
-            '<span style="background: #fee2e2; color: #dc2626; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500;">Inactivo</span>';
-
-        html += `
-            <div class="diplomado-card" style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 16px; 
-                        background: white; transition: all 0.3s; cursor: pointer;"
-                 onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'"
-                 onmouseout="this.style.boxShadow='none'">
-                
-                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                    <div style="flex: 1;">
-                        <h4 style="margin: 0 0 8px 0; color: #1e293b; font-size: 18px;">${dip.titulo}</h4>
-                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                            <span style="color: #64748b; font-size: 14px;">
-                                <i class="fas fa-tag"></i> ${dip.categoria}
-                            </span>
-                            <span style="color: #64748b; font-size: 14px;">
-                                <i class="fas fa-signal"></i> ${dip.nivel}
-                            </span>
-                            <span style="color: #64748b; font-size: 14px;">
-                                <i class="fas fa-clock"></i> ${dip.duracion}h
-                            </span>
-                            <span style="color: #64748b; font-size: 14px;">
-                                <i class="fas fa-book"></i> ${dip.contenidos}/${dip.lecciones} contenidos
-                            </span>
-                        </div>
-                    </div>
-                    <div style="text-align: right;">
-                        ${estadoBadge}
-                        <div style="margin-top: 8px; font-size: 20px; font-weight: 700; color: #10b981;">
-                            ${formatearNumero(dip.precio)}
-                        </div>
-                    </div>
-                </div>
-
-                <div style="margin-top: 12px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                        <span style="font-size: 13px; color: #64748b;">Progreso de contenido</span>
-                        <span style="font-size: 13px; font-weight: 600; color: #3b82f6;">${dip.progreso}%</span>
-                    </div>
-                    <div style="background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
-                        <div class="progress-animated" style="width: 0%; background: linear-gradient(90deg, #3b82f6, #2563eb); 
-                                    height: 100%; transition: width 0.8s ease; border-radius: 4px;" data-width="${dip.progreso}">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-    
-    html += '</div>';
-    container.innerHTML = html;
-
-    setTimeout(() => {
-        const barras = container.querySelectorAll('.progress-animated');
-        barras.forEach(barra => {
-            barra.style.width = barra.getAttribute('data-width') + '%';
-        });
-    }, 100);
+// ======================================================
+// Mostrar rango de la semana en el header
+// ======================================================
+function updateWeekDisplay() {
+    const weekInfo = document.getElementById('currentWeek');
+    if(!weekInfo) return;
+    const start = getStartOfWeek(currentWeek);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    weekInfo.textContent = `Semana del ${formatDate(start,'d MMM')} - ${formatDate(end,'d MMM yyyy')}`;
 }
 
-// ===========================
-// MÉTRICAS ENGAGEMENT
-// ===========================
-async function cargarMetricasEngagement() {
-    try {
-        const response = await fetch('/api/reportes/metricas-engagement');
-        if (!response.ok) throw new Error('Error al cargar métricas');
-        
-        const data = await response.json();
-
-        // Actualizar métricas
-        const metricRows = document.querySelectorAll('.metric-row');
-        if (metricRows.length >= 2) {
-            metricRows[0].querySelector('.metric-value').textContent = data.tiempo_promedio_sesion;
-            metricRows[1].querySelector('.metric-value').textContent = data.sesiones_totales.toLocaleString('es-CO');
-        }
-
-        // Actualizar barras de progreso
-        const progressGroups = document.querySelectorAll('#usuarios .progress-group');
-        if (progressGroups.length >= 2) {
-            progressGroups[0].querySelector('.metric-value').textContent = `${data.tasa_retencion}%`;
-            progressGroups[0].querySelector('.progress-bar-fill').style.width = `${data.tasa_retencion}%`;
-            
-            progressGroups[1].querySelector('.metric-value').textContent = `${data.usuarios_activos_porcentaje}%`;
-            progressGroups[1].querySelector('.progress-bar-fill').style.width = `${data.usuarios_activos_porcentaje}%`;
-        }
-    } catch (error) {
-        console.error('Error en cargarMetricasEngagement:', error);
-        mostrarNotificacion('Error al cargar métricas de engagement', 'error');
-    }
-}
-
-// ===========================
-// FILTROS
-// ===========================
-function configurarFiltros() {
-    const filterPeriod = document.getElementById('filterPeriod');
-    if (filterPeriod) {
-        filterPeriod.addEventListener('change', function() {
-            mostrarNotificacion(`Cargando datos de ${this.value} meses...`, 'info');
-            cargarUsuariosCrecimiento();
-        });
-    }
-}
-
-// ===========================
-// ANIMACIONES
-// ===========================
-function animateProgressBars() {
-    const progressBars = document.querySelectorAll('.progress-bar-fill');
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const bar = entry.target;
-                const width = bar.style.width;
-                bar.style.width = '0';
-                setTimeout(() => {
-                    bar.style.width = width;
-                }, 100);
-                observer.unobserve(bar);
-            }
-        });
-    }, { threshold: 0.5 });
-    
-    progressBars.forEach(bar => observer.observe(bar));
-}
-
-// ===========================
-// EXPORTAR PDF
-// ===========================
-function exportarPDF() {
-    mostrarNotificacion('Generando PDF...', 'info');
-    
-    const element = document.querySelector('.main');
-    const opt = {
-        margin: 10,
-        filename: `reporte_${new Date().toISOString().split('T')[0]}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, logging: false },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+function formatDate(date, format) {
+    const options = {
+        'd': date.getDate(),
+        'MMM': date.toLocaleDateString('es-ES', { month: 'short' }),
+        'yyyy': date.getFullYear()
     };
-    
-    if (typeof html2pdf !== 'undefined') {
-        html2pdf().set(opt).from(element).save()
-            .then(() => mostrarNotificacion('PDF generado correctamente', 'success'))
-            .catch(error => {
-                console.error('Error:', error);
-                mostrarNotificacion('Error al generar el PDF', 'error');
-            });
+    return format.replace(/d|MMM|yyyy/g, m => options[m]);
+}
+
+// ======================================================
+// Cambio de semana
+// ======================================================
+function changeWeek(direction) {
+    currentWeek.setDate(currentWeek.getDate() + direction * 7);
+    updateWeekDisplay();
+    updateChart();
+}
+
+// ======================================================
+// Chart - Gráfico semanal
+// ======================================================
+function initializeChart() {
+    const ctx = document.getElementById('weeklyChart');
+    if(!ctx) return;
+
+    ctx.height = 400;
+
+    const gradient = ctx.getContext('2d').createLinearGradient(0,0,0,400);
+    gradient.addColorStop(0,'rgba(99,102,241,0.3)');
+    gradient.addColorStop(1,'rgba(99,102,241,0.05)');
+
+    weeklyChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],
+            datasets: [{
+                label: 'Horas de Estudio',
+                data: [0,0,0,0,0,0,0],
+                borderColor: '#6366f1',
+                backgroundColor: gradient,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 6,
+                pointHoverRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, max: 5 },
+                x: { grid: { display: false } }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: ctx => {
+                            const h = Math.floor(ctx.parsed.y);
+                            const m = Math.round((ctx.parsed.y - h)*60);
+                            return `${h}h ${m}m de estudio`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function updateChart() {
+    if(!weeklyChart) return;
+    const weekKey = formatWeekKey(currentWeek);
+    const weekData = studentData.weeks[weekKey];
+    const days = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+
+    if(weekData) {
+        if(viewMode==='hours') {
+            weeklyChart.data.datasets[0].data = days.map(d => (weekData.days[d]?.totalMinutes || 0)/60);
+            weeklyChart.data.datasets[0].label = 'Horas de Estudio';
+            weeklyChart.options.scales.y.max = Math.max(...weeklyChart.data.datasets[0].data)+1;
+        } else {
+            weeklyChart.data.datasets[0].data = days.map(d => weekData.days[d]?.sessions.length || 0);
+            weeklyChart.data.datasets[0].label = 'Sesiones';
+            weeklyChart.options.scales.y.max = Math.max(...weeklyChart.data.datasets[0].data)+1;
+        }
     } else {
-        mostrarNotificacion('Librería html2pdf no disponible', 'error');
+        // Si no hay datos de la semana, resetear
+        weeklyChart.data.datasets[0].data = [0,0,0,0,0,0,0];
+        weeklyChart.data.datasets[0].label = 'Horas de Estudio';
+        weeklyChart.options.scales.y.max = 5;
     }
+
+    weeklyChart.update();
 }
 
-// ===========================
-// UTILIDADES
-// ===========================
-function formatearNumero(numero) {
-    return new Intl.NumberFormat('es-CO', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-    }).format(numero);
-}
-
-function mostrarNotificacion(mensaje, tipo = 'info') {
-    const existentes = document.querySelectorAll('.notificacion-custom');
-    existentes.forEach(n => n.remove());
-
-    const notificacion = document.createElement('div');
-    notificacion.className = 'notificacion-custom';
+// ======================================================
+// Manejo de redimensionamiento
+// ======================================================
+window.addEventListener('resize', () => {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
     
-    const iconos = {
-        success: 'fa-check-circle',
-        error: 'fa-exclamation-circle',
-        info: 'fa-info-circle'
-    };
-    
-    const colores = {
-        success: '#10b981',
-        error: '#ef4444',
-        info: '#3b82f6'
-    };
-    
-    notificacion.style.cssText = `
-        position: fixed;
-        top: 80px;
-        right: 20px;
-        padding: 16px 24px;
-        background: ${colores[tipo]};
-        color: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        z-index: 10000;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        animation: slideInRight 0.3s ease;
-        font-weight: 500;
-        max-width: 400px;
-    `;
-    
-    notificacion.innerHTML = `
-        <i class="fas ${iconos[tipo]}" style="font-size: 20px;"></i>
-        <span>${mensaje}</span>
-    `;
-
-    document.body.appendChild(notificacion);
-
-    setTimeout(() => {
-        notificacion.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => notificacion.remove(), 300);
-    }, 3000);
-}
-
-// Agregar estilos de animación
-const styleSheet = document.createElement('style');
-styleSheet.textContent = `
-    @keyframes slideInRight {
-        from { transform: translateX(400px); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
+    if (window.innerWidth > 1024 && sidebar && sidebarOverlay) {
+        sidebar.classList.remove('open');
+        sidebarOverlay.classList.remove('active');
+        sidebarOpen = false;
     }
-    @keyframes slideOutRight {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(400px); opacity: 0; }
-    }
-`;
-document.head.appendChild(styleSheet)
+});

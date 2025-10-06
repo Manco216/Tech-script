@@ -1,129 +1,55 @@
-// Datos de ejemplo para los diplomados
-const diplomadosData = [
-    {
-        id: 1,
-        title: "Desarrollo Web Full Stack",
-        description: "Aprende a crear aplicaciones web completas desde cero",
-        level: "Intermedio",
-        category: "desarrollo-web",
-        rating: 4.8,
-        students: 1250,
-        duration: "12 semanas",
-        modules: 8,
-        instructor: "Prof. García",
-        currentPrice: 29900,
-        originalPrice: 39900,
-        status: "comprar",
-        gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-    },
-    {
-        id: 2,
-        title: "Inteligencia Artificial y Machine Learning",
-        description: "Domina los fundamentos de IA y ML con Python",
-        level: "Avanzado",
-        category: "inteligencia-artificial",
-        rating: 4.9,
-        students: 890,
-        duration: "16 semanas",
-        modules: 12,
-        instructor: "Dr. López",
-        currentPrice: 44900,
-        originalPrice: 59900,
-        status: "continuar",
-        gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
-    },
-    {
-        id: 3,
-        title: "Ciberseguridad Básica",
-        description: "Fundamentos de seguridad informática y protección de datos",
-        level: "Principiante",
-        category: "ciberseguridad",
-        rating: 4.6,
-        students: 650,
-        duration: "8 semanas",
-        modules: 6,
-        instructor: "Prof. Martínez",
-        currentPrice: 0,
-        originalPrice: null,
-        status: "inscribirse",
-        gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
-    },
-    {
-        id: 4,
-        title: "Data Science con Python",
-        description: "Análisis de datos y visualización con herramientas modernas",
-        level: "Intermedio",
-        category: "data-science",
-        rating: 4.7,
-        students: 980,
-        duration: "14 semanas",
-        modules: 10,
-        instructor: "Dra. Rodríguez",
-        currentPrice: 34900,
-        originalPrice: 44900,
-        status: "comprar",
-        gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)"
-    },
-    {
-        id: 5,
-        title: "Desarrollo Móvil con React Native",
-        description: "Crea aplicaciones móviles multiplataforma",
-        level: "Avanzado",
-        category: "desarrollo-web",
-        rating: 4.5,
-        students: 720,
-        duration: "10 semanas",
-        modules: 8,
-        instructor: "Prof. Sánchez",
-        currentPrice: 39900,
-        originalPrice: 49900,
-        status: "comprar",
-        gradient: "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
-    },
-    {
-        id: 6,
-        title: "Blockchain y Criptomonedas",
-        description: "Tecnología blockchain y desarrollo de smart contracts",
-        level: "Avanzado",
-        category: "desarrollo-web",
-        rating: 4.4,
-        students: 540,
-        duration: "12 semanas",
-        modules: 9,
-        instructor: "Dr. Torres",
-        currentPrice: 0,
-        originalPrice: null,
-        status: "inactivo",
-        gradient: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)"
-    }
-];
+// diplomados.js - Integrado con backend Flask
 
 class DiplomadosApp {
     constructor() {
-        this.diplomados = diplomadosData;
-        this.filteredDiplomados = [...diplomadosData];
-
-        this.routes = {
-            detalle:      (id) => `index.html?view=detalle&id=${id}`,
-            continuar:    (id) => `index.html?view=continuar&id=${id}`,
-            comprar:      (id) => `index.html?view=checkout&id=${id}`,
-            inscribirse:  (id) => `index.html?view=inscripcion&id=${id}`,
-            modulos:      (id) => `modulos.html?id=${id}`
-        };
-
+        this.diplomados = [];
+        this.filteredDiplomados = [];
         this.init();
     }
 
-    navigateTo(url) {
-        window.location.href = url;
-    }
-
-    init() {
-        this.renderDiplomados();
+    async init() {
+        await this.loadDiplomados();
         this.setupEventListeners();
         this.setupSidebar();
     }
 
+    // =================== CARGAR DIPLOMADOS DESDE EL BACKEND ===================
+    async loadDiplomados() {
+        try {
+            const response = await fetch('/estudiante/api/diplomados');
+            
+            if (!response.ok) {
+                throw new Error('Error al cargar diplomados');
+            }
+            
+            const data = await response.json();
+            this.diplomados = data;
+            this.filteredDiplomados = [...data];
+            this.renderDiplomados();
+            
+        } catch (error) {
+            console.error('Error al cargar diplomados:', error);
+            this.showError('No se pudieron cargar los diplomados');
+        }
+    }
+
+    // =================== MOSTRAR ERROR ===================
+    showError(message) {
+        const grid = document.getElementById('diplomadosGrid');
+        if (grid) {
+            grid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                    <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #ef4444; margin-bottom: 1rem;"></i>
+                    <h3 style="color: #64748b; margin-bottom: 0.5rem;">${message}</h3>
+                    <button onclick="location.reload()" class="btn btn-primary" style="margin-top: 1rem;">
+                        <i class="fas fa-redo"></i> Reintentar
+                    </button>
+                </div>
+            `;
+        }
+    }
+
+    // =================== SETUP EVENT LISTENERS ===================
     setupEventListeners() {
         const categoryFilter = document.getElementById('categoryFilter');
         const levelFilter = document.getElementById('levelFilter');
@@ -141,6 +67,7 @@ class DiplomadosApp {
         }
     }
 
+    // =================== SETUP SIDEBAR ===================
     setupSidebar() {
         const toggleBtn = document.getElementById('toggleSidebar');
         const toggleMobileBtn = document.getElementById('toggleSidebarMobile');
@@ -160,55 +87,63 @@ class DiplomadosApp {
 
         document.addEventListener('click', (e) => {
             if (window.innerWidth <= 768) {
-                if (!sidebar.contains(e.target) && !toggleMobileBtn.contains(e.target)) {
+                if (!sidebar.contains(e.target) && !toggleMobileBtn?.contains(e.target)) {
                     sidebar.classList.remove('active');
                 }
             }
         });
     }
 
+    // =================== APLICAR FILTROS ===================
     applyFilters() {
         const categoryFilter = document.getElementById('categoryFilter').value;
         const levelFilter = document.getElementById('levelFilter').value;
 
         this.filteredDiplomados = this.diplomados.filter(diplomado => {
-            const categoryMatch = !categoryFilter || diplomado.category === categoryFilter;
-            const levelMatch = !levelFilter || diplomado.level.toLowerCase() === levelFilter.toLowerCase();
+            const categoryMatch = !categoryFilter || 
+                                 diplomado.category.toLowerCase() === categoryFilter.toLowerCase();
+            const levelMatch = !levelFilter || 
+                              diplomado.level.toLowerCase() === levelFilter.toLowerCase();
             return categoryMatch && levelMatch;
         });
 
         this.renderDiplomados();
     }
 
+    // =================== BUSCAR ===================
     handleSearch(query) {
         if (!query.trim()) {
             this.filteredDiplomados = [...this.diplomados];
         } else {
+            const lowerQuery = query.toLowerCase();
             this.filteredDiplomados = this.diplomados.filter(diplomado =>
-                diplomado.title.toLowerCase().includes(query.toLowerCase()) ||
-                diplomado.description.toLowerCase().includes(query.toLowerCase()) ||
-                diplomado.instructor.toLowerCase().includes(query.toLowerCase())
+                diplomado.title.toLowerCase().includes(lowerQuery) ||
+                diplomado.description.toLowerCase().includes(lowerQuery) ||
+                diplomado.instructor.toLowerCase().includes(lowerQuery) ||
+                diplomado.category.toLowerCase().includes(lowerQuery)
             );
         }
         this.renderDiplomados();
     }
 
+    // =================== STATUS BADGE HTML ===================
     getStatusBadgeHTML(status) {
         const statusMap = {
             'comprar': { text: 'Comprar', class: 'status-comprar', icon: 'fa-shopping-cart' },
             'continuar': { text: 'Continuar', class: 'status-continuar', icon: 'fa-play-circle' },
-            'inscribirse': { text: 'Inscribirse', class: 'status-inscribirse', icon: 'fa-edit' },
+            'inscribirse': { text: 'Gratis', class: 'status-inscribirse', icon: 'fa-gift' },
+            'completado': { text: 'Completado', class: 'status-continuar', icon: 'fa-check-circle' },
             'inactivo': { text: 'Inactivo', class: 'status-inactivo', icon: 'fa-ban' }
         };
 
-        const statusInfo = statusMap[status];
-        if (!statusInfo) return '';
+        const statusInfo = statusMap[status] || statusMap['inscribirse'];
 
         return `<div class="status-tag ${statusInfo.class}">
                     <i class="fas ${statusInfo.icon}"></i> ${statusInfo.text}
                 </div>`;
     }
 
+    // =================== FORMATEAR PRECIO ===================
     formatPrice(price) {
         if (!price || price === 0) return '';
         return new Intl.NumberFormat('es-CO', {
@@ -218,6 +153,7 @@ class DiplomadosApp {
         }).format(price);
     }
 
+    // =================== PRECIO HTML ===================
     getPriceHTML(currentPrice, originalPrice, status) {
         if (status === 'inscribirse' || currentPrice === 0) {
             return '<div class="free-badge">Gratuito</div>';
@@ -234,6 +170,7 @@ class DiplomadosApp {
         return priceHTML;
     }
 
+    // =================== INICIALES INSTRUCTOR ===================
     getInstructorInitials(instructor) {
         return instructor
             .split(' ')
@@ -243,10 +180,14 @@ class DiplomadosApp {
             .toUpperCase();
     }
 
-    // ✅ Versión modificada con stats en una sola fila
+    // =================== CREAR TARJETA DE DIPLOMADO ===================
     createDiplomadoCard(diplomado) {
         const statusTag = this.getStatusBadgeHTML(diplomado.status);
-        const priceHTML = this.getPriceHTML(diplomado.currentPrice, diplomado.originalPrice, diplomado.status);
+        const priceHTML = this.getPriceHTML(
+            diplomado.currentPrice, 
+            diplomado.originalPrice, 
+            diplomado.status
+        );
         const instructorInitials = this.getInstructorInitials(diplomado.instructor);
 
         return `
@@ -291,7 +232,7 @@ class DiplomadosApp {
                 <div class="card-footer">
                     ${priceHTML}
                     <div class="card-actions">
-                        <button class="btn btn-primary ver-mas-btn">
+                        <button class="btn btn-primary ver-mas-btn" data-id="${diplomado.id}">
                             <i class="fas fa-eye"></i>
                             Ver Más
                         </button>
@@ -301,6 +242,7 @@ class DiplomadosApp {
         `;
     }
 
+    // =================== RENDERIZAR DIPLOMADOS ===================
     renderDiplomados() {
         const grid = document.getElementById('diplomadosGrid');
         if (!grid) return;
@@ -321,53 +263,64 @@ class DiplomadosApp {
             .join('');
 
         grid.innerHTML = diplomadosHTML;
-
         this.setupCardEventListeners();
     }
 
+    // =================== SETUP CARD EVENT LISTENERS ===================
     setupCardEventListeners() {
-        const cards = document.querySelectorAll('.diplomado-card');
+        const verMasBtns = document.querySelectorAll('.ver-mas-btn');
         
-        cards.forEach(card => {
-            const diplomadoId = parseInt(card.dataset.id);
-            const diplomado = this.diplomados.find(d => d.id === diplomadoId);
-            
-            const verMasBtn = card.querySelector('.ver-mas-btn');
-            if (verMasBtn) {
-                verMasBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    this.navigateTo(this.routes.modulos(diplomado.id));
-                });
-            }
+        verMasBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const diplomadoId = btn.dataset.id;
+                this.navegarAModulos(diplomadoId);
+            });
         });
     }
 
-    addDiplomado(diplomado) {
-        const newId = Math.max(...this.diplomados.map(d => d.id)) + 1;
-        const newDiplomado = { ...diplomado, id: newId };
-        this.diplomados.push(newDiplomado);
-        this.filteredDiplomados = [...this.diplomados];
-        this.renderDiplomados();
+    // =================== NAVEGAR A MÓDULOS ===================
+    navegarAModulos(diplomadoId) {
+        window.location.href = `/estudiante/modulos/${diplomadoId}`;
     }
 
-    removeDiplomado(id) {
-        this.diplomados = this.diplomados.filter(d => d.id !== id);
-        this.filteredDiplomados = this.filteredDiplomados.filter(d => d.id !== id);
-        this.renderDiplomados();
+    // =================== MATRICULARSE (OPCIONAL) ===================
+    async matricularEnDiplomado(diplomadoId) {
+        try {
+            const response = await fetch(`/estudiante/api/diplomados/${diplomadoId}/matricular`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Error al matricularse');
+            }
+
+            const data = await response.json();
+            alert(data.message);
+            
+            // Recargar diplomados
+            await this.loadDiplomados();
+            
+        } catch (error) {
+            console.error('Error al matricularse:', error);
+            alert(error.message);
+        }
     }
 }
 
+// =================== INICIALIZAR APP ===================
 document.addEventListener('DOMContentLoaded', () => {
     new DiplomadosApp();
 });
 
+// =================== RESPONSIVE ===================
 window.addEventListener('resize', () => {
     const sidebar = document.getElementById('sidebar');
     if (window.innerWidth > 768) {
-        sidebar.classList.remove('active');
+        sidebar?.classList.remove('active');
     }
 });
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = DiplomadosApp;
-}

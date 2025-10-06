@@ -1,107 +1,40 @@
-# admin_routes.py
 from flask import Blueprint, render_template, jsonify, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from extensions import mysql
 from gestionUsuarios import contar_usuarios, contar_por_rol
 from MySQLdb.cursors import DictCursor
 from datetime import datetime
-from decimal import Decimal
+import json
 
-# Definimos el blueprint
+# Definimos el blueprint 
 admin_bp = Blueprint("admin", __name__, template_folder="templates/admin")
 
-# ---------------------
-# Panel principal
-# ---------------------
+def admin_required(f):
+    """Decorador para verificar que el usuario sea administrador"""
+    from functools import wraps
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or current_user.fk_rol != 3:
+            flash("Acceso denegado. Se requieren permisos de administrador.", "error")
+            return redirect(url_for('home'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# =====================================================
+# PANEL PRINCIPAL
+# =====================================================
 @admin_bp.route("/admin/home", endpoint="home")
 @login_required
+@admin_required
 def home_admin():
-    return render_template("admin/home.html")
+    return render_template("admin/home.html", user=current_user)
 
-# ---------------------
-# Gestión de Usuarios
-# ---------------------
-@admin_bp.route("/usuarios/<int:user_id>", methods=["PUT"])
-def actualizar_usuario(user_id):
-    data = request.get_json()
-    nombre = data.get("nombre")
-    correo = data.get("correo")
-    telefono = data.get("telefono")
-    rol = data.get("rol")
-
-    cur = mysql.connection.cursor()
-    cur.execute("""
-        UPDATE usuarios
-        SET nombre=%s, correo=%s, telefono=%s, fk_rol=%s
-        WHERE id=%s
-    """, (nombre, correo, telefono, rol, user_id))
-    mysql.connection.commit()
-    cur.close()
-
-    return jsonify({"message": "Usuario actualizado correctamente"})
-
-@admin_bp.route("/admin/usuarios/toggle_estado/<int:user_id>", methods=["POST"])
+# =====================================================
+# GESTIÓN DE USUARIOS
+# =====================================================
+@admin_bp.route("/admin/usuarios", endpoint="gestion_usuarios")
 @login_required
-def toggle_estado_usuario(user_id):
-    cur = mysql.connection.cursor(DictCursor)
-    cur.execute("SELECT estado FROM usuarios WHERE id=%s", (user_id,))
-    usuario = cur.fetchone()
-
-    if usuario:
-        estado_actual = usuario["estado"]
-        nuevo_estado = "inactivo" if estado_actual == "activo" else "activo"
-        cur.execute("UPDATE usuarios SET estado=%s WHERE id=%s", (nuevo_estado, user_id))
-        mysql.connection.commit()
-        flash(f"Estado cambiado a {nuevo_estado}", "success")
-
-    cur.close()
-    return redirect(url_for("admin.gestion_usuarios"))
-
-@admin_bp.route("/admin/usuarios/eliminar/<int:user_id>", methods=["POST"])
-@login_required
-def eliminar_usuario(user_id):
-    cur = mysql.connection.cursor()
-    cur.execute("DELETE FROM usuarios WHERE id=%s", (user_id,))
-    mysql.connection.commit()
-    cur.close()
-    flash("Usuario eliminado correctamente", "success")
-    return redirect(url_for("admin.gestion_usuarios"))
-
-@admin_bp.route("/api/usuarios/filtrar", methods=["GET"])
-def filtrar_usuarios():
-    q = request.args.get("q", "").strip()
-    rol = request.args.get("rol", "todos")
-    estado = request.args.get("estado", "todos")
-
-    cur = mysql.connection.cursor()
-    query = """
-        SELECT u.id, u.nombre, u.documento, u.correo, u.telefono, u.estado, 
-               u.fecha_creacion, u.fecha_actualizacion, r.nombre AS rol, u.fk_rol
-        FROM usuarios u
-        JOIN roles r ON u.fk_rol = r.id
-        WHERE 1=1
-    """
-    params = []
-
-    if q:
-        query += " AND (u.nombre LIKE %s OR u.correo LIKE %s)"
-        params.extend([f"%{q}%", f"%{q}%"])
-
-    if rol != "todos":
-        query += " AND r.nombre = %s"
-        params.append(rol.capitalize())
-
-    if estado != "todos":
-        query += " AND u.estado = %s"
-        params.append(estado)
-
-    cur.execute(query, params)
-    usuarios = cur.fetchall()
-    cur.close()
-    return jsonify(usuarios)
-
-@admin_bp.route("/admin/usuarios")
-@login_required
+@admin_required
 def gestion_usuarios():
     cur = mysql.connection.cursor(DictCursor)
 
@@ -135,7 +68,94 @@ def gestion_usuarios():
                         administradores=administradores,
                         usuarios=usuarios)
 
+@admin_bp.route("/usuarios/<int:user_id>", methods=["PUT"])
+@login_required
+@admin_required
+def actualizar_usuario(user_id):
+    data = request.get_json()
+    nombre = data.get("nombre")
+    correo = data.get("correo")
+    telefono = data.get("telefono")
+    rol = data.get("rol")
+
+    cur = mysql.connection.cursor()
+    cur.execute("""
+        UPDATE usuarios
+        SET nombre=%s, correo=%s, telefono=%s, fk_rol=%s
+        WHERE id=%s
+    """, (nombre, correo, telefono, rol, user_id))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify({"message": "Usuario actualizado correctamente"})
+
+@admin_bp.route("/admin/usuarios/toggle_estado/<int:user_id>", methods=["POST"])
+@login_required
+@admin_required
+def toggle_estado_usuario(user_id):
+    cur = mysql.connection.cursor(DictCursor)
+    cur.execute("SELECT estado FROM usuarios WHERE id=%s", (user_id,))
+    usuario = cur.fetchone()
+
+    if usuario:
+        estado_actual = usuario["estado"]
+        nuevo_estado = "inactivo" if estado_actual == "activo" else "activo"
+        cur.execute("UPDATE usuarios SET estado=%s WHERE id=%s", (nuevo_estado, user_id))
+        mysql.connection.commit()
+        flash(f"Estado cambiado a {nuevo_estado}", "success")
+
+    cur.close()
+    return redirect(url_for("admin.gestion_usuarios"))
+
+@admin_bp.route("/admin/usuarios/eliminar/<int:user_id>", methods=["POST"])
+@login_required
+@admin_required
+def eliminar_usuario(user_id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM usuarios WHERE id=%s", (user_id,))
+    mysql.connection.commit()
+    cur.close()
+    flash("Usuario eliminado correctamente", "success")
+    return redirect(url_for("admin.gestion_usuarios"))
+
+@admin_bp.route("/api/usuarios/filtrar", methods=["GET"])
+@login_required
+@admin_required
+def filtrar_usuarios():
+    q = request.args.get("q", "").strip()
+    rol = request.args.get("rol", "todos")
+    estado = request.args.get("estado", "todos")
+
+    cur = mysql.connection.cursor()
+    query = """
+        SELECT u.id, u.nombre, u.documento, u.correo, u.telefono, u.estado, 
+               u.fecha_creacion, u.fecha_actualizacion, r.nombre AS rol, u.fk_rol
+        FROM usuarios u
+        JOIN roles r ON u.fk_rol = r.id
+        WHERE 1=1
+    """
+    params = []
+
+    if q:
+        query += " AND (u.nombre LIKE %s OR u.correo LIKE %s)"
+        params.extend([f"%{q}%", f"%{q}%"])
+
+    if rol != "todos":
+        query += " AND r.nombre = %s"
+        params.append(rol.capitalize())
+
+    if estado != "todos":
+        query += " AND u.estado = %s"
+        params.append(estado)
+
+    cur.execute(query, params)
+    usuarios = cur.fetchall()
+    cur.close()
+    return jsonify(usuarios)
+
 @admin_bp.route("/api/usuarios/stats")
+@login_required
+@admin_required
 def usuarios_stats():
     total = contar_usuarios(mysql)
     estudiantes = contar_por_rol(mysql, 1)
@@ -149,253 +169,382 @@ def usuarios_stats():
         "administradores": administradores,
     })
 
-# ---------------------
-# Gestión de diplomados
-# ---------------------
-@admin_bp.route("/admin/diplomados")
+# =====================================================
+# GESTIÓN DE DIPLOMADOS - PÁGINA
+# =====================================================
+@admin_bp.route("/admin/diplomados", endpoint="gestion_diplomados")
 @login_required
+@admin_required
 def gestion_diplomados():
-    return render_template("admin/gestionDiplomados.html", user=current_user)
+    return render_template("admin/diplomadosIns.html", user=current_user)
 
-# ---------------------
-# Métricas
-# ---------------------
-@admin_bp.route("/admin/metricas")
+# =====================================================
+# API DIPLOMADOS - CRUD COMPLETO
+# =====================================================
+
+@admin_bp.route("/api/diplomados", methods=["GET"])
 @login_required
+@admin_required
+def api_listar_diplomados():
+    """Listar todos los diplomados con información detallada"""
+    try:
+        print(f"📋 Admin {current_user.id} solicitando diplomados")
+        
+        cur = mysql.connection.cursor(DictCursor)
+        cur.execute("""
+            SELECT 
+                d.id, d.titulo, d.categoria, d.descripcion, d.nivel, 
+                d.duracion_horas, d.lecciones_estimadas, d.objetivos, 
+                d.precio, d.estado,
+                DATE_FORMAT(d.fecha_creacion, '%%Y-%%m-%%d') as fecha_creacion,
+                u.nombre as instructor_nombre,
+                COUNT(DISTINCT m.usuario_id) as total_estudiantes,
+                COUNT(DISTINCT c.id) as total_contenidos
+            FROM diplomados d
+            LEFT JOIN usuarios u ON d.usuario_id = u.id
+            LEFT JOIN matriculas m ON d.id = m.diplomado_id
+            LEFT JOIN contenidos c ON d.id = c.diplomado_id
+            GROUP BY d.id
+            ORDER BY d.fecha_creacion DESC
+        """)
+        rows = cur.fetchall()
+        cur.close()
+        
+        print(f"📊 Diplomados encontrados: {len(rows)}")
+
+        diplomados = []
+        for row in rows:
+            try:
+                objetivos_data = row.get("objetivos", "[]")
+                if isinstance(objetivos_data, bytes):
+                    objetivos_data = objetivos_data.decode('utf-8')
+                objetivos = json.loads(objetivos_data) if objetivos_data else []
+            except:
+                objetivos = []
+
+            # Formatear según lo que espera el frontend
+            diplomados.append({
+                "id": row["id"],
+                "title": row["titulo"],  # El JS espera 'title'
+                "category": row["categoria"],  # El JS espera 'category'
+                "description": row["descripcion"],  # El JS espera 'description'
+                "level": row["nivel"],  # El JS espera 'level'
+                "duration": f"{row['duracion_horas']}h",  # El JS espera 'duration' con formato
+                "modules": row["lecciones_estimadas"],  # El JS espera 'modules'
+                "price": float(row["precio"]) if row["precio"] else 0,
+                "status": row["estado"],
+                "instructor": row["instructor_nombre"] or "Sin instructor",
+                "students": row["total_estudiantes"] or 0,
+                "totalContent": row["total_contenidos"] or 0,
+                "rating": 4.5,  # Valor por defecto
+                "gradient": get_gradient_by_category(row["categoria"]),
+                "created_at": row["fecha_creacion"],
+                # También incluir datos en formato original por si acaso
+                "titulo": row["titulo"],
+                "categoria": row["categoria"],
+                "descripcion": row["descripcion"],
+                "nivel": row["nivel"],
+                "duracion_horas": row["duracion_horas"],
+                "lecciones_estimadas": row["lecciones_estimadas"],
+                "objetivos": objetivos,
+                "fecha_creacion": row["fecha_creacion"]
+            })
+
+        print(f"✅ Diplomados procesados: {len(diplomados)}")
+        return jsonify(diplomados), 200
+        
+    except Exception as e:
+        print(f"❌ ERROR al listar diplomados: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+@admin_bp.route("/api/diplomados/<int:diplomado_id>", methods=["GET"])
+@login_required
+@admin_required
+def api_obtener_diplomado(diplomado_id):
+    """Obtener un diplomado específico"""
+    try:
+        cur = mysql.connection.cursor(DictCursor)
+        cur.execute("""
+            SELECT 
+                d.*,
+                u.nombre as instructor_nombre,
+                COUNT(DISTINCT m.usuario_id) as total_estudiantes,
+                COUNT(DISTINCT c.id) as total_contenidos
+            FROM diplomados d
+            LEFT JOIN usuarios u ON d.usuario_id = u.id
+            LEFT JOIN matriculas m ON d.id = m.diplomado_id
+            LEFT JOIN contenidos c ON d.id = c.diplomado_id
+            WHERE d.id = %s
+            GROUP BY d.id
+        """, (diplomado_id,))
+        row = cur.fetchone()
+        cur.close()
+        
+        if not row:
+            return jsonify({"error": "Diplomado no encontrado"}), 404
+        
+        try:
+            objetivos_data = row.get("objetivos", "[]")
+            if isinstance(objetivos_data, bytes):
+                objetivos_data = objetivos_data.decode('utf-8')
+            objetivos = json.loads(objetivos_data) if objetivos_data else []
+        except:
+            objetivos = []
+        
+        diplomado = {
+            "id": row["id"],
+            "titulo": row["titulo"],
+            "categoria": row["categoria"],
+            "descripcion": row["descripcion"],
+            "nivel": row["nivel"],
+            "duracion_horas": row["duracion_horas"],
+            "lecciones_estimadas": row["lecciones_estimadas"],
+            "objetivos": objetivos,
+            "precio": float(row["precio"]) if row["precio"] else 0,
+            "estado": row["estado"],
+            "instructor": row["instructor_nombre"],
+            "total_estudiantes": row["total_estudiantes"] or 0,
+            "total_contenidos": row["total_contenidos"] or 0
+        }
+        
+        return jsonify(diplomado), 200
+        
+    except Exception as e:
+        print(f"❌ Error al obtener diplomado: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@admin_bp.route("/api/diplomados", methods=["POST"])
+@login_required
+@admin_required
+def api_crear_diplomado():
+    """Crear un nuevo diplomado"""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No se recibieron datos"}), 400
+
+        titulo = data.get("titulo")
+        categoria = data.get("categoria")
+        descripcion = data.get("descripcion")
+        nivel = data.get("nivel", "Principiante")
+        duracion_horas = int(data.get("duracion_horas") or 0)
+        lecciones_estimadas = int(data.get("lecciones_estimadas") or 0)
+        objetivos = json.dumps(data.get("objetivos", []))
+        precio = float(data.get("precio") or 0)
+        estado = data.get("estado", "draft")
+
+        if not titulo or not categoria or not descripcion:
+            return jsonify({"error": "Faltan campos obligatorios"}), 400
+
+        cur = mysql.connection.cursor()
+        cur.execute("""
+            INSERT INTO diplomados (titulo, categoria, descripcion, nivel,
+                                    duracion_horas, lecciones_estimadas, objetivos,
+                                    precio, estado, usuario_id, fecha_creacion)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,NOW())
+        """, (titulo, categoria, descripcion, nivel,
+              duracion_horas, lecciones_estimadas, objetivos,
+              precio, estado, current_user.id))
+        mysql.connection.commit()
+        nuevo_id = cur.lastrowid
+        cur.close()
+
+        print(f"✅ Diplomado creado con ID: {nuevo_id}")
+        return jsonify({
+            "success": True,
+            "message": "Diplomado creado exitosamente", 
+            "id": nuevo_id
+        }), 201
+
+    except Exception as e:
+        print(f"❌ Error al crear diplomado: {e}")
+        mysql.connection.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@admin_bp.route("/api/diplomados/<int:diplomado_id>", methods=["PUT"])
+@login_required
+@admin_required
+def api_editar_diplomado(diplomado_id):
+    """Editar un diplomado existente"""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No se recibieron datos"}), 400
+
+        # Verificar que existe
+        cur = mysql.connection.cursor(DictCursor)
+        cur.execute("SELECT id FROM diplomados WHERE id = %s", (diplomado_id,))
+        if not cur.fetchone():
+            cur.close()
+            return jsonify({"error": "Diplomado no encontrado"}), 404
+
+        titulo = data.get("titulo")
+        categoria = data.get("categoria")
+        descripcion = data.get("descripcion")
+        nivel = data.get("nivel", "Principiante")
+        duracion_horas = int(data.get("duracion_horas") or 0)
+        lecciones_estimadas = int(data.get("lecciones_estimadas") or 0)
+        objetivos = json.dumps(data.get("objetivos", []))
+        precio = float(data.get("precio") or 0)
+        estado = data.get("estado", "draft")
+
+        if not titulo or not categoria or not descripcion:
+            return jsonify({"error": "Faltan campos obligatorios"}), 400
+
+        cur.execute("""
+            UPDATE diplomados
+            SET titulo=%s, categoria=%s, descripcion=%s, nivel=%s,
+                duracion_horas=%s, lecciones_estimadas=%s, objetivos=%s,
+                precio=%s, estado=%s
+            WHERE id=%s
+        """, (titulo, categoria, descripcion, nivel,
+              duracion_horas, lecciones_estimadas, objetivos,
+              precio, estado, diplomado_id))
+        mysql.connection.commit()
+        cur.close()
+
+        print(f"✅ Diplomado {diplomado_id} actualizado")
+        return jsonify({
+            "success": True,
+            "message": "Diplomado actualizado exitosamente"
+        }), 200
+
+    except Exception as e:
+        print(f"❌ Error al editar diplomado: {e}")
+        mysql.connection.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@admin_bp.route("/api/diplomados/<int:diplomado_id>", methods=["DELETE"])
+@login_required
+@admin_required
+def api_eliminar_diplomado(diplomado_id):
+    """Eliminar un diplomado"""
+    try:
+        cur = mysql.connection.cursor(DictCursor)
+        
+        # Verificar que existe
+        cur.execute("SELECT id FROM diplomados WHERE id = %s", (diplomado_id,))
+        if not cur.fetchone():
+            cur.close()
+            return jsonify({"error": "Diplomado no encontrado"}), 404
+        
+        # Verificar si tiene estudiantes
+        cur.execute("SELECT COUNT(*) as total FROM matriculas WHERE diplomado_id = %s", (diplomado_id,))
+        result = cur.fetchone()
+        
+        if result['total'] > 0:
+            cur.close()
+            return jsonify({
+                "error": "No se puede eliminar un diplomado con estudiantes matriculados"
+            }), 400
+        
+        # Eliminar
+        cur.execute("DELETE FROM diplomados WHERE id=%s", (diplomado_id,))
+        mysql.connection.commit()
+        cur.close()
+        
+        print(f"✅ Diplomado {diplomado_id} eliminado")
+        return jsonify({
+            "success": True,
+            "message": "Diplomado eliminado exitosamente"
+        }), 200
+
+    except Exception as e:
+        print(f"❌ Error al eliminar diplomado: {e}")
+        mysql.connection.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@admin_bp.route("/api/diplomados/<int:diplomado_id>/estado", methods=["POST"])
+@login_required
+@admin_required
+def cambiar_estado_diplomado(diplomado_id):
+    """Cambiar estado de un diplomado"""
+    data = request.get_json()
+    nuevo_estado = data.get("estado")
+
+    if nuevo_estado not in ["draft", "active", "archived"]:
+        return jsonify({"error": "Estado inválido"}), 400
+
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE diplomados SET estado=%s WHERE id=%s", (nuevo_estado, diplomado_id))
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({"message": f"Diplomado cambiado a {nuevo_estado}"})
+    except Exception as e:
+        mysql.connection.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@admin_bp.route("/api/diplomados/stats", methods=["GET"])
+@login_required
+@admin_required
+def diplomados_stats():
+    """Estadísticas de diplomados"""
+    try:
+        cur = mysql.connection.cursor(DictCursor)
+        
+        cur.execute("SELECT COUNT(*) as total FROM diplomados")
+        total_diplomados = cur.fetchone()["total"]
+        
+        cur.execute("SELECT COUNT(*) as total FROM diplomados WHERE estado = 'active'")
+        activos = cur.fetchone()["total"]
+        
+        cur.execute("SELECT COUNT(DISTINCT usuario_id) as total FROM matriculas")
+        total_estudiantes = cur.fetchone()["total"]
+        
+        cur.execute("SELECT COUNT(*) as total FROM contenidos")
+        total_contenidos = cur.fetchone()["total"]
+        
+        cur.close()
+        
+        return jsonify({
+            "total_diplomados": total_diplomados,
+            "activos": activos,
+            "total_estudiantes": total_estudiantes,
+            "total_contenidos": total_contenidos
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# =====================================================
+# MÉTRICAS
+# =====================================================
+@admin_bp.route("/admin/metricas", endpoint="metricas")
+@login_required
+@admin_required
 def metricas():
     return render_template("admin/metricas.html", user=current_user)
 
-# ---------------------
-# Subir contenido
-# ---------------------
-@admin_bp.route("/admin/contenido")
+# =====================================================
+# SUBIR CONTENIDO
+# =====================================================
+@admin_bp.route("/admin/contenido", endpoint="subir_contenido")
 @login_required
+@admin_required
 def subir_contenido():
     return render_template("admin/subirContenido.html", user=current_user)
 
 # =====================================================
-# ENDPOINTS PARA MATRÍCULAS Y PROGRESO
+# REPORTES
 # =====================================================
-
-@admin_bp.route("/api/matriculas", methods=["GET"])
+@admin_bp.route("/admin/reportes", endpoint="reportes")
 @login_required
-def listar_matriculas():
-    """Lista todas las matrículas con filtros"""
-    estado = request.args.get('estado', 'todos')
-    diplomado_id = request.args.get('diplomado_id', None)
-    
-    cur = mysql.connection.cursor(DictCursor)
-    
-    query = """
-        SELECT 
-            m.id,
-            m.fecha_inscripcion,
-            m.fecha_inicio,
-            m.fecha_finalizacion,
-            m.estado,
-            m.progreso_porcentaje,
-            m.calificacion_final,
-            m.monto_pagado,
-            u.nombre as estudiante_nombre,
-            u.correo as estudiante_correo,
-            d.titulo as diplomado_titulo,
-            d.categoria
-        FROM matriculas m
-        JOIN usuarios u ON m.usuario_id = u.id
-        JOIN diplomados d ON m.diplomado_id = d.id
-        WHERE 1=1
-    """
-    params = []
-    
-    if estado != 'todos':
-        query += " AND m.estado = %s"
-        params.append(estado)
-    
-    if diplomado_id:
-        query += " AND m.diplomado_id = %s"
-        params.append(diplomado_id)
-    
-    query += " ORDER BY m.fecha_inscripcion DESC"
-    
-    cur.execute(query, params)
-    matriculas = cur.fetchall()
-    cur.close()
-    
-    # Convertir Decimal a float
-    for matricula in matriculas:
-        if matricula['progreso_porcentaje']:
-            matricula['progreso_porcentaje'] = float(matricula['progreso_porcentaje'])
-        if matricula['calificacion_final']:
-            matricula['calificacion_final'] = float(matricula['calificacion_final'])
-        if matricula['monto_pagado']:
-            matricula['monto_pagado'] = float(matricula['monto_pagado'])
-    
-    return jsonify(matriculas)
-
-@admin_bp.route("/api/matriculas/<int:matricula_id>", methods=["GET"])
-@login_required
-def obtener_matricula(matricula_id):
-    """Obtiene detalles de una matrícula específica"""
-    cur = mysql.connection.cursor(DictCursor)
-    
-    cur.execute("""
-        SELECT 
-            m.*,
-            u.nombre as estudiante_nombre,
-            u.correo as estudiante_correo,
-            u.telefono as estudiante_telefono,
-            d.titulo as diplomado_titulo,
-            d.categoria,
-            d.duracion_horas,
-            d.lecciones_estimadas
-        FROM matriculas m
-        JOIN usuarios u ON m.usuario_id = u.id
-        JOIN diplomados d ON m.diplomado_id = d.id
-        WHERE m.id = %s
-    """, (matricula_id,))
-    
-    matricula = cur.fetchone()
-    
-    if not matricula:
-        cur.close()
-        return jsonify({"error": "Matrícula no encontrada"}), 404
-    
-    # Obtener progreso de contenidos
-    cur.execute("""
-        SELECT 
-            pc.id,
-            pc.completado,
-            pc.fecha_completado,
-            pc.tiempo_dedicado_minutos,
-            pc.calificacion,
-            c.titulo as contenido_titulo,
-            c.tipo
-        FROM progreso_contenidos pc
-        JOIN contenidos c ON pc.contenido_id = c.id
-        WHERE pc.usuario_id = %s AND pc.diplomado_id = %s
-        ORDER BY c.orden
-    """, (matricula['usuario_id'], matricula['diplomado_id']))
-    
-    progresos = cur.fetchall()
-    cur.close()
-    
-    # Convertir Decimals
-    if matricula['progreso_porcentaje']:
-        matricula['progreso_porcentaje'] = float(matricula['progreso_porcentaje'])
-    if matricula['calificacion_final']:
-        matricula['calificacion_final'] = float(matricula['calificacion_final'])
-    if matricula['monto_pagado']:
-        matricula['monto_pagado'] = float(matricula['monto_pagado'])
-    
-    matricula['progresos'] = progresos
-    
-    return jsonify(matricula)
-
-@admin_bp.route("/api/matriculas", methods=["POST"])
-@login_required
-def crear_matricula():
-    """Crea una nueva matrícula"""
-    data = request.get_json()
-    
-    usuario_id = data.get('usuario_id')
-    diplomado_id = data.get('diplomado_id')
-    monto_pagado = data.get('monto_pagado', 0)
-    metodo_pago = data.get('metodo_pago', 'efectivo')
-    
-    if not usuario_id or not diplomado_id:
-        return jsonify({"error": "Faltan datos requeridos"}), 400
-    
-    cur = mysql.connection.cursor(DictCursor)
-    
-    # Verificar que no exista ya una matrícula
-    cur.execute("""
-        SELECT id FROM matriculas 
-        WHERE usuario_id = %s AND diplomado_id = %s
-    """, (usuario_id, diplomado_id))
-    
-    if cur.fetchone():
-        cur.close()
-        return jsonify({"error": "El usuario ya está matriculado en este diplomado"}), 400
-    
-    # Crear matrícula
-    cur.execute("""
-        INSERT INTO matriculas 
-        (usuario_id, diplomado_id, estado, monto_pagado, metodo_pago, fecha_inicio)
-        VALUES (%s, %s, 'inscrito', %s, %s, NOW())
-    """, (usuario_id, diplomado_id, monto_pagado, metodo_pago))
-    
-    mysql.connection.commit()
-    matricula_id = cur.lastrowid
-    cur.close()
-    
-    return jsonify({
-        "message": "Matrícula creada exitosamente",
-        "matricula_id": matricula_id
-    }), 201
-
-@admin_bp.route("/api/matriculas/<int:matricula_id>/progreso", methods=["PUT"])
-@login_required
-def actualizar_progreso_contenido(matricula_id):
-    """Actualiza el progreso de un contenido"""
-    data = request.get_json()
-    
-    contenido_id = data.get('contenido_id')
-    completado = data.get('completado', False)
-    tiempo_dedicado = data.get('tiempo_dedicado_minutos', 0)
-    calificacion = data.get('calificacion', None)
-    
-    cur = mysql.connection.cursor(DictCursor)
-    
-    # Obtener info de la matrícula
-    cur.execute("""
-        SELECT usuario_id, diplomado_id 
-        FROM matriculas 
-        WHERE id = %s
-    """, (matricula_id,))
-    
-    matricula = cur.fetchone()
-    
-    if not matricula:
-        cur.close()
-        return jsonify({"error": "Matrícula no encontrada"}), 404
-    
-    # Verificar si ya existe registro de progreso
-    cur.execute("""
-        SELECT id FROM progreso_contenidos
-        WHERE usuario_id = %s AND contenido_id = %s
-    """, (matricula['usuario_id'], contenido_id))
-    
-    existe = cur.fetchone()
-    
-    if existe:
-        # Actualizar
-        cur.execute("""
-            UPDATE progreso_contenidos
-            SET completado = %s,
-                tiempo_dedicado_minutos = tiempo_dedicado_minutos + %s,
-                calificacion = COALESCE(%s, calificacion),
-                fecha_completado = CASE WHEN %s = 1 THEN NOW() ELSE fecha_completado END
-            WHERE usuario_id = %s AND contenido_id = %s
-        """, (completado, tiempo_dedicado, calificacion, completado, 
-              matricula['usuario_id'], contenido_id))
-    else:
-        # Insertar
-        cur.execute("""
-            INSERT INTO progreso_contenidos
-            (usuario_id, contenido_id, diplomado_id, completado, 
-             tiempo_dedicado_minutos, calificacion, fecha_inicio, fecha_completado)
-            VALUES (%s, %s, %s, %s, %s, %s, NOW(), %s)
-        """, (matricula['usuario_id'], contenido_id, matricula['diplomado_id'],
-              completado, tiempo_dedicado, calificacion, 
-              datetime.now() if completado else None))
-    
-    mysql.connection.commit()
-    cur.close()
-    
-    return jsonify({"message": "Progreso actualizado exitosamente"})
-
-@admin_bp.route("/admin/reportes")
-@login_required
+@admin_required
 def reportes():
     return render_template("admin/reportes.html", user=current_user)
 
+# =====================================================
+# UTILIDADES
+# =====================================================
+def get_gradient_by_category(category):
+    """Retorna un gradiente según la categoría"""
+    gradients = {
+        'Frontend': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        'Backend': 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+        'Data Science': 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+        'DevOps': 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+    }
+    return gradients.get(category, 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)')

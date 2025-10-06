@@ -27,20 +27,20 @@
           <i class="fas fa-chart-line icon"></i>
           <span class="text">Panel</span>
         </a>
-        <a href="{{ url_for('home') }}" class="nav-item" id="mis-cursos">
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="mis-cursos">
           <i class="fas fa-book icon"></i>
           <span class="text">Mis Diplomados</span>
         </a>
-        <a href="{{ url_for('home') }}" class="nav-item" id="estudiantes">
+<a href="{{ url_for('instructor.seguimiento_estudiantes') }}" class="nav-item active">
           <i class="fas fa-users icon"></i>
           <span class="text">Estudiantes</span>
         </a>
-        <a href="{{ url_for('home') }}" class="nav-item" id="contenido">
+        <a href="{{ url_for('subirContenido') }}" class="nav-item" id="contenido">
           <i class="fas fa-upload icon"></i>
           <span class="text">Contenido</span>
         </a>
      
-        <a href="{{ url_for('home') }}" class="nav-item" id="reportes">
+        <a href="{{ url_for('reportesIns') }}" class="nav-item" id="reportes">
           <i class="fas fa-chart-bar icon"></i>
           <span class="text">Reportes</span>
         </a>
@@ -51,8 +51,8 @@
           <div class="user">
             <img src="https://i.pravatar.cc/40?img=6" alt="foto de perfil" class="user-avatar">
             <div class="user-info">
-              <span class="name">Prof. Martínez</span>
-              <span class="email">martinez@techscript.com</span>
+              <span class="name">{{ user.nombre }}</span>
+              <span class="email">{{ user.correo }}</span>
             </div>
           </div>
         </div>
@@ -84,13 +84,13 @@
                   <img src="https://i.pravatar.cc/40?img=6" alt="Avatar">
                 </div>
                 <div class="dropdown-user-info">
-                  <h4>Prof. Martínez</h4>
+                  <h4>Prof. {{ user.nombre }}</h4>
                   <span>Instructor</span>
                 </div>
               </div>
               <div class="dropdown-divider"></div>
               <div class="dropdown-content">
-                <a href="#" class="dropdown-item">
+                <a href="{{ url_for('perfilEstudiante') }}" class="dropdown-item">
                   <i class="fas fa-user"></i>
                   <span>Mi Perfil</span>
                 </a>
@@ -114,7 +114,7 @@
           <div class="welcome-content">
             <div class="welcome-main">
               <div class="welcome-text">
-                <h1>¡Bienvenido de vuelta, Prof. Martínez!</h1>
+                <h1>¡Bienvenido de vuelta, Prof.{{ user.nombre }}!</h1>
                 <p>Gestiona tus cursos y estudiantes. Tienes 3 tareas pendientes de revisión.</p>
                 <a href="#" class="welcome-btn" id="revisar-tareas">
                   <i class="fas fa-clipboard-check"></i>

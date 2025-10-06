@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Curso de Prompt Engineering - Platzi</title>
-  <link rel="stylesheet" href="../../static/CSS/estudiante/modulos.css">
-  <link rel="icon" type="image/png" href="../../static/img/logof.png"/>
-  <!-- FontAwesome -->
+  <title>Módulos - tech-script</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='CSS/estudiante/modulos.css') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logof.png') }}"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://js.braintreegateway.com/web/dropin/1.43.0/js/dropin.min.js"></script>
 </head>
 <body>
   <div class="layout">
@@ -18,41 +18,37 @@
 
       <div class="logo">
         <div class="logo-content">
-          <img src="../../static/img/logo.png" alt="Logo">
+          <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo">
           <h2>Tech-script</h2>
         </div>
       </div>
 
-        <nav>
-  <a href="{{ url_for('student') }}" class="nav-item" id="Inicio">
-    <i class="fas fa-chart-line icon"></i>
-    <span class="text">Inicio</span>
-  </a>
-  <a href="{{ url_for('diplomados') }}" class="nav-item active" id="diplomados">
-    <i class="fas fa-book icon"></i>
-    <span class="text">Diplomados</span>
-  </a>
-  <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
-    <i class="fas fa-video icon"></i>
-    <span class="text">Mi progreso</span>
-  </a>
-  <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
-    <i class="fas fa-credit-card icon"></i>
-    <span class="text">Pagos</span>
-  </a>
-  <a href="{{ url_for('certificados') }}" class="nav-item" id="certificados">
-    <i class="fas fa-certificate icon"></i>
-    <span class="text">Certificados</span>
-  </a>
-</nav>
+      <nav>
+        <a href="{{ url_for('home') }}" class="nav-item">
+          <i class="fas fa-chart-line icon"></i>
+          <span class="text">Inicio</span>
+        </a>
+        <a href="{{ url_for('estudiante.diplomados') }}" class="nav-item active">
+          <i class="fas fa-book icon"></i>
+          <span class="text">Diplomados</span>
+        </a>
+        <a href="{{ url_for('pagos') }}" class="nav-item">
+          <i class="fas fa-credit-card icon"></i>
+          <span class="text">Pagos</span>
+        </a>
+        <a href="{{ url_for('certificados') }}" class="nav-item">
+          <i class="fas fa-certificate icon"></i>
+          <span class="text">Certificados</span>
+        </a>
+      </nav>
 
       <div class="sidebar-footer">
         <div class="user-card">
           <div class="user">
             <img src="https://i.pravatar.cc/40" alt="foto de perfil" class="user-avatar">
             <div class="user-info">
-              <span class="name">María González</span>
-              <span class="email">maria.gonzalez@email.com</span>
+              <span class="name">{{ user.nombre }}</span>
+              <span class="email">{{ user.correo }}</span>
             </div>
           </div>
         </div>
@@ -93,25 +89,22 @@
         </div>
                 
         <div class="course-info">
-          <h1 id="course-title">Curso de Prompt Engineering</h1>
+          <h1 id="course-title">Cargando...</h1>
           <div class="rating">
             <span class="stars">⭐⭐⭐⭐⭐</span>
             <span class="rating-score" id="rating-score">4.7</span>
             <span class="opinions" id="opinions">380 opiniones ›</span>
           </div>
-          <div class="publish-date" id="publish-date">Publicado el 14 de abril de 2025</div>
+          <div class="publish-date" id="publish-date">Publicado recientemente</div>
                     
           <div class="course-stats">
-            <span class="stat"><i class="fas fa-signal text-purple"></i> <span id="level">Nivel Intermedio</span></span>
-            <span class="stat"><i class="fas fa-video text-red"></i> <span id="classes">18 clases</span></span>
-            <span class="stat"><i class="fas fa-clock text-blue"></i> <span id="duration">5 horas de contenido</span></span>
-            <span class="stat"><i class="fas fa-bolt text-yellow"></i> <span id="practice">8 horas de práctica</span></span>
+            <span class="stat"><i class="fas fa-signal text-purple"></i> <span id="level">Cargando...</span></span>
+            <span class="stat"><i class="fas fa-video text-red"></i> <span id="classes">-- clases</span></span>
+            <span class="stat"><i class="fas fa-clock text-blue"></i> <span id="duration">-- horas</span></span>
           </div>
                     
           <p class="course-description" id="course-description">
-            Guía práctica para dominar prompt engineering en IA: estructura instrucciones, 
-            explora estilos (zero-shot, few-shot, chain of thought, meta-prompt), aplica 
-            formatos, analiza datos y crea imágenes o audio.
+            Cargando descripción del diplomado...
           </p>
         </div>
 
@@ -123,107 +116,34 @@
             <div class="play-overlay"><i class="fas fa-play-circle"></i></div>
             <div class="course-badge">
               <div class="course-title">
-                Curso de<br>
-                <strong>Prompt<br>Engineering</strong>
+                Diplomado de<br>
+                <strong id="badge-title">Tech-script</strong>
               </div>
             </div> 
           </div>
          
-          <a href="clases.html" class="btn btn-success start-course-btn" id="start-course-btn">
-            Empezar Curso sin costo
-          </a> 
-          <a href="#" class="btn btn-success buy-course-btn">
-            Comprar Diplomado
-        </a>    
+          <button class="btn btn-success start-course-btn" id="start-course-btn">
+            <i class="fas fa-play"></i> Empezar Curso
+          </button>
+          
+          <button class="btn btn-success buy-course-btn" style="display: none;">
+            <i class="fas fa-shopping-cart"></i> Comprar Diplomado
+          </button>
         </div>
       </div>
 
       <!-- COURSE CONTENT -->
       <div class="course-content">
-
-        <h2><i class="fas fa-list-ul"></i> Clases del curso</h2>
-                
-        <!-- Módulo 1 -->
-        <div class="lesson-section">
-          <button class="module-title collapsible">
-            <i class="fas fa-brain"></i> <span id="module-1-title">Fundamentos de los LLMs</span>
-            <i class="fas fa-chevron-down toggle-icon"></i>
-          </button>
-          <div class="lesson-list">
-            <div class="lesson-item completed" id="lesson-1-1">
-              <div class="lesson-number">1</div>
-              <div class="lesson-content">
-                <h4 id="lesson-1-title">Qué es un LLM y cómo funciona</h4>
-                <div class="lesson-status"><i class="fas fa-check-circle text-green"></i> Completado</div>
-                <div class="lesson-duration" id="lesson-1-duration">00:30 minutos</div>
-              </div>
-            </div>
-
-            <div class="lesson-item" id="lesson-1-2">
-              <div class="lesson-number">2</div>
-              <div class="lesson-content">
-                <h4 id="lesson-2-title">Cómo los LLMs transforman palabras en vectores</h4>
-                <div class="lesson-status"><i class="fas fa-play text-blue"></i> En progreso</div>
-                <div class="lesson-duration" id="lesson-2-duration">00:30 minutos</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Módulo 2 -->
-        <div class="lesson-section">
-          <button class="module-title collapsible">
-            <i class="fas fa-brain"></i> <span id="module-2-title">Fundamentos 2 de los LLMs</span>
-            <i class="fas fa-chevron-down toggle-icon"></i>
-          </button>
-          <div class="lesson-list">
-            <div class="lesson-item completed" id="lesson-2-1">
-              <div class="lesson-number">1</div>
-              <div class="lesson-content">
-                <h4 id="lesson-2-title">Qué es un LLM y cómo funciona</h4>
-                <div class="lesson-status"><i class="fas fa-check-circle text-green"></i> Completado</div>
-                <div class="lesson-duration" id="lesson-2-duration">00:30 minutos</div>
-              </div>
-            </div>
-
-            <div class="lesson-item" id="lesson-2-2">
-              <div class="lesson-number">2</div>
-              <div class="lesson-content">
-                <h4 id="lesson-2-title">Cómo los LLMs transforman palabras en vectores</h4>
-                <div class="lesson-status"><i class="fas fa-play text-blue"></i> En progreso</div>
-                <div class="lesson-duration" id="lesson-2-duration">00:30 minutos</div>
-              </div>
-            </div>
-
-            <div class="lesson-item" id="lesson-2-3">
-              <div class="lesson-number">3</div>
-              <div class="lesson-content">
-                <h4 id="lesson-3-title">Aplicaciones prácticas de embeddings</h4>
-                <div class="lesson-status"><i class="fas fa-clock text-gray"></i> Pendiente</div>
-                <div class="lesson-duration" id="lesson-3-duration">00:45 minutos</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <h2><i class="fas fa-list-ul"></i> Módulos del diplomado</h2>
         
-        <!-- Certificate Section -->
-        <div class="certificate-section">
-          <div class="certificate-badge">
-            <i class="fas fa-graduation-cap"></i> Certificado digital
-          </div>
-          <div class="certificate-content">
-            <div class="certificate-text">
-              <h3>¡Comparte tus logros con un certificado!</h3>
-              <p>Cuando termines el curso tendrás acceso al certificado digital para compartirlo con tu familia, amigos, empleadores y la comunidad.</p>
-              <a href="certificados.html" class="btn btn-secondary">Obtener mi Diplomado</a>
-            </div>
-            <div class="certificate-preview"></div>
-          </div>
+        <!-- Los módulos se cargarán dinámicamente aquí -->
+        <div style="text-align: center; padding: 3rem;">
+          <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #6366f1;"></i>
+          <p style="color: #64748b; margin-top: 1rem;">Cargando contenido...</p>
         </div>
       </div>
     </main>
   </div>
 
-  <script src="../../static/JS/estudiante/modulos.js"></script>
-</body>
-</html>
+  <script src="{{ url_for('static', filename='JS/estudiante/modulos.js') }}"></script>
+</body></html>

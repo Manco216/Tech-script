@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagos y Facturación - Tech-script</title>
+    <link rel="stylesheet" href="../../static/CSS/estudiante/pagos.css">
+    <link rel="icon" type="image/png" href="../../static/img/logof.png"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="layout">
+
+             <!-- Botón hamburguesa flotante (solo móvil/tablet) -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Overlay para cerrar sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+        <!-- ========== SIDEBAR ========== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-content">
+                    <img src="../../static/img/logo.png" alt="Logo">
+                    <h2>tech-script</h2>
+                </div>
+                <button id="toggleSidebar" class="toggle-btn">☰</button>
+            </div>
+              <nav>
+  <a href="{{ url_for('home') }}" class="nav-item" id="Inicio">
+    <i class="fas fa-chart-line icon"></i>
+    <span class="text">Inicio</span>
+  </a>
+  <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
+    <i class="fas fa-book icon"></i>
+    <span class="text">Diplomados</span>
+  </a>
+  <a href="{{ url_for('pagos') }}" class="nav-item active" id="pagos">
+    <i class="fas fa-credit-card icon"></i>
+    <span class="text">Pagos</span>
+  </a>
+  <a href="{{ url_for('certificados') }}" class="nav-item" id="certificados">
+    <i class="fas fa-certificate icon"></i>
+    <span class="text">Certificados</span>
+  </a>
+</nav>
+            <div class="sidebar-footer">
+                <div class="nav-item" id="configuracion"><i class="fas fa-cog icon"></i><span class="text">Configuración</span></div>
+                <div class="nav-item" id="mi-cuenta"><i class="fas fa-user icon"></i><span class="text">Mi cuenta</span></div>
+            </div>
+        </aside>
+
+        <!-- ========== MAIN CONTENT ========== -->
+        <main class="main">
+
+            <!-- ========== PAGOS CONTENT ========== -->
+            <div class="content-area">
+                <div class="page-header">
+                    <div class="header-content">
+                        <h1 class="page-title">
+                            <i class="fas fa-credit-card"></i>
+                            Historial y Facturación
+                        </h1>
+                        <p class="page-description">Gestiona tus pagos, métodos de pago y suscripciones</p>
+                    </div>
+                    <div class="header-badge">
+                    </div>
+                </div>
+
+                <!-- Curso Seleccionado (si viene de Diplomado) -->
+                <div id="selected-course-container" class="selected-course-card" style="display:none;">
+                    <div class="course-card">
+                        <div class="course-info">
+                            <h3 id="selected-course"></h3>
+                            <p>Curso seleccionado para pago</p>
+                        </div>
+                        <button id="pay-course-btn" class="btn btn-primary">
+                            <i class="fas fa-credit-card"></i>
+                            Pagar Ahora
+                        </button>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Tabs -->
+        <!-- Tabs -->
+<div class="tabs-container">
+    <div class="tabs-nav">
+        <button class="tab-button active" data-tab="history">
+            <i class="fas fa-history"></i>
+            Historial de Pagos
+        </button>
+    
+    </div>
+
+    <!-- Tab Content: Historial -->
+    <div class="tab-content active" id="history-tab">
+        <div class="chart-card">
+            <div class="card-header">
+                <h3><i class="fas fa-history"></i> Historial de Pagos</h3>
+                <p>Todos tu Historial de Pagos y Facturación</p>
+            </div>
+            <div class="card-content">
+                <div id="payment-history-list" class="payment-list">
+                    <!-- Se carga dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Content: Facturas -->
+</div>
+
+                    <!-- Tab Content: Historial -->
+                    <div class="tab-content active" id="history-tab">
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-history"></i> Historial de Pagos</h3>
+                                <p>Todos tus pagos y transacciones realizadas</p>
+                            </div>
+                            <div class="card-content">
+                                <div id="payment-history-list" class="payment-list">
+                                    <!-- Payment items se cargarán dinámicamente -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                        
+                        </div>
+                    </div>
+
+                 
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <button id="toggleSidebarMobile" class="toggle-btn-mobile">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    </button>
+
+<!-- Overlay para cerrar sidebar en móvil -->
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <script src="../../static/JS/estudiante/pagos.js"></script>
+</body>
+</html>

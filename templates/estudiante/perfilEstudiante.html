@@ -1,221 +1,85 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Perfil de Usuario - Tech Script</title>
-  <link rel="stylesheet" href="../../static/CSS/estudiante/perfilEstudiante.css">
-  <link rel="icon" type="image/png" href="../../static/img/logof.png"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Mi Perfil | G.I.Q</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../static/CSS/estudiante/perfilEstudiante.css">
+    <link rel="icon" type="image/png" href="/frontend/img/LogoG.I.Q.png">
 </head>
 <body>
+    <header class="topbar">
+        <button class="back" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="top-title">
+            <h1>Mi Perfil</h1>
+        </div>
+    </header>
 
-<div class="layout">
-  <!-- ========== SIDEBAR ========== -->
-  <aside class="sidebar" id="sidebar">
-    <button id="toggleSidebar" class="toggle-btn">☰</button>
-    
-    <div class="logo">
-      <div class="logo-content">
-        <img src="../../static/img/logo.png" alt="Logo">
-        <h2>Tech-script</h2>
-      </div>
-    </div>
-      <nav>
-  <a href="{{ url_for('student') }}" class="nav-item active" id="Inicio">
-    <i class="fas fa-chart-line icon"></i>
-    <span class="text">Inicio</span>
-  </a>
-  <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
-    <i class="fas fa-book icon"></i>
-    <span class="text">Diplomados</span>
-  </a>
-  <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
-    <i class="fas fa-video icon"></i>
-    <span class="text">Mi progreso</span>
-  </a>
-  <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
-    <i class="fas fa-credit-card icon"></i>
-    <span class="text">Pagos</span>
-  </a>
-  <a href="{{ url_for('certificados') }}" class="nav-item" id="certificados">
-    <i class="fas fa-certificate icon"></i>
-    <span class="text">Certificados</span>
-  </a>
-</nav>
-  </aside>
-
-  <!-- ========== MAIN ========== -->
-  <main class="main">
-    <!-- TOPBAR -->
-    <div class="topbar">
-      <div class="topbar-right">
-      </div>
-    </div>
-
-    <!-- GRID PRINCIPAL -->
-    <div class="content-grid">
-   <!-- COLUMNA CENTRAL -->
-      <div class="profile-main-section">
-        <div class="profile-header-card">
-          <div class="profile-header-actions">
-          </div>
-
-          <div class="profile-main-info">
-            <!-- Avatar + datos -->
-            <div class="profile-avatar-section">
-              <div class="profile-avatar-large">
-                <img src="https://i.pravatar.cc/150?u=usuario" alt="Usuario">
-              </div>
-
-              <div class="profile-basic-info">
-                <h1 class="profile-name">maria gonzales</h1>
-                <p class="profile-phone">
-                  <i class="fas fa-phone"></i> +57 300 456 7890
-                </p>
-                <p class="profile-email-contact">
-                  <i class="fas fa-envelope"></i> mariagonzales@gmail.com
-                </p>
-              </div>
+    <main class="profile-wrap">
+        <aside class="profile-card">
+            <div class="avatar">MC
+                <button class="avatar-btn" title="Cambiar foto">
+                    <i class="fas fa-camera"></i>
+                </button>
             </div>
+            <h2 class="name">María Camila Sánchez</h2>
+            <div class="email">mcsanchez@gigq.com</div>
+            <span class="role">Coordinadora</span>
 
-            <!-- Información General -->
-            <div class="profile-details-grid">
-              <div class="info-column">
-                <div class="info-section">
-                  <h3 class="section-title">
-                    <i class="fas fa-user"></i> Información General
-                    <button class="edit-section-btn">
-                      <i class="fas fa-edit"></i>
+            <ul class="meta">
+                <li><strong>Departamento:</strong> Control de Calidad</li>
+                <li><strong>Fecha de ingreso:</strong> Marzo 2023</li>
+            </ul>
+        </aside>
+
+        <section class="info-card">
+            <div class="info-header">
+                <h3>Información Personal</h3>
+                <div class="info-actions">
+                    <button id="editBtn" class="btn small">
+                        <i class="fas fa-pen"></i> Editar
                     </button>
-                  </h3>
-                  <div class="info-items">
-                    <div class="info-item">
-                      <span class="info-label">Fecha de nacimiento:</span>
-                      <span class="info-value">23/07/1994</span>
-                    </div>
-                    <div class="info-item">
-                      <span class="info-label">Ciudad:</span>
-                      <span class="info-value">Bogotá, Colombia</span>
-                    </div>
-                    <div class="info-item">
-                      <span class="info-label">Dirección:</span>
-                      <span class="info-value">Cra 45 #23-67</span>
-                    </div>
-                    <div class="info-item">
-                      <span class="info-label">Fecha de registro:</span>
-                      <span class="info-value">12/09/2025</span>
-                    </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Información Académica -->
-        <div class="bottom-cards-grid">
-          <div class="academic-card">
-            <h3>Información Académica</h3>
-            <div class="info-items">
-              <div class="info-item">
-                <span class="info-label">Nivel actual:</span>
-                <span class="info-value">Avanzado</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Cursos completados:</span>
-                <span class="info-value">2 de 3</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Progreso general:</span>
-                <span class="info-value">75%</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Puntos totales:</span>
-                <span class="info-value" id="totalPoints">2,450</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+            <form id="profileForm" class="info-form" autocomplete="off">
+                <div class="grid-2">
+                    <label>
+                        Nombre Completo
+                        <input type="text" id="nombre" value="María Camila Sánchez Rodríguez" readonly>
+                    </label>
+                    <label>
+                        Correo Electrónico
+                        <input type="email" id="correo" value="maria.sanchez@gigq.com" readonly>
+                    </label>
+                </div>
 
-      <!-- COLUMNA DERECHA -->
-      <div class="points-sidebar">
-        <div class="points-card">
-          <h3>Sistema de Puntos</h3>
-          <div class="points-circle">
-            <div class="points-inner">
-              <span class="points-number" id="totalPoints">2,450</span>
-              <span class="points-label">Puntos</span>
-            </div>
-            <svg class="progress-ring" width="120" height="120">
-              <circle class="progress-ring-circle" 
-                      stroke="#e0e0e0" 
-                      stroke-width="8"
-                      fill="transparent"
-                      r="52"
-                      cx="60"
-                      cy="60"/>
-              <circle class="progress-ring-circle progress" 
-                      stroke="#6366f1" 
-                      stroke-width="8"
-                      fill="transparent"
-                      r="52"
-                      cx="60"
-                      cy="60"
-                      id="progressCircle"/>
-            </svg>
-          </div>
-          <div class="points-breakdown">
-            <div class="points-item">
-              <span class="points-source">UX/UI Design - Básico</span>
-              <span class="points-value">+500 pts</span>
-            </div>
-            <div class="points-item">
-              <span class="points-source">UX/UI Design - Intermedio</span>
-              <span class="points-value">+750 pts</span>
-            </div>
-            <div class="points-item">
-              <span class="points-source">UX/UI Design - Avanzado</span>
-              <span class="points-value">+1200 pts</span>
-            </div>
-          </div>
-        </div>
+                <div class="grid-2">
+                    <label>
+                        Número de Documento
+                        <input type="text" id="documento" value="1098765432" readonly>
+                    </label>
+                    <label>
+                        Teléfono
+                        <input type="tel" id="telefono" value="+57 315 987 6543" readonly>
+                    </label>
+                </div>
 
-        <!-- Logros -->
-        <div class="achievements-card">
-          <h3>Logros y Certificaciones</h3>
-          <div class="achievements-grid">
-            <div class="achievement-item">
-              <div class="achievement-icon">🏆</div>
-              <div class="achievement-info">
-                <h4>Primer Diplomado</h4>
-                <p>Completaste tu primer curso</p>
-              </div>
-            </div>
-            <div class="achievement-item">
-              <div class="achievement-icon">🎯</div>
-              <div class="achievement-info">
-                <h4>Estudiante Dedicado</h4>
-                <p>2 cursos completados</p>
-              </div>
-            </div>
-            <div class="achievement-item">
-              <div class="achievement-icon">⭐</div>
-              <div class="achievement-info">
-                <h4>Próximo Objetivo</h4>
-                <p>Completa 3 diplomados</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-</div>
+                <div class="form-actions">
+                    <button type="button" id="logoutBtn" class="btn primary">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </button>
+                </div>
+            </form>
+        </section>
 
-<script src="../../static/JS/estudiante/perfilEstudiante.js"></script>
+       
+    </main>
+    <script src="../../static/JS/estudiante/perfilEstudiante.js"></script>
 </body>
 </html>
+

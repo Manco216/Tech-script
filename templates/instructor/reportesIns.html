@@ -6,10 +6,18 @@
     <title>Reportes Administrativos - Plataforma</title>
     <link rel="icon" type="image/png" href="../../static/img/logof.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../../static/CSS/admin/reportes.css">
+    <link rel="stylesheet" href="../../static/CSS/instructor/reportes.css">
 </head>
 <body>
+         <!-- Botón hamburguesa flotante (solo móvil/tablet) -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Overlay para cerrar sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
      <div class="layout">
+
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
       <button id="toggleSidebar" class="toggle-btn">☰</button>
@@ -21,7 +29,7 @@
       </div>
 
       <nav>
-        <a href="{{ url_for('instructor') }}" class="nav-item" id="Inicio">
+        <a href="{{ url_for('home') }}" class="nav-item" id="Inicio">
           <i class="fas fa-chart-line icon"></i>
           <span class="text">Panel</span>
         </a>
@@ -38,7 +46,7 @@
           <span class="text">Contenido</span>
         </a>
      
-        <a href="{{ url_for('diplomadosIns') }}" class="nav-item active" id="reportes">
+        <a href="{{ url_for('reportesIns') }}" class="nav-item active" id="reportes">
           <i class="fas fa-chart-bar icon"></i>
           <span class="text">Reportes</span>
         </a>
@@ -61,53 +69,7 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <main class="container">
-      <!-- BARRA SUPERIOR -->
-      <header class="topbar">
-        <button id="toggleSidebarTop" class="toggle-btn"><i class="fas fa-bars"></i></button>
-        <div class="search-container">
-          <i class="fas fa-search search-icon"></i>
-          <input type="text" placeholder="Buscar estudiantes, cursos, contenido..." id="search-input">
-        </div>
-        <div class="topbar-right">
-          <div class="notification-icon" id="notifications">
-            <i class="fas fa-bell"></i>
-            <div class="notification-badge">5</div>
-          </div>
-          
-          <div class="profile-dropdown" id="profileDropdown">
-            <div class="profile-pic" id="profile">
-              <img src="https://i.pravatar.cc/40?img=6" alt="Foto de perfil">
-            </div>
-            <div class="dropdown-menu" id="dropdownMenu">
-              <div class="dropdown-header">
-                <div class="dropdown-avatar">
-                  <img src="https://i.pravatar.cc/40?img=6" alt="Avatar">
-                </div>
-                <div class="dropdown-user-info">
-                  <h4>Prof. Martínez</h4>
-                  <span>Instructor</span>
-                </div>
-              </div>
-              <div class="dropdown-divider"></div>
-              <div class="dropdown-content">
-                <a href="#" class="dropdown-item">
-                  <i class="fas fa-user"></i>
-                  <span>Mi Perfil</span>
-                </a>
-                <a href="#" class="dropdown-item">
-                  <i class="fas fa-cog"></i>
-                  <span>Configuración</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item logout">
-                  <i class="fas fa-sign-out-alt"></i>
-                  <span>Cerrar Sesión</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+     
 
 
     <div class="main">
@@ -170,21 +132,7 @@
         </div>
     </div>
 
-    <div class="stat-card-new yellow-bg">
-        <div class="stat-content-new">
-            <div class="stat-icon-new">
-                <i class="fas fa-star"></i>
-            </div>
-            <div class="stat-info-new">
-                <p class="stat-label">Calificación Promedio</p>
-                <h3 class="stat-number">4.8</h3>
-                <div class="stat-badge">
-                    <i class="fas fa-medal"></i>
-                    <span>Excelente</span>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <div class="stat-card-new purple-bg">
         <div class="stat-content-new">

@@ -1,0 +1,360 @@
+
+
+/* ========== MODAL DE PAGOS ========== */
+.payment-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.payment-modal.active {
+    opacity: 1;
+}
+
+.payment-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+}
+
+.payment-modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 2rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.close-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #f1f5f9;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #64748b;
+    font-size: 1.2rem;
+}
+
+.close-modal:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+    transform: rotate(90deg);
+}
+
+/* ========== HEADER DEL MODAL ========== */
+.payment-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.payment-header i {
+    font-size: 3rem;
+    color: #6366f1;
+    margin-bottom: 1rem;
+}
+
+.payment-header h2 {
+    font-size: 1.5rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.payment-header p {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+/* ========== RESUMEN DE PAGO ========== */
+.payment-summary {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    color: #64748b;
+}
+
+.summary-row:last-child {
+    margin-bottom: 0;
+}
+
+.summary-row.total {
+    padding-top: 0.75rem;
+    border-top: 2px solid #e2e8f0;
+    margin-top: 0.75rem;
+    color: #1e293b;
+    font-size: 1.1rem;
+}
+
+.summary-row strong {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.summary-row.total strong {
+    color: #6366f1;
+    font-size: 1.3rem;
+}
+
+/* ========== MÉTODOS DE PAGO ========== */
+.payment-methods {
+    margin-bottom: 2rem;
+}
+
+.payment-methods h3 {
+    font-size: 1rem;
+    color: #1e293b;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.payment-method-btn {
+    width: 100%;
+    padding: 1.25rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.payment-method-btn:hover {
+    border-color: #6366f1;
+    background: #f8fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+}
+
+.payment-method-btn:active {
+    transform: translateY(0);
+}
+
+.payment-method-btn > i:first-child {
+    font-size: 2rem;
+    width: 50px;
+    text-align: center;
+}
+
+.payment-method-btn.paypal > i:first-child {
+    color: #0070ba;
+}
+
+.payment-method-btn.googlepay > i:first-child {
+    color: #4285f4;
+}
+
+.method-info {
+    flex: 1;
+    text-align: left;
+}
+
+.method-info strong {
+    display: block;
+    color: #1e293b;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.method-info span {
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.payment-method-btn > i:last-child {
+    color: #cbd5e1;
+    font-size: 1.2rem;
+}
+
+/* ========== SEGURIDAD ========== */
+.payment-security {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #10b981;
+    font-size: 0.9rem;
+    padding: 1rem;
+    background: #f0fdf4;
+    border-radius: 8px;
+}
+
+.payment-security i {
+    font-size: 1.1rem;
+}
+
+/* ========== NOTIFICACIONES ========== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 10000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    min-width: 300px;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification i {
+    font-size: 1.5rem;
+}
+
+.notification.success {
+    border-left: 4px solid #10b981;
+}
+
+.notification.success i {
+    color: #10b981;
+}
+
+.notification.error {
+    border-left: 4px solid #ef4444;
+}
+
+.notification.error i {
+    color: #ef4444;
+}
+
+.notification.info {
+    border-left: 4px solid #3b82f6;
+}
+
+.notification.info i {
+    color: #3b82f6;
+}
+
+.notification.warning {
+    border-left: 4px solid #f59e0b;
+}
+
+.notification.warning i {
+    color: #f59e0b;
+}
+
+.notification span {
+    color: #1e293b;
+    font-weight: 500;
+}
+
+/* ========== LECCIONES BLOQUEADAS ========== */
+.lesson-item.locked {
+    opacity: 0.6;
+    cursor: not-allowed;
+    position: relative;
+}
+
+.lesson-item.locked:hover {
+    background: #f8fafc;
+}
+
+.lesson-item .lock-icon {
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 1.2rem;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .payment-modal-content {
+        width: 95%;
+        padding: 1.5rem;
+    }
+
+    .payment-header i {
+        font-size: 2.5rem;
+    }
+
+    .payment-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .payment-method-btn {
+        padding: 1rem;
+    }
+
+    .payment-method-btn > i:first-child {
+        font-size: 1.5rem;
+        width: 40px;
+    }
+
+    .notification {
+        min-width: auto;
+        width: 90%;
+        right: 5%;
+    }
+}
+
+/* ========== ANIMACIONES ========== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.payment-modal-content {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.payment-method-btn:hover > i:last-child {
+    animation: pulse 1s infinite;
+}
