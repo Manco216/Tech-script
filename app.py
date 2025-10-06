@@ -11,6 +11,7 @@ from flask import jsonify
 from flask_mail import Mail
 
 
+
 import MySQLdb.cursors
 
 # Importamos nuestros módulos
@@ -30,6 +31,8 @@ from pagos_routes import pagos_bp
 from routes.contenidos_routes import contenidos_bp
 from routes.pagos_routes import pagosH_bp
 from instructor_routes import instructor_bp
+from reportes_instructor_routes import reportes_instructor_bp
+
 
 
 
@@ -48,6 +51,8 @@ app.register_blueprint(pagos_bp)
 app.register_blueprint(contenidos_bp)
 app.register_blueprint(pagosH_bp)
 app.register_blueprint(instructor_bp)
+app.register_blueprint(reportes_instructor_bp)
+
 
 
 # Flask-Session

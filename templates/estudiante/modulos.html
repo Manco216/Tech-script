@@ -22,25 +22,26 @@
           <h2>Tech-script</h2>
         </div>
       </div>
+  <!-- NAVEGACIÓN PRINCIPAL -->
+  <nav>
+  <a href="{{ url_for('home') }}" class="nav-item active" id="Inicio">
+    <i class="fas fa-chart-line icon"></i>
+    <span class="text">Inicio</span>
+  </a>
+  <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
+    <i class="fas fa-book icon"></i>
+    <span class="text">Diplomados</span>
+  </a>
+  <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
+    <i class="fas fa-credit-card icon"></i>
+    <span class="text">Pagos</span>
+  </a>
+  <a href="{{ url_for('certificados') }}" class="nav-item" id="certificados">
+    <i class="fas fa-certificate icon"></i>
+    <span class="text">Certificados</span>
+  </a>
+</nav>
 
-      <nav>
-        <a href="{{ url_for('home') }}" class="nav-item">
-          <i class="fas fa-chart-line icon"></i>
-          <span class="text">Inicio</span>
-        </a>
-        <a href="{{ url_for('estudiante.diplomados') }}" class="nav-item active">
-          <i class="fas fa-book icon"></i>
-          <span class="text">Diplomados</span>
-        </a>
-        <a href="{{ url_for('pagos') }}" class="nav-item">
-          <i class="fas fa-credit-card icon"></i>
-          <span class="text">Pagos</span>
-        </a>
-        <a href="{{ url_for('certificados') }}" class="nav-item">
-          <i class="fas fa-certificate icon"></i>
-          <span class="text">Certificados</span>
-        </a>
-      </nav>
 
       <div class="sidebar-footer">
         <div class="user-card">

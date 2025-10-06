@@ -19,13 +19,13 @@
                 </div>
                 <button id="toggleSidebar" class="toggle-btn">☰</button>
             </div>
-
- <nav>
-  <a href="{{ url_for('home') }}" class="nav-item " id="Inicio">
+  <!-- NAVEGACIÓN PRINCIPAL -->
+  <nav>
+  <a href="{{ url_for('home') }}" class="nav-item active" id="Inicio">
     <i class="fas fa-chart-line icon"></i>
     <span class="text">Inicio</span>
   </a>
-  <a href="{{ url_for('diplomados') }}" class="nav-item active" id="diplomados">
+  <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
     <i class="fas fa-book icon"></i>
     <span class="text">Diplomados</span>
   </a>
@@ -38,6 +38,7 @@
     <span class="text">Certificados</span>
   </a>
 </nav>
+
 
             <div class="sidebar-footer">
                 <div class="nav-item" id="configuracion"><i class="fas fa-cog icon"></i><span class="text">Configuración</span></div>

@@ -20,8 +20,8 @@
                 <button id="toggleSidebar" class="toggle-btn">☰</button>
             </div>
 
-            <nav>
-        <a href="{{ url_for('home') }}" class="nav-item" id="Inicio">
+      <nav>
+        <a href="{{ url_for('home') }}" class="nav-item active" id="Inicio">
           <i class="fas fa-chart-line icon"></i>
           <span class="text">Panel</span>
         </a>
@@ -29,7 +29,7 @@
           <i class="fas fa-book icon"></i>
           <span class="text">Mis Diplomados</span>
         </a>
-        <a href="{{ url_for('diplomadosIns') }}" class="nav-item active" id="estudiantes">
+    <a href="{{ url_for('instructor.seguimiento_estudiantes') }}" class="nav-item">
           <i class="fas fa-users icon"></i>
           <span class="text">Estudiantes</span>
         </a>
@@ -38,7 +38,7 @@
           <span class="text">Contenido</span>
         </a>
      
-        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
+        <a href="{{ url_for('reportesIns') }}" class="nav-item" id="reportes">
           <i class="fas fa-chart-bar icon"></i>
           <span class="text">Reportes</span>
         </a>
@@ -67,210 +67,146 @@
             </div>
 
             <!-- ========== MIS ESTUDIANTES CONTENT ========== -->
-            <div class="content-area">
-                <div class="page-header">
-                    <h1 class="page-title">
-                        <i class="fas fa-users"></i>
-                        Mis Estudiantes
-                    </h1>
-                    <p class="page-description">Estadísticas generales y distribución por diplomados</p>
-                    <button class="btn btn-primary" id="sendGroupMessage">
-                        <i class="fas fa-comments"></i> Mensaje Grupal
-                    </button>
+<div class="content-area" id="reportContent">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-users"></i>
+            Mis Estudiantes
+        </h1>
+        <p class="page-description">Estadísticas generales y distribución por diplomados</p>
+        <div class="header-actions">
+            <button class="btn btn-secondary" id="reportContent">
+                <i class="fas fa-file-pdf"></i> Exportar PDF
+            </button>
+            <button class="btn btn-primary" id="sendGroupMessage">
+                <i class="fas fa-comments"></i> Mensaje Grupal
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Cards Generales -->
+    <div class="stats-grid">
+        <div class="stat-card primary">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3 id="totalStudents">--</h3>
+                <p>Total Estudiantes</p>
+                <small id="activeStudents">-- activos</small>
+            </div>
+        </div>
+
+        <div class="stat-card success">
+            <div class="stat-icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="stat-info">
+                <h3 id="totalDiplomas">--</h3>
+                <p>Diplomados Activos</p>
+                <small id="avgStudentsPerDiploma">-- promedio/diplomado</small>
+            </div>
+        </div>
+
+        <div class="stat-card info">
+            <div class="stat-icon">
+                <i class="fas fa-certificate"></i>
+            </div>
+            <div class="stat-info">
+                <h3 id="totalCertificates">--</h3>
+                <p>Certificados Emitidos</p>
+                <small id="monthlyGrowth">-- este mes</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-section">
+        <div class="filters-card">
+            <div class="filter-group">
+                <label>Diplomado:</label>
+                <select class="form-select" id="diplomadoFilter">
+                    <option value="">Todos los diplomados</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Período:</label>
+                <select class="form-select" id="periodFilter">
+                    <option value="all">Todo el tiempo</option>
+                    <option value="month">Último mes</option>
+                    <option value="quarter">Último trimestre</option>
+                    <option value="year">Último año</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+        <div class="tabs-nav">
+            <button class="tab-button active" data-tab="overview">
+                <i class="fas fa-chart-pie"></i> Resumen General
+            </button>
+            <button class="tab-button" data-tab="estadisticas">
+                <i class="fas fa-chart-bar"></i> Estadísticas
+            </button>
+        </div>
+
+        <!-- Resumen General -->
+        <div class="tab-content active" id="overview-tab">
+            <div class="overview-grid">
+
+                <!-- Progreso General -->
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-line"></i> Progreso General</h3>
+                    <canvas id="progressChart"></canvas>
                 </div>
 
-                <!-- Stats Cards Generales -->
-                <div class="stats-grid">
-                    <div class="stat-card primary">
-                        <div class="stat-icon">
-                            <i class="fas fa-users"></i>
+                <!-- Actividad Reciente -->
+                <div class="chart-card recent-activity">
+                    <h3><i class="fas fa-clock"></i> Actividad Reciente</h3>
+                    <div class="activity-summary">
+                        <div class="activity-stat">
+                            <div class="activity-number" id="newEnrollments">--</div>
+                            <div class="activity-text">Nuevas inscripciones hoy</div>
                         </div>
-                        <div class="stat-info">
-                            <h3 id="totalStudents">1,247</h3>
-                            <p>Total Estudiantes</p>
-                            <small id="activeStudents">1,089 activos</small>
+                        <div class="activity-stat">
+                            <div class="activity-number" id="modulesCompleted">--</div>
+                            <div class="activity-text">Módulos completados hoy</div>
                         </div>
-                    </div>
-                    <div class="stat-card success">
-                        <div class="stat-icon">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="totalDiplomas">8</h3>
-                            <p>Diplomados Activos</p>
-                            <small id="avgStudentsPerDiploma">156 promedio/diplomado</small>
-                        </div>
-                    </div>
-                       <div class="stat-card info">
-                        <div class="stat-icon">
-                            <i class="fas fa-certificate"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="totalCertificates">456</h3>
-                            <p>Certificados Emitidos</p>
-                            <small id="monthlyGrowth">+23 este mes</small>
-                        </div>
-                    </div>
-                    
-                   
-                  
-                </div>
-
-                <!-- Filtros Simplificados -->
-                <div class="filters-section">
-                    <div class="filters-card">
-                        <div class="filter-group">
-                            <label>Diplomado:</label>
-                            <select class="form-select" id="diplomadoFilter">
-                                <option value="">Todos los diplomados</option>
-                                <option value="react">Desarrollo Web con React</option>
-                                <option value="python">Python para Data Science</option>
-                                <option value="spring">Microservicios con Spring Boot</option>
-                                <option value="ux">Diseño UX/UI</option>
-                                <option value="ml">Machine Learning Básico</option>
-                                <option value="angular">Angular Avanzado</option>
-                                <option value="node">Node.js Backend</option>
-                                <option value="mobile">Desarrollo Mobile</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>Período:</label>
-                            <select class="form-select" id="periodFilter">
-                                <option value="all">Todo el tiempo</option>
-                                <option value="month">Último mes</option>
-                                <option value="quarter">Último trimestre</option>
-                                <option value="year">Último año</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <button class="btn btn-secondary" id="exportData">
-                                <i class="fas fa-download"></i> Exportar Datos
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tabs -->
-                <div class="tabs-container">
-                    <div class="tabs-nav">
-                        <button class="tab-button active" data-tab="overview">
-                            <i class="fas fa-chart-pie"></i>
-                            Resumen General
-                        </button>
-                        <button class="tab-button" data-tab="estadisticas">
-                            <i class="fas fa-chart-bar"></i>
-                            Estadísticas
-                        </button>
-                    </div>
-
-                    <!-- Tab Content: Resumen General -->
-                    <div class="tab-content active" id="overview-tab">
-                        <div class="overview-grid">
-
-                            <!-- Progreso General -->
-                            <div class="chart-card">
-                                <h3><i class="fas fa-chart-line"></i> Progreso General</h3>
-                                <div class="progress-overview">
-                                    <div class="progress-item">
-                                        <span class="progress-label">Estudiantes Iniciando (0-25%)</span>
-                                        <div class="progress-bar-container">
-                                            <div class="progress-bar">
-                                                <div class="progress-fill starting" style="width: 23%"></div>
-                                            </div>
-                                            <span class="progress-value">287 estudiantes</span>
-                                        </div>
-                                    </div>
-                                    <div class="progress-item">
-                                        <span class="progress-label">En Progreso (26-75%)</span>
-                                        <div class="progress-bar-container">
-                                            <div class="progress-bar">
-                                                <div class="progress-fill progress" style="width: 45%"></div>
-                                            </div>
-                                            <span class="progress-value">561 estudiantes</span>
-                                        </div>
-                                    </div>
-                                    <div class="progress-item">
-                                        <span class="progress-label">Avanzado (76-100%)</span>
-                                        <div class="progress-bar-container">
-                                            <div class="progress-bar">
-                                                <div class="progress-fill advanced" style="width: 32%"></div>
-                                            </div>
-                                            <span class="progress-value">399 estudiantes</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Actividad Reciente -->
-                            <div class="chart-card recent-activity">
-                                <h3><i class="fas fa-clock"></i> Actividad Reciente</h3>
-                                <div class="activity-summary">
-                                    <div class="activity-stat">
-                                        <div class="activity-number">23</div>
-                                        <div class="activity-text">Nuevas inscripciones hoy</div>
-                                    </div>
-                                    <div class="activity-stat">
-                                        <div class="activity-number">45</div>
-                                        <div class="activity-text">Módulos completados hoy</div>
-                                    </div>
-                                    <div class="activity-stat">
-                                        <div class="activity-number">12</div>
-                                        <div class="activity-text">Certificados emitidos</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                                  <div class="chart-card">
-                                <h3><i class="fas fa-star"></i> Diplomados Más Populares</h3>
-                                <div class="top-courses">
-                                    <div class="course-rank">
-                                        <span class="rank-number">1</span>
-                                        <div class="course-info">
-                                            <span class="course-name">Desarrollo Web con React</span>
-                                            <span class="course-students">342 estudiantes</span>
-                                        </div>
-                                        <span class="course-percentage">27%</span>
-                                    </div>
-                                    <div class="course-rank">
-                                        <span class="rank-number">2</span>
-                                        <div class="course-info">
-                                            <span class="course-name">Python para Data Science</span>
-                                            <span class="course-students">298 estudiantes</span>
-                                        </div>
-                                        <span class="course-percentage">24%</span>
-                                    </div>
-                                    <div class="course-rank">
-                                        <span class="rank-number">3</span>
-                                        <div class="course-info">
-                                            <span class="course-name">Microservicios Spring Boot</span>
-                                            <span class="course-students">187 estudiantes</span>
-                                        </div>
-                                        <span class="course-percentage">15%</span>
-                                    </div>
-                                </div>
-                            </div>
-                    </div>
-
-                
-
-                    <!-- Tab Content: Estadísticas -->
-                    <div class="tab-content" id="estadisticas-tab">
-                        <div class="statistics-grid">
-                            <div class="chart-card">
-                                <h3><i class="fas fa-chart-line"></i> Tendencia de Inscripciones</h3>
-                                <div class="chart-container">
-                                    <canvas id="enrollmentChart"></canvas>
-                                </div>
-                            </div>
-                            </div>
+                        <div class="activity-stat">
+                            <div class="activity-number" id="certificatesIssued">--</div>
+                            <div class="activity-text">Certificados emitidos</div>
                         </div>
                     </div>
                 </div>
             </div>
-        </main>
+
+            <!-- Diplomados más populares -->
+            <div class="chart-card">
+                <h3><i class="fas fa-star"></i> Diplomados Más Populares</h3>
+                <div class="chart-container">
+                    <canvas id="popularCoursesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="tab-content" id="estadisticas-tab">
+            <div class="statistics-grid">
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-line"></i> Tendencia de Inscripciones</h3>
+                    <div class="chart-container">
+                        <canvas id="enrollmentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <script src="../../static/JS/instructor/seguimientoEstudiantes.js"></script>
+<script src="{{ url_for('static', filename='JS/instructor/seguimientoEstudiantes.js') }}"></script>
 </body>
 </html>

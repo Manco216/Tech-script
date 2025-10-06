@@ -29,7 +29,9 @@
                 <button id="toggleSidebar" class="toggle-btn">☰</button>
             </div>
               <nav>
-  <a href="{{ url_for('home') }}" class="nav-item" id="Inicio">
+  <!-- NAVEGACIÓN PRINCIPAL -->
+  <nav>
+  <a href="{{ url_for('home') }}" class="nav-item active" id="Inicio">
     <i class="fas fa-chart-line icon"></i>
     <span class="text">Inicio</span>
   </a>
@@ -37,7 +39,7 @@
     <i class="fas fa-book icon"></i>
     <span class="text">Diplomados</span>
   </a>
-  <a href="{{ url_for('pagos') }}" class="nav-item active" id="pagos">
+  <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
     <i class="fas fa-credit-card icon"></i>
     <span class="text">Pagos</span>
   </a>
@@ -46,6 +48,7 @@
     <span class="text">Certificados</span>
   </a>
 </nav>
+
             <div class="sidebar-footer">
                 <div class="nav-item" id="configuracion"><i class="fas fa-cog icon"></i><span class="text">Configuración</span></div>
                 <div class="nav-item" id="mi-cuenta"><i class="fas fa-user icon"></i><span class="text">Mi cuenta</span></div>

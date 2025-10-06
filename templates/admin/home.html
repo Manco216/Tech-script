@@ -87,8 +87,8 @@
                   <img src="https://i.pravatar.cc/40?img=6" alt="Avatar">
                 </div>
                 <div class="dropdown-user-info">
-                  <h4>Prof. Martínez</h4>
-                  <span>Instructor</span>
+                  <h4>¡Bienvenido Admin. {{ user.nombre }}</h4>
+                  <span>Administrador</span>
                 </div>
               </div>
               <div class="dropdown-divider"></div>
@@ -118,6 +118,8 @@
               <div class="welcome-text">
                 <h1>¡Bienvenido de vuelta al Panel administrativo!</h1>
                 <p>Gestiona tus Diplomados y Usuarios. Tienes 3 tareas pendientes de revisión.</p>
+                                  <h4>¡Bienvenido Admin {{ user.nombre }}</h4>
+                  <span>Administrador</span>
                 <a href="#" class="welcome-btn" id="revisar-tareas">
                   <i class="fas fa-clipboard-check"></i>
                   
