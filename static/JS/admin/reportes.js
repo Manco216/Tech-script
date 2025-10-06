@@ -1,7 +1,4 @@
-// reportes.js - Versión limpia y optimizada
-// ===========================
-// CONFIGURACIÓN GLOBAL
-// ===========================
+// reportes.js - VERSIÓN CORREGIDA
 const MESES_ES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
                   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -13,13 +10,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 async function inicializarTodo() {
-    // Inicializar componentes UI
     initSidebar();
     initTabs();
     initDropdown();
     configurarFiltros();
     
-    // Cargar datos
     try {
         await cargarKPIs();
         await cargarUsuariosCrecimiento();
@@ -27,7 +22,6 @@ async function inicializarTodo() {
         await cargarDiplomadosRendimiento();
         await cargarMetricasEngagement();
         
-        // Animar elementos después de cargar
         setTimeout(animateProgressBars, 300);
     } catch (error) {
         console.error('Error al inicializar reportes:', error);
@@ -55,7 +49,6 @@ function initSidebar() {
         });
     }
 
-    // Marcar link activo
     const currentPath = window.location.pathname;
     document.querySelectorAll('.nav-item').forEach(link => {
         if (link.getAttribute('href') === currentPath) {
@@ -64,7 +57,6 @@ function initSidebar() {
         }
     });
 
-    // Responsive: cerrar sidebar en móviles al hacer clic en un link
     if (window.innerWidth <= 768) {
         document.querySelectorAll('.nav-item').forEach(link => {
             link.addEventListener('click', () => {
@@ -106,11 +98,9 @@ function initTabs() {
         button.addEventListener('click', () => {
             const tabName = button.getAttribute('data-tab');
             
-            // Remover active
             tabButtons.forEach(btn => btn.classList.remove('active'));
             tabContents.forEach(content => content.classList.remove('active'));
             
-            // Activar seleccionado
             button.classList.add('active');
             const targetTab = document.getElementById(tabName);
             if (targetTab) {
@@ -124,47 +114,74 @@ function initTabs() {
 // CARGAR KPIs
 // ===========================
 async function cargarKPIs() {
-    const response = await fetch('/api/reportes/kpis');
-    const data = await response.json();
+    try {
+        const response = await fetch('/api/reportes/kpis');
+        if (!response.ok) throw new Error('Error al cargar KPIs');
+        
+        const data = await response.json();
 
-    // Total estudiantes
-    document.querySelector('.blue-bg .stat-number').textContent = 
-        data.total_estudiantes.toLocaleString('es-CO');
-    
-    document.querySelector('.blue-bg .stat-growth span').textContent = 
-        `${data.crecimiento_estudiantes >= 0 ? '+' : ''}${data.crecimiento_estudiantes}%`;
-    
-    const growthElement = document.querySelector('.blue-bg .stat-growth');
-    growthElement.className = `stat-growth ${data.crecimiento_estudiantes >= 0 ? 'positive' : 'negative'}`;
+        // Total estudiantes
+        const totalEstudiantesEl = document.querySelector('.blue-bg .stat-number');
+        if (totalEstudiantesEl) {
+            totalEstudiantesEl.textContent = data.total_estudiantes.toLocaleString('es-CO');
+        }
+        
+        // Crecimiento
+        const growthEl = document.querySelector('.blue-bg .stat-growth span');
+        if (growthEl) {
+            growthEl.textContent = `${data.crecimiento_estudiantes >= 0 ? '+' : ''}${data.crecimiento_estudiantes}%`;
+        }
+        
+        const growthContainer = document.querySelector('.blue-bg .stat-growth');
+        if (growthContainer) {
+            growthContainer.className = `stat-growth ${data.crecimiento_estudiantes >= 0 ? 'positive' : 'negative'}`;
+        }
 
-    // Ingresos
-    document.querySelector('.green-bg .stat-number').textContent = 
-        `$${formatearNumero(data.ingresos_totales)}`;
+        // Ingresos
+        const ingresosEl = document.querySelector('.green-bg .stat-number');
+        if (ingresosEl) {
+            ingresosEl.textContent = `$${formatearNumero(data.ingresos_totales)}`;
+        }
 
-    // Tasa finalización
-    document.querySelector('.purple-bg .stat-number').textContent = 
-        `${data.tasa_finalizacion}%`;
+        // Tasa finalización
+        const tasaEl = document.querySelector('.purple-bg .stat-number');
+        if (tasaEl) {
+            tasaEl.textContent = `${data.tasa_finalizacion}%`;
+        }
+    } catch (error) {
+        console.error('Error en cargarKPIs:', error);
+        mostrarNotificacion('Error al cargar estadísticas principales', 'error');
+    }
 }
 
 // ===========================
 // CRECIMIENTO USUARIOS
 // ===========================
 async function cargarUsuariosCrecimiento() {
-    const meses = document.getElementById('filterPeriod')?.value || 6;
-    const response = await fetch(`/api/reportes/usuarios-crecimiento?meses=${meses}`);
-    const data = await response.json();
-    renderizarGraficoUsuarios(data);
+    try {
+        const meses = document.getElementById('filterPeriod')?.value || 6;
+        const response = await fetch(`/api/reportes/usuarios-crecimiento?meses=${meses}`);
+        if (!response.ok) throw new Error('Error al cargar usuarios');
+        
+        const data = await response.json();
+        renderizarGraficoUsuarios(data);
+    } catch (error) {
+        console.error('Error en cargarUsuariosCrecimiento:', error);
+        mostrarNotificacion('Error al cargar datos de usuarios', 'error');
+    }
 }
 
 function renderizarGraficoUsuarios(datos) {
     const container = document.getElementById('usuarios-chart');
+    
+    if (!container) return;
     
     if (!datos || datos.length === 0) {
         container.innerHTML = '<p style="text-align:center; padding: 40px; color: #64748b;">No hay datos disponibles</p>';
         return;
     }
 
-    const maxValor = Math.max(...datos.map(d => d.total));
+    const maxValor = Math.max(...datos.map(d => d.total), 1);
     const alturaGrafico = 300;
 
     let html = '<div class="chart-bars" style="display: flex; align-items: flex-end; justify-content: space-around; height: ' + alturaGrafico + 'px; margin-top: 20px; padding: 0 10px;">';
@@ -193,7 +210,6 @@ function renderizarGraficoUsuarios(datos) {
     html += '</div>';
     container.innerHTML = html;
 
-    // Animar barras
     setTimeout(() => {
         const barras = container.querySelectorAll('.bar-animated');
         barras.forEach(barra => {
@@ -206,13 +222,22 @@ function renderizarGraficoUsuarios(datos) {
 // INGRESOS POR CATEGORÍA
 // ===========================
 async function cargarIngresosCategoria() {
-    const response = await fetch('/api/reportes/ingresos-categoria');
-    const data = await response.json();
-    renderizarGraficoIngresos(data);
+    try {
+        const response = await fetch('/api/reportes/ingresos-categoria');
+        if (!response.ok) throw new Error('Error al cargar ingresos');
+        
+        const data = await response.json();
+        renderizarGraficoIngresos(data);
+    } catch (error) {
+        console.error('Error en cargarIngresosCategoria:', error);
+        mostrarNotificacion('Error al cargar ingresos por categoría', 'error');
+    }
 }
 
 function renderizarGraficoIngresos(datos) {
     const container = document.getElementById('ingresos-chart');
+    
+    if (!container) return;
     
     if (!datos || datos.length === 0) {
         container.innerHTML = '<p style="text-align:center; padding: 40px; color: #64748b;">No hay datos de ingresos disponibles</p>';
@@ -249,7 +274,6 @@ function renderizarGraficoIngresos(datos) {
     html += '</div>';
     container.innerHTML = html;
 
-    // Animar barras de progreso
     setTimeout(() => {
         const barras = container.querySelectorAll('.progress-animated');
         barras.forEach(barra => {
@@ -262,13 +286,22 @@ function renderizarGraficoIngresos(datos) {
 // DIPLOMADOS RENDIMIENTO
 // ===========================
 async function cargarDiplomadosRendimiento() {
-    const response = await fetch('/api/reportes/diplomados-rendimiento');
-    const data = await response.json();
-    renderizarListaDiplomados(data);
+    try {
+        const response = await fetch('/api/reportes/diplomados-rendimiento');
+        if (!response.ok) throw new Error('Error al cargar diplomados');
+        
+        const data = await response.json();
+        renderizarListaDiplomados(data);
+    } catch (error) {
+        console.error('Error en cargarDiplomadosRendimiento:', error);
+        mostrarNotificacion('Error al cargar diplomados', 'error');
+    }
 }
 
 function renderizarListaDiplomados(diplomados) {
     const container = document.getElementById('cursos-list');
+    
+    if (!container) return;
     
     if (!diplomados || diplomados.length === 0) {
         container.innerHTML = '<p style="text-align:center; padding: 40px; color: #64748b;">No hay diplomados registrados</p>';
@@ -309,7 +342,7 @@ function renderizarListaDiplomados(diplomados) {
                     <div style="text-align: right;">
                         ${estadoBadge}
                         <div style="margin-top: 8px; font-size: 20px; font-weight: 700; color: #10b981;">
-                            $${formatearNumero(dip.precio)}
+                            ${formatearNumero(dip.precio)}
                         </div>
                     </div>
                 </div>
@@ -332,7 +365,6 @@ function renderizarListaDiplomados(diplomados) {
     html += '</div>';
     container.innerHTML = html;
 
-    // Animar progreso
     setTimeout(() => {
         const barras = container.querySelectorAll('.progress-animated');
         barras.forEach(barra => {
@@ -345,24 +377,31 @@ function renderizarListaDiplomados(diplomados) {
 // MÉTRICAS ENGAGEMENT
 // ===========================
 async function cargarMetricasEngagement() {
-    const response = await fetch('/api/reportes/metricas-engagement');
-    const data = await response.json();
-
-    // Actualizar métricas
-    const metricRows = document.querySelectorAll('.metric-row');
-    if (metricRows.length >= 2) {
-        metricRows[0].querySelector('.metric-value').textContent = data.tiempo_promedio_sesion;
-        metricRows[1].querySelector('.metric-value').textContent = data.sesiones_totales.toLocaleString('es-CO');
-    }
-
-    // Actualizar barras de progreso
-    const progressGroups = document.querySelectorAll('#usuarios .progress-group');
-    if (progressGroups.length >= 2) {
-        progressGroups[0].querySelector('.metric-value').textContent = `${data.tasa_retencion}%`;
-        progressGroups[0].querySelector('.progress-bar-fill').style.width = `${data.tasa_retencion}%`;
+    try {
+        const response = await fetch('/api/reportes/metricas-engagement');
+        if (!response.ok) throw new Error('Error al cargar métricas');
         
-        progressGroups[1].querySelector('.metric-value').textContent = `${data.usuarios_activos_porcentaje}%`;
-        progressGroups[1].querySelector('.progress-bar-fill').style.width = `${data.usuarios_activos_porcentaje}%`;
+        const data = await response.json();
+
+        // Actualizar métricas
+        const metricRows = document.querySelectorAll('.metric-row');
+        if (metricRows.length >= 2) {
+            metricRows[0].querySelector('.metric-value').textContent = data.tiempo_promedio_sesion;
+            metricRows[1].querySelector('.metric-value').textContent = data.sesiones_totales.toLocaleString('es-CO');
+        }
+
+        // Actualizar barras de progreso
+        const progressGroups = document.querySelectorAll('#usuarios .progress-group');
+        if (progressGroups.length >= 2) {
+            progressGroups[0].querySelector('.metric-value').textContent = `${data.tasa_retencion}%`;
+            progressGroups[0].querySelector('.progress-bar-fill').style.width = `${data.tasa_retencion}%`;
+            
+            progressGroups[1].querySelector('.metric-value').textContent = `${data.usuarios_activos_porcentaje}%`;
+            progressGroups[1].querySelector('.progress-bar-fill').style.width = `${data.usuarios_activos_porcentaje}%`;
+        }
+    } catch (error) {
+        console.error('Error en cargarMetricasEngagement:', error);
+        mostrarNotificacion('Error al cargar métricas de engagement', 'error');
     }
 }
 
@@ -440,7 +479,6 @@ function formatearNumero(numero) {
 }
 
 function mostrarNotificacion(mensaje, tipo = 'info') {
-    // Remover notificaciones anteriores
     const existentes = document.querySelectorAll('.notificacion-custom');
     existentes.forEach(n => n.remove());
 
@@ -502,4 +540,4 @@ styleSheet.textContent = `
         to { transform: translateX(400px); opacity: 0; }
     }
 `;
-document.head.appendChild(styleSheet);
+document.head.appendChild(styleSheet)
