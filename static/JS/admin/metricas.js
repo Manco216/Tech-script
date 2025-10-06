@@ -72,6 +72,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+
+
+
   function updateSystemMetrics(sistema) {
     // Actualizar métricas del sistema
     document.getElementById('errorValue').textContent = sistema.errores + '%';
@@ -166,31 +169,32 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
   }
 
-  function updateContentAnalysis(contenido) {
-    const container = document.getElementById('contentAnalysis');
-    let html = '';
+function updateContentAnalysis(contenido) {
+  const container = document.getElementById('contentAnalysis');
+  if (!container) return;
 
-    contenido.forEach(item => {
-      html += `
-        <div class="content-item">
-          <div style="width: 100%;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-              <span class="item-label">${item.tipo}</span>
-              <div style="text-align: right;">
-                <div class="item-value">${item.valor.toLocaleString()}</div>
-                <div class="item-description">${item.engagement}% engagement</div>
-              </div>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${item.engagement}%"></div>
-            </div>
+  let html = '';
+
+  contenido.forEach(item => {
+    html += `
+      <div class="content-item">
+        <div class="content-header">
+          <span class="item-label">${item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1)}</span>
+          <div class="item-stats">
+            <span class="item-value">${item.valor}</span>
+            <span class="item-description">${item.engagement}% engagement</span>
           </div>
         </div>
-      `;
-    });
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${item.engagement}%"></div>
+        </div>
+      </div>
+    `;
+  });
 
-    container.innerHTML = html;
-  }
+  container.innerHTML = html;
+}
+
 
   function updateAlerts(alertas) {
     const alertsList = document.getElementById('alertsList');
