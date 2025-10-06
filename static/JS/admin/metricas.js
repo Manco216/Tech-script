@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let refreshInterval;
 
   // Elementos del DOM
+
   const autoRefreshToggle = document.getElementById('autoRefresh');
   const refreshBtn = document.getElementById('refreshBtn');
   const lastUpdateTime = document.getElementById('lastUpdateTime');
