@@ -131,12 +131,10 @@
           <div class="welcome-content">
             <div class="welcome-main">
               <div class="welcome-text">
-                <h1>¡Bienvenido de vuelta, María!</h1>
-                <p>Continúa tu camino hacia el éxito profesional. Tienes nuevos módulos esperándote.</p>
-                <a href="#" class="welcome-btn" id="continuar-aprendiendo">
-                  <i class="fas fa-play"></i>
-                  Continuar Aprendiendo
-                </a>
+                <div class="dropdown-user-info">
+                  <h4>Hola. {{ user.nombre }}</h4>
+                  <span>Estudiante</span>
+                </div>
               </div>
               <div class="welcome-illustration">
                 <img src="../../static/img/Online learning.gif" alt="Ilustración de aprendizaje online">

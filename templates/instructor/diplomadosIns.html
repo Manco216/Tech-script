@@ -20,28 +20,29 @@
                 <button id="toggleSidebar" class="toggle-btn">☰</button>
             </div>
 
-            <nav>
-                <a href="{{ url_for('home') }}" class="nav-item" id="Inicio">
-                    <i class="fas fa-chart-line icon"></i>
-                    <span class="text">Panel</span>
-                </a>
-                <a href="{{ url_for('diplomadosIns') }}" class="nav-item active" id="mis-cursos">
-                    <i class="fas fa-book icon"></i>
-                    <span class="text">Mis Diplomados</span>
-                </a>
-                <a href="#" class="nav-item" id="estudiantes">
-                    <i class="fas fa-users icon"></i>
-                    <span class="text">Estudiantes</span>
-                </a> 
-                <a href="{{ url_for('subirContenido') }}" class="nav-item" id="contenido">
-                    <i class="fas fa-upload icon"></i>
-                    <span class="text">Contenido</span>  
-                </a>
-                <a href="{{ url_for('reportesIns') }}" class="nav-item" id="reportes">
-                    <i class="fas fa-chart-bar icon"></i>
-                    <span class="text">Reportes</span>
-                </a>
-            </nav>
+      <nav>
+        <a href="{{ url_for('home') }}" class="nav-item active" id="Inicio">
+          <i class="fas fa-chart-line icon"></i>
+          <span class="text">Panel</span>
+        </a>
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="mis-cursos">
+          <i class="fas fa-book icon"></i>
+          <span class="text">Mis Diplomados</span>
+        </a>
+    <a href="{{ url_for('instructor.seguimiento_estudiantes') }}" class="nav-item">
+          <i class="fas fa-users icon"></i>
+          <span class="text">Estudiantes</span>
+        </a>
+        <a href="{{ url_for('subirContenido') }}" class="nav-item" id="contenido">
+          <i class="fas fa-upload icon"></i>
+          <span class="text">Contenido</span>
+        </a>
+     
+        <a href="{{ url_for('reportesIns') }}" class="nav-item" id="reportes">
+          <i class="fas fa-chart-bar icon"></i>
+          <span class="text">Reportes</span>
+        </a>
+      </nav>
 
             <div class="sidebar-footer">
                 <div class="nav-item" id="configuracion"><i class="fas fa-cog icon"></i><span class="text">Configuración</span></div>
