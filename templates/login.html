@@ -54,7 +54,7 @@
                  <div class="mensaje-error">{{ mensaje }}</div>
                 {% endif %}
 
-                <a href="">¿Olvidaste tu contraseña?</a>
+                <a href="{{ url_for('recuperarContrasena') }}">¿Olvidaste tu contraseña?</a>
 
                 <button class="button" type="submit">Iniciar Sesión</button>
             </form>
@@ -66,8 +66,7 @@
                 <h2>Registrarse</h2>
                 <div class="step-indicator"><span id="step-text">Paso 1 de 2</span></div>
                 <div class="social-networks">
-                    <ion-icon name="logo-google"></ion-icon>
-                    <ion-icon name="logo-facebook"></ion-icon>
+
                 </div>
                 <span>Use su correo electrónico para registrarse</span>
 

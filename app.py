@@ -3,11 +3,12 @@ from flask import Flask, redirect, url_for, session, flash, render_template, req
 from flask_mysqldb import MySQL
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from authlib.integrations.flask_client import OAuth
+from authlib.integrations.flask_client import OAuth, OAuthError
 from flask_session import Session
 from extensions import mysql
 from activity_logger import registrar_actividad
 from flask import jsonify
+from flask_mail import Mail
 
 
 import MySQLdb.cursors
@@ -15,6 +16,7 @@ import MySQLdb.cursors
 # Importamos nuestros módulos
 from models import Usuario
 from gestionUsuarios import (
+    
     obtener_usuario_por_id,
     obtener_usuario_por_correo,
     crear_usuario,
@@ -23,6 +25,15 @@ from gestionUsuarios import (
 from admin_routes import admin_bp  # blueprint de admin
 from reportes_routes import reportes_bp  # blueprint de reportes
 from metrics_routes import metrics_bp  # 👈 importa el nuevo blueprint
+from estudiante_routes import estudiante_bp
+from pagos_routes import pagos_bp
+from routes.contenidos_routes import contenidos_bp
+from routes.pagos_routes import pagosH_bp
+from instructor_routes import instructor_bp
+
+
+
+
 
 # ---------------- CONFIG ----------------
 app = Flask(__name__)
@@ -32,6 +43,11 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "clave_super_secreta")
 app.register_blueprint(admin_bp)
 app.register_blueprint(reportes_bp)
 app.register_blueprint(metrics_bp)
+app.register_blueprint(estudiante_bp)
+app.register_blueprint(pagos_bp)  
+app.register_blueprint(contenidos_bp)
+app.register_blueprint(pagosH_bp)
+app.register_blueprint(instructor_bp)
 
 
 # Flask-Session
@@ -48,6 +64,29 @@ app.config['MYSQL_PORT'] = 3306
 app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 mysql.init_app(app)
 
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'vaison37877@gmail.com'  # tu correo real
+app.config['MAIL_PASSWORD'] = 'lxkk iwfi dmsj piop'   # contraseña de aplicación
+app.config['MAIL_DEFAULT_SENDER'] = 'vaison37877@gmail.com'
+
+mail = Mail(app)
+
+
+
+# Configuración para manejo de archivos
+app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
+app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 500MB máximo
+
+# Crear carpetas de uploads si no existen
+os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'videos'), exist_ok=True)
+os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'documents'), exist_ok=True)
+os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'images'), exist_ok=True)
+# Flask-Login
+
 # Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -57,8 +96,8 @@ login_manager.login_view = "login"
 oauth = OAuth(app)
 google = oauth.register(
     name='google',
-    client_id='TU_CLIENT_ID',
-    client_secret='TU_CLIENT_SECRET',
+    client_id='680454376937-rl88neotnl9fj5f8rob9rlss0bt4uot1.apps.googleusercontent.com',
+    client_secret='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',
     server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
     client_kwargs={'scope': 'openid email profile'}
 )
@@ -73,7 +112,57 @@ def load_user(user_id):
 def index():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    return redirect(url_for('login'))
+    # Si no está autenticado, renderiza index.html (landing page pública)
+    return render_template("index.html")
+
+
+
+@app.route('/diplomados')
+@login_required
+def diplomados():
+    """Redirige a la nueva ruta de diplomados"""
+    return redirect(url_for('estudiante.diplomados'))
+
+@app.route('/progreso_semanal')
+@login_required
+def progreso_semanal():
+    return render_template("estudiante/progressemanal.html", user=current_user)
+
+@app.route('/pagos')
+@login_required
+def pagos():
+    return render_template("estudiante/pagosH.html", user=current_user)
+
+@app.route('/reportesIns')
+@login_required
+def reportesIns():
+    return render_template("instructor/reportesIns.html", user=current_user)
+
+@app.route('/certificados')
+@login_required
+def certificados():
+    return render_template("estudiante/certificados.html", user=current_user)
+
+@app.route('/subir-contenido', methods=['GET', 'POST'])
+@login_required
+def subirContenido():
+    return render_template("instructor/subirContenido.html")
+
+
+@app.route('/perfilEstudiante', methods=['GET', 'POST'])
+@login_required
+def perfilEstudiante():
+    return render_template("estudiante/perfilEstudiante.html")
+
+
+@app.route('/recuperarContrasena', methods=['GET', 'POST'])
+def recuperarContrasena():
+    return render_template("recuperarContrasena.html")
+
+@app.route('/diplomadosIns', methods=['GET', 'POST'])
+@login_required
+def diplomadosIns():
+    return render_template("instructor/diplomadosIns.html")
 
 # -------- LOGIN NORMAL --------
 @app.route('/login', methods=['GET', 'POST'])
@@ -87,18 +176,111 @@ def login():
         if not correo or not contrasena or not rol_seleccionado:
             mensaje = "Completa todos los campos"
         else:
-            usuario = obtener_usuario_por_correo(mysql, correo)
+            cur = mysql.connection.cursor()
+            cur.execute("SELECT * FROM usuarios WHERE correo=%s", (correo,))
+            usuario = cur.fetchone()
+            cur.close()
             rol_map = {'estudiante': 1, 'docente': 2, 'admin': 3}
             rol_num = rol_map.get(rol_seleccionado.lower())
-
-            if usuario and check_password_hash(usuario.contrasena, contrasena) and usuario.fk_rol == rol_num:
-                login_user(usuario)
-                flash(f"Bienvenido {usuario.nombre}", "success")
+            if usuario and check_password_hash(usuario['contrasena'], contrasena) and usuario['fk_rol'] == rol_num:
+                user = Usuario(usuario['id'], usuario['nombre'], usuario['correo'], usuario['fk_rol'])
+                login_user(user)
+                flash(f"Bienvenido {usuario['nombre']}", "success")
                 return redirect(url_for('home'))
             else:
                 mensaje = "Usuario o contraseña incorrectos, o rol incorrecto"
-
     return render_template("login.html", mensaje=mensaje)
+
+@app.route('/crear-usuario', methods=['POST'])
+def crear_usuario():
+    nombre = request.form.get('txtNombre')
+    correo = request.form.get('txtCorreo')
+    contrasena = request.form.get('txtContrasena')
+    documento = request.form.get('txtDocumento')
+    direccion = request.form.get('txtDireccion')
+    telefono = request.form.get('txtTelefono')
+
+    if not all([nombre, correo, contrasena, documento, direccion, telefono]):
+        flash("Completa todos los campos para registrarte", "error")
+        return redirect(url_for('login'))
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM usuarios WHERE correo=%s", (correo,))
+    existe = cur.fetchone()
+    if existe:
+        flash("El correo ya está registrado", "error")
+        cur.close()
+        return redirect(url_for('login'))
+
+    hashed_password = generate_password_hash(contrasena)
+    fk_rol = 1  # estudiante por defecto
+
+    cur.execute("""
+        INSERT INTO usuarios(nombre, documento, correo, contrasena, direccion, telefono, fk_rol)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """, (nombre, documento, correo, hashed_password, direccion, telefono, fk_rol))
+    mysql.connection.commit()
+    cur.close()
+
+    flash("Usuario registrado correctamente. Ahora inicia sesión.", "success")
+    return redirect(url_for('login'))
+
+@app.route('/login/google')
+def login_google():
+    redirect_uri = url_for('auth_callback', _external=True)
+    return google.authorize_redirect(redirect_uri, prompt='select_account')
+
+@app.route('/auth/callback')
+def auth_callback():
+    if 'error' in request.args:
+        flash("Inicio de sesión con Google cancelado o denegado.", "info")
+        return redirect(url_for('login'))
+
+    try:
+        # Si no hay error en la URL, intenta obtener el token.
+        token = google.authorize_access_token()
+    except OAuthError as e:
+        # Maneja cualquier otro error inesperado que pueda ocurrir durante el intercambio del token.
+        print(f"Error durante el intercambio de token OAuth: {e}")
+        flash("Error de autenticación con Google. Inténtalo de nuevo.", "danger")
+        return redirect(url_for('login'))
+        
+    # El resto de la lógica de autenticación y registro de usuario sigue aquí
+    user_info = token.get('userinfo') or token.get('id_token')
+    correo = user_info.get('email')
+    nombre = user_info.get('name', 'Usuario')
+
+    usuario = obtener_usuario_por_correo(mysql, correo)
+
+    if not usuario:
+        hashed_pass = generate_password_hash(os.urandom(16).hex())
+        crear_usuario(mysql, nombre, None, correo, hashed_pass, None, None, fk_rol=1)
+        usuario = obtener_usuario_por_correo(mysql, correo)
+        
+    login_user(usuario)
+    flash(f"Bienvenido {usuario.nombre}", "success")
+    
+    # ⭐ SOLUCIÓN AL TYPERROR: Se elimina 'usuario_id=usuario.id' de la llamada. ⭐
+    registrar_actividad('login_google') 
+    
+    return redirect(url_for('home'))
+        
+    # El resto de la lógica de autenticación y registro de usuario solo se ejecuta si el token es exitoso
+    user_info = token.get('userinfo') or token.get('id_token')
+    correo = user_info.get('email')
+    nombre = user_info.get('name', 'Usuario')
+
+    usuario = obtener_usuario_por_correo(mysql, correo)
+
+    if not usuario:
+        hashed_pass = generate_password_hash(os.urandom(16).hex())
+        crear_usuario(mysql, nombre, None, correo, hashed_pass, None, None, fk_rol=1)
+        usuario = obtener_usuario_por_correo(mysql, correo)
+        
+    login_user(usuario)
+    flash(f"Bienvenido {usuario.nombre}", "success")
+    registrar_actividad('login_google', usuario_id=usuario.id)
+    return redirect(url_for('home'))
 
 # -------- REGISTRO --------
 @app.route('/crear-usuario', methods=['POST'])
@@ -125,27 +307,7 @@ def registrar_usuario():
     return redirect(url_for('login'))
 
 # -------- LOGIN CON GOOGLE --------
-@app.route('/login/google')
-def login_google():
-    redirect_uri = url_for('auth_callback', _external=True)
-    return google.authorize_redirect(redirect_uri, prompt='select_account')
 
-@app.route('/auth/callback')
-def auth_callback():
-    token = google.authorize_access_token()
-    user_info = token.get('userinfo') or token.get('id_token')
-    correo = user_info.get('email')
-    nombre = user_info.get('name', 'Usuario')
-
-    usuario = obtener_usuario_por_correo(mysql, correo)
-    if not usuario:
-        hashed_pass = generate_password_hash(os.urandom(16).hex())
-        crear_usuario(mysql, nombre, None, correo, hashed_pass, None, None, fk_rol=1)
-        usuario = obtener_usuario_por_correo(mysql, correo)
-
-    login_user(usuario)
-    flash(f"Bienvenido {usuario.nombre}", "success")
-    return redirect(url_for('home'))
 
 # -------- HOME SEGÚN ROL --------
 @app.route('/home')
@@ -162,26 +324,6 @@ def home():
     else:
         return "Rol no definido"
 
-# -------- PÁGINAS EXTRAS --------
-@app.route('/diplomados')
-@login_required
-def diplomados():
-    return render_template("diplomados.html", user=current_user)
-
-@app.route('/progreso_semanal')
-@login_required
-def progreso_semanal():
-    return render_template("progreso_semanal.html", user=current_user)
-
-@app.route('/pagos')
-@login_required
-def pagos():
-    return render_template("pagos.html", user=current_user)
-
-@app.route('/certificados')
-@login_required
-def certificados():
-    return render_template("certificados.html", user=current_user)
 
 # -------- LOGOUT --------
 @app.route('/logout')
@@ -191,48 +333,21 @@ def logout():
     flash("Has cerrado sesión", "success")
     return redirect(url_for('login'))
 
-@app.route('/quiz/<int:id>/completar', methods=['POST'])
-@login_required
-def completar_quiz(id):
-    data = request.get_json()
-    puntaje = data.get('puntaje', 0)
-    
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT diplomado_id FROM contenidos WHERE id = %s", (id,))
-    result = cur.fetchone()
-    
-    if result:
-        diplomado_id = result[0]
-        
-        # Actualizar evaluación
-        cur.execute("""
-            UPDATE evaluaciones 
-            SET fecha_fin = NOW(), 
-                puntaje_obtenido = %s,
-                porcentaje = %s,
-                aprobado = %s
-            WHERE usuario_id = %s 
-            AND contenido_id = %s 
-            AND fecha_fin IS NULL
-            ORDER BY fecha_inicio DESC 
-            LIMIT 1
-        """, (puntaje, puntaje, 1 if puntaje >= 70 else 0, current_user.id, id))
-        
-        mysql.connection.commit()
-        
-        # Registrar actividad
-        registrar_actividad(
-            'quiz_completado',
-            diplomado_id=diplomado_id,
-            contenido_id=id,
-            detalles={'puntaje': puntaje, 'aprobado': puntaje >= 70}
-        )  # ← AGREGAR ESTO
-        
-        cur.close()
-        return jsonify({'success': True, 'puntaje': puntaje})
-    
-    cur.close()
-    return jsonify({'success': False}), 400
+
+from routes.diplomados import create_diplomados_blueprint
+from routes.contenido import create_contenido_blueprint
+
+
+from routes.recovery import create_recovery_blueprint
+
+recovery_bp = create_recovery_blueprint(mysql, mail, app)
+app.register_blueprint(recovery_bp)
+
+diplomados_bp = create_diplomados_blueprint(mysql)
+contenido_bp = create_contenido_blueprint(mysql)
+
+app.register_blueprint(diplomados_bp)
+app.register_blueprint(contenido_bp)
 
 # ---------------- MAIN ----------------
 if __name__ == '__main__':

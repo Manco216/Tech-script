@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Diplomados - tech-script</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="../../static/CSS/instructor/diplomadosIns.css">
-    <link rel="icon" type="image/png" href="../../static/img/logof.png"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/instructor/diplomadosIns.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logof.png') }}"/>
 </head>
 <body>
     <div class="layout">
@@ -14,35 +14,34 @@
         <aside class="sidebar" id="sidebar">
             <div class="logo">
                 <div class="logo-content">
-                    <img src="../../static/img/logo.png" alt="Logo">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo">
                     <h2>tech-script</h2>
                 </div>
                 <button id="toggleSidebar" class="toggle-btn">☰</button>
             </div>
 
             <nav>
-        <a href="{{ url_for('instructor') }}" class="nav-item " id="Inicio">
-          <i class="fas fa-chart-line icon"></i>
-          <span class="text">Panel</span>
-        </a>
-        <a href="{{ url_for('diplomadosIns') }}" class="nav-item active" id="mis-cursos">
-          <i class="fas fa-book icon"></i>
-          <span class="text">Mis Diplomados</span>
-        </a>
-        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="estudiantes">
-          <i class="fas fa-users icon"></i>
-          <span class="text">Estudiantes</span>
-        </a>
-        <a href="{{ url_for('subirContenido') }}" class="nav-item" id="contenido">
-          <i class="fas fa-upload icon"></i>
-          <span class="text">Contenido</span>
-        </a>
-     
-        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
-          <i class="fas fa-chart-bar icon"></i>
-          <span class="text">Reportes</span>
-        </a>
-      </nav>
+                <a href="{{ url_for('home') }}" class="nav-item" id="Inicio">
+                    <i class="fas fa-chart-line icon"></i>
+                    <span class="text">Panel</span>
+                </a>
+                <a href="{{ url_for('diplomadosIns') }}" class="nav-item active" id="mis-cursos">
+                    <i class="fas fa-book icon"></i>
+                    <span class="text">Mis Diplomados</span>
+                </a>
+                <a href="#" class="nav-item" id="estudiantes">
+                    <i class="fas fa-users icon"></i>
+                    <span class="text">Estudiantes</span>
+                </a> 
+                <a href="{{ url_for('subirContenido') }}" class="nav-item" id="contenido">
+                    <i class="fas fa-upload icon"></i>
+                    <span class="text">Contenido</span>  
+                </a>
+                <a href="{{ url_for('reportesIns') }}" class="nav-item" id="reportes">
+                    <i class="fas fa-chart-bar icon"></i>
+                    <span class="text">Reportes</span>
+                </a>
+            </nav>
 
             <div class="sidebar-footer">
                 <div class="nav-item" id="configuracion"><i class="fas fa-cog icon"></i><span class="text">Configuración</span></div>
@@ -91,30 +90,11 @@
                             </div>
                             <div class="stat-info">
                                 <h4>Total Diplomados</h4>
-                                <p id="total-courses">4</p>
-                                <small id="active-courses">3 activos</small>
+                                <p id="total-courses">0</p>
+                                <small id="active-courses">0 activos</small>
                             </div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="stat-info">
-                                <h4>Total Estudiantes</h4>
-                                <p id="total-students">437</p>
-                                <small>Promedio 109/Diplomado</small>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-file-alt"></i>
-                            </div>
-                            <div class="stat-info">
-                                <h4>Total Contenidos</h4>
-                                <p id="total-content">127</p>
-                                <small>Todos los diplomados</small>
-                            </div>
-                        </div>    
+                     
                     </div>
 
                     <!-- Filtros -->
@@ -146,7 +126,9 @@
                     </div>
 
                     <!-- Grid de Diplomados -->
-                    <div id="courses-list" class="courses-grid"></div>
+                    <div id="courses-list" class="courses-grid">
+                        <!-- Las tarjetas se generarán dinámicamente aquí -->
+                    </div>
                 </div>
 
                 <!-- VISTA: Contenido del Diplomado -->
@@ -213,6 +195,7 @@
                                 <select id="content-status-filter" class="filter-select">
                                     <option value="all">Todos los estados</option>
                                     <option value="published">Publicado</option>
+                                    <option value="draft">Borrador</option>
                                     <option value="processing">Procesando</option>
                                 </select>
                             </div>
@@ -222,8 +205,18 @@
                         </div>
 
                         <!-- Grid de contenidos -->
-                        <div id="content-grid" class="content-grid"></div>
-                    </div>     
+                        <div id="content-grid" class="content-grid">
+                            <!-- Los contenidos se generarán dinámicamente aquí -->
+                        </div>
+                    </div>
+
+                    <!-- Tab de estadísticas -->
+                    <div class="tab-content" id="content-analytics">
+                        <div style="text-align: center; padding: 3rem; color: #64748b;">
+                            <i class="fas fa-chart-bar" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h3>Estadísticas próximamente</h3>
+                            <p>Aquí podrás ver el rendimiento de tus contenidos</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -340,16 +333,6 @@
         </div>
     </div>
 
-    <!-- Modal para Gestión de Contenido -->
-    <div class="modal-overlay" id="contentModalOverlay">
-        <div class="modal large-modal">
-            <div class="modal-header">
-                <h2 id="content-modal-title">Gestión de Contenido</h2>
-                <button class="modal-close" id="closeContentModal">&times;</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="../../static/JS/instructor/diplomadosIns.js"></script>
+    <script src="{{ url_for('static', filename='JS/instructor/diplomadosIns.js') }}"></script>
 </body>
 </html>

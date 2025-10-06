@@ -1110,3 +1110,281 @@ body {
 .lesson-list.open, .lesson-list.active { max-height: 1000px; } /* suficiente para varias lecciones */
 .toggle-icon { transition: transform 0.25s ease; display: inline-block; }
 .toggle-icon.rotated { transform: rotate(180deg); }
+
+/* ========================== 
+   MODAL DE PAGO
+========================== */
+.payment-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.payment-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.payment-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.payment-modal-content {
+    position: relative;
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.payment-modal.active .payment-modal-content {
+    transform: scale(1);
+}
+
+.close-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #f1f5f9;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1.2rem;
+    color: #64748b;
+}
+
+.close-modal:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+    transform: rotate(90deg);
+}
+
+.payment-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.payment-header i {
+    font-size: 3rem;
+    color: #6366f1;
+    margin-bottom: 1rem;
+}
+
+.payment-header h2 {
+    font-size: 1.8rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.payment-header p {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+.payment-summary {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+.summary-row.total {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1e293b;
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+    border-top: 2px solid #cbd5e1;
+}
+
+.payment-methods {
+    margin-bottom: 2rem;
+}
+
+.payment-methods h3 {
+    font-size: 1.1rem;
+    color: #1e293b;
+    margin-bottom: 1rem;
+}
+
+#braintree-dropin-container {
+    min-height: 200px;
+}
+
+.payment-security {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: #f0fdf4;
+    border-radius: 12px;
+    color: #15803d;
+    font-size: 0.9rem;
+}
+
+.payment-security i {
+    font-size: 1.2rem;
+}
+
+/* Notificaciones */
+.notification {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 10000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    border-left: 4px solid #6366f1;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification.success {
+    border-left-color: #10b981;
+}
+
+.notification.error {
+    border-left-color: #ef4444;
+}
+
+.notification.warning {
+    border-left-color: #f59e0b;
+}
+
+.notification i {
+    font-size: 1.5rem;
+}
+
+.notification.success i {
+    color: #10b981;
+}
+
+.notification.error i {
+    color: #ef4444;
+}
+
+.notification.warning i {
+    color: #f59e0b;
+}
+
+.notification.info i {
+    color: #6366f1;
+}
+/* Estilos para el formulario de Braintree */
+#braintree-dropin-container {
+    min-height: 250px;
+}
+
+.braintree-form__field-group {
+    margin-bottom: 1rem;
+}
+
+.braintree-form__label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 0.9rem;
+}
+
+.braintree-form__field {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.braintree-form__hosted-field {
+    height: 45px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0 1rem;
+    font-size: 16px;
+    background: white;
+    transition: all 0.2s;
+}
+
+.braintree-form__hosted-field:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.braintree-form__hosted-field.braintree-hosted-fields-invalid {
+    border-color: #ef4444;
+}
+
+.braintree-form__hosted-field.braintree-hosted-fields-valid {
+    border-color: #10b981;
+}
+
+/* Asegurar que el CVV sea visible */
+.braintree-form__field--cvv {
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* Mejorar botones de PayPal y Google Pay */
+.braintree-method__label {
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.braintree-method__label:hover {
+    border-color: #6366f1;
+    background: #f8fafc;
+}
+
+.braintree-method--active .braintree-method__label {
+    border-color: #6366f1;
+    background: #f0f4ff;
+}

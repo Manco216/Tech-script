@@ -1,520 +1,13 @@
-const courses = [
-    {
-        id: "1",
-        title: "Desarrollo Web con React",
-        description: "Aprende a crear aplicaciones web modernas con React, hooks y estado global.",
-        category: "Frontend",
-        level: "Intermedio",
-        duration: 40,
-        students: 156,
-        rating: 4.8,
-        reviews: 89,
-        status: "active",
-        progress: 100,
-        thumbnail: "https://via.placeholder.com/300x200",
-        price: 150000,
-        lessons: 24,
-        contentCount: 18
-    },
-    {
-        id: "2",
-        title: "Python para Data Science",
-        description: "Domina Python y sus librerías para análisis de datos y machine learning.",
-        category: "Data Science",
-        level: "Principiante",
-        duration: 35,
-        students: 203,
-        rating: 4.9,
-        reviews: 127,
-        status: "active",
-        progress: 100,
-        thumbnail: "https://via.placeholder.com/300x200",
-        price: 180000,
-        lessons: 28,
-        contentCount: 25
-    },
-    {
-        id: "3",
-        title: "Microservicios con Spring Boot",
-        description: "Arquitectura de microservicios usando Spring Boot y tecnologías cloud.",
-        category: "Backend",
-        level: "Avanzado",
-        duration: 50,
-        students: 78,
-        rating: 4.7,
-        reviews: 45,
-        status: "active",
-        progress: 85,
-        thumbnail: "https://via.placeholder.com/300x200",
-        price: 220000,
-        lessons: 32,
-        contentCount: 31
-    },
-    {
-        id: "4",
-        title: "Introducción a DevOps",
-        description: "Conceptos fundamentales de DevOps, CI/CD y automatización.",
-        category: "DevOps",
-        level: "Principiante",
-        duration: 25,
-        students: 0,
-        rating: 0,
-        reviews: 0,
-        status: "draft",
-        progress: 60,
-        thumbnail: "https://via.placeholder.com/300x200",
-        price: 120000,
-        lessons: 18,
-        contentCount: 5
-    }
-];
-
-const mockContent = [
-    { 
-        id: "1", 
-        courseId: "1",
-        title: "Introducción a React Hooks", 
-        type: "video", 
-        lesson: "Lección 1", 
-        size: "245 MB", 
-        uploadDate: "2024-01-14", 
-        status: "published", 
-        views: 156, 
-        duration: "15:30", 
-        description: "Video introductorio sobre React Hooks y su implementación" 
-    },
-    { 
-        id: "2", 
-        courseId: "1",
-        title: "Ejercicios de useState", 
-        type: "document", 
-        lesson: "Lección 1", 
-        size: "2.5 MB", 
-        uploadDate: "2024-01-14", 
-        status: "published", 
-        views: 89, 
-        description: "Documento PDF con ejercicios prácticos de useState" 
-    },
-    { 
-        id: "3", 
-        courseId: "1",
-        title: "Quiz: Fundamentos de React", 
-        type: "quiz", 
-        lesson: "Lección 2", 
-        size: "0.5 MB", 
-        uploadDate: "2024-01-12", 
-        status: "published", 
-        views: 134, 
-        description: "Evaluación de conocimientos básicos de React" 
-    },
-    { 
-        id: "4", 
-        courseId: "2",
-        title: "Introducción a NumPy", 
-        type: "video", 
-        lesson: "Lección 1", 
-        size: "180 MB", 
-        uploadDate: "2024-01-13", 
-        status: "published", 
-        views: 203, 
-        duration: "12:45", 
-        description: "Video sobre las bases de NumPy para análisis de datos" 
-    },
-    { 
-        id: "5", 
-        courseId: "2",
-        title: "Ejercicios de Pandas", 
-        type: "document", 
-        lesson: "Lección 3", 
-        size: "3.2 MB", 
-        uploadDate: "2024-01-10", 
-        status: "draft", 
-        views: 0, 
-        description: "Ejercicios prácticos con la librería Pandas" 
-    }
-];
-
-const notificacionesDiplomados = [
-    {
-        id: 1,
-        diplomadoId: 'new_1',
-        titulo: "Desarrollo Mobile con React Native",
-        instructor: "Patricia Jiménez",
-        categoria: "Desarrollo Mobile",
-        fechaEnvio: "2024-03-25T10:30:00",
-        descripcion: "Curso completo de desarrollo de aplicaciones móviles multiplataforma",
-        duracion: 45,
-        lecciones: 32,
-        estado: "pendiente"
-    },
-    {
-        id: 2,
-        diplomadoId: 'new_2',
-        titulo: "Blockchain y Criptomonedas",
-        instructor: "Eduardo Ruiz",
-        categoria: "Blockchain",
-        fechaEnvio: "2024-03-24T15:20:00",
-        descripcion: "Introducción completa al mundo de blockchain y desarrollo de smart contracts",
-        duracion: 38,
-        lecciones: 28,
-        estado: "pendiente"
-    },
-    {
-        id: 3,
-        diplomadoId: 'new_3',
-        titulo: "Data Science con R",
-        instructor: "María Gonzalez",
-        categoria: "Data Science",
-        fechaEnvio: "2024-03-23T09:15:00",
-        descripcion: "Análisis de datos y machine learning usando el lenguaje R",
-        duracion: 52,
-        lecciones: 35,
-        estado: "pendiente"
-    }
-];
-
-class NotificacionesManager {
-    constructor() {
-        this.notificaciones = [...notificacionesDiplomados];
-        this.init();
-    }
-
-    init() {
-        this.setupEventListeners();
-        this.updateNotificationBadge();
-        this.renderNotifications();
-        this.renderApprovals();
-    }
-
-    setupEventListeners() {
-        const notificationIcon = document.querySelector('.notification-icon');
-        const notificationsPanel = document.getElementById('notificationsPanel');
-        const notificationsOverlay = document.getElementById('notificationsOverlay');
-        const closeNotifications = document.getElementById('closeNotifications');
-
-        if (notificationIcon) {
-            notificationIcon.addEventListener('click', () => {
-                this.openNotificationsPanel();
-            });
-        }
-
-        if (closeNotifications) {
-            closeNotifications.addEventListener('click', () => {
-                this.closeNotificationsPanel();
-            });
-        }
-
-        if (notificationsOverlay) {
-            notificationsOverlay.addEventListener('click', () => {
-                this.closeNotificationsPanel();
-            });
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && notificationsPanel && notificationsPanel.classList.contains('active')) {
-                this.closeNotificationsPanel();
-            }
-        });
-    }
-
-    openNotificationsPanel() {
-        const panel = document.getElementById('notificationsPanel');
-        const overlay = document.getElementById('notificationsOverlay');
-        
-        if (panel && overlay) {
-            panel.classList.add('active');
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-    }
-
-    closeNotificationsPanel() {
-        const panel = document.getElementById('notificationsPanel');
-        const overlay = document.getElementById('notificationsOverlay');
-        
-        if (panel && overlay) {
-            panel.classList.remove('active');
-            overlay.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-    }
-
-    updateNotificationBadge() {
-        const badge = document.querySelector('.notification-badge');
-        const pendientes = this.notificaciones.filter(n => n.estado === 'pendiente').length;
-        
-        if (badge) {
-            badge.textContent = pendientes;
-            badge.style.display = pendientes > 0 ? 'flex' : 'none';
-            
-            if (pendientes > 0) {
-                badge.classList.add('pulse');
-            } else {
-                badge.classList.remove('pulse');
-            }
-        }
-    }
-
-    renderApprovals() {
-        const container = document.getElementById('approvals-list');
-        if (!container) return;
-
-        const pendientes = this.notificaciones.filter(n => n.estado === 'pendiente');
-
-        if (pendientes.length === 0) {
-            container.innerHTML = `
-                <div style="text-align: center; padding: 2rem; color: #64748b;">
-                    <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 1rem; color: #10b981;"></i>
-                    <h4 style="margin-bottom: 0.5rem;">Todo al día</h4>
-                    <p>No hay solicitudes pendientes de aprobación</p>
-                </div>
-            `;
-            return;
-        }
-
-        container.innerHTML = pendientes.map(notif => `
-            <div class="approval-card" style="background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-                    <div style="flex: 1;">
-                        <h4 style="margin: 0 0 0.5rem 0; color: #1e293b; font-size: 1.125rem;">${notif.titulo}</h4>
-                        <p style="color: #64748b; margin: 0 0 0.75rem 0; font-size: 0.875rem;">${notif.descripcion}</p>
-                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.875rem; color: #64748b;">
-                            <span><i class="fas fa-user" style="color: #6366f1;"></i> ${notif.instructor}</span>
-                            <span><i class="fas fa-tag" style="color: #6366f1;"></i> ${notif.categoria}</span>
-                            <span><i class="fas fa-clock" style="color: #6366f1;"></i> ${notif.duracion}h</span>
-                            <span><i class="fas fa-book" style="color: #6366f1;"></i> ${notif.lecciones} lecciones</span>
-                        </div>
-                    </div>
-                    <span style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; white-space: nowrap;">
-                        ${this.formatTime(notif.fechaEnvio)}
-                    </span>
-                </div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button class="btn btn-primary" onclick="notificacionesManager.aprobarDiplomado(${notif.id})" style="flex: 1;">
-                        <i class="fas fa-check"></i> Aprobar
-                    </button>
-                    <button class="btn btn-secondary" onclick="notificacionesManager.verDetalles(${notif.id})">
-                        <i class="fas fa-eye"></i> Ver
-                    </button>
-                    <button class="btn btn-danger" onclick="notificacionesManager.rechazarDiplomado(${notif.id})">
-                        <i class="fas fa-times"></i> Rechazar
-                    </button>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    renderNotifications() {
-        const container = document.getElementById('notificationsContent');
-        if (!container) return;
-
-        const pendientes = this.notificaciones.filter(n => n.estado === 'pendiente');
-
-        if (pendientes.length === 0) {
-            container.innerHTML = `
-                <div class="empty-notifications">
-                    <i class="fas fa-bell-slash"></i>
-                    <h4>No hay solicitudes pendientes</h4>
-                    <p>Todas las solicitudes han sido procesadas</p>
-                </div>
-            `;
-            return;
-        }
-
-        container.innerHTML = pendientes.map(notif => `
-            <div class="notification-item pending">
-                <div class="notification-header">
-                    <div class="notification-title">${notif.titulo}</div>
-                    <div class="notification-time">${this.formatTime(notif.fechaEnvio)}</div>
-                </div>
-                
-                <div class="notification-details">
-                    <div class="notification-detail">
-                        <span class="label">Instructor:</span>
-                        <span class="value">${notif.instructor}</span>
-                    </div>
-                    <div class="notification-detail">
-                        <span class="label">Categoría:</span>
-                        <span class="value">${notif.categoria}</span>
-                    </div>
-                    <div class="notification-detail">
-                        <span class="label">Duración:</span>
-                        <span class="value">${notif.duracion} horas</span>
-                    </div>
-                    <div class="notification-detail">
-                        <span class="label">Lecciones:</span>
-                        <span class="value">${notif.lecciones}</span>
-                    </div>
-                </div>
-
-                <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 1rem; line-height: 1.4;">
-                    ${notif.descripcion}
-                </p>
-
-                <div class="notification-actions">
-                    <button class="notification-btn view" onclick="notificacionesManager.verDetalles(${notif.id})">
-                        <i class="fas fa-eye"></i>
-                        Ver
-                    </button>
-                    <button class="notification-btn approve" onclick="notificacionesManager.aprobarDiplomado(${notif.id})">
-                        <i class="fas fa-check"></i>
-                        Aprobar
-                    </button>
-                    <button class="notification-btn reject" onclick="notificacionesManager.rechazarDiplomado(${notif.id})">
-                        <i class="fas fa-times"></i>
-                        Rechazar
-                    </button>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    formatTime(dateString) {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffMs = now - date;
-        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-        const diffDays = Math.floor(diffHours / 24);
-
-        if (diffHours < 1) {
-            return 'Hace menos de 1h';
-        } else if (diffHours < 24) {
-            return `Hace ${diffHours}h`;
-        } else if (diffDays === 1) {
-            return 'Ayer';
-        } else {
-            return `Hace ${diffDays} días`;
-        }
-    }
-
-    verDetalles(notificationId) {
-        const notif = this.notificaciones.find(n => n.id === notificationId);
-        if (notif) {
-            this.showNotification(`Viendo detalles de: ${notif.titulo}`, 'info');
-        }
-    }
-
-    aprobarDiplomado(notificationId) {
-        if (confirm('¿Estás seguro de que quieres aprobar este diplomado?')) {
-            const notif = this.notificaciones.find(n => n.id === notificationId);
-            if (notif) {
-                notif.estado = 'aprobado';
-                
-                if (window.app) {
-                    const nuevoDiplomado = {
-                        id: notif.diplomadoId,
-                        title: notif.titulo,
-                        description: notif.descripcion,
-                        category: notif.categoria,
-                        level: "Intermedio",
-                        duration: notif.duracion,
-                        students: 0,
-                        rating: 0,
-                        reviews: 0,
-                        status: "active",
-                        progress: 100,
-                        thumbnail: "https://via.placeholder.com/300x200",
-                        price: 180000,
-                        lessons: notif.lecciones,
-                        contentCount: 0
-                    };
-                    
-                    app.courses.push(nuevoDiplomado);
-                    app.filteredCourses = [...app.courses];
-                    app.renderCourses();
-                    app.updateStats();
-                }
-                
-                this.updateNotificationBadge();
-                this.renderNotifications();
-                this.renderApprovals();
-                this.showNotification(`Diplomado "${notif.titulo}" aprobado exitosamente`, 'success');
-            }
-        }
-    }
-
-    rechazarDiplomado(notificationId) {
-        if (confirm('¿Estás seguro de que quieres rechazar este diplomado?')) {
-            const notif = this.notificaciones.find(n => n.id === notificationId);
-            if (notif) {
-                notif.estado = 'rechazado';
-                
-                this.updateNotificationBadge();
-                this.renderNotifications();
-                this.renderApprovals();
-                this.showNotification(`Diplomado "${notif.titulo}" rechazado`, 'warning');
-            }
-        }
-    }
-
-    showNotification(message, type = "info") {
-        if (window.app && typeof app.showNotification === 'function') {
-            app.showNotification(message, type);
-        } else {
-            const notification = document.createElement("div");
-            notification.className = `notification ${type}`;
-            notification.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
-                <span>${message}</span>
-            `;
-            
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${type === "success" ? "#10b981" : type === "error" ? "#ef4444" : type === "warning" ? "#f59e0b" : "#6366f1"};
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 12px;
-                font-weight: 600;
-                z-index: 9999;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                min-width: 300px;
-                animation: slideInRight 0.3s ease-out;
-                font-family: "Montserrat", sans-serif;
-            `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.animation = "slideOutRight 0.3s ease-out forwards";
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 300);
-            }, 4000);
-        }
-    }
-
-    agregarNotificacion(nuevaNotificacion) {
-        this.notificaciones.unshift({
-            ...nuevaNotificacion,
-            id: Date.now(),
-            estado: 'pendiente',
-            fechaEnvio: new Date().toISOString()
-        });
-        
-        this.updateNotificationBadge();
-        this.renderNotifications();
-        this.renderApprovals();
-    }
-}
-
 class DiplomaApp {
     constructor() {
-        this.courses = courses;
-        this.filteredCourses = [...courses];
+        this.courses = [];
+        this.filteredCourses = [];
         this.currentView = 'diplomados';
         this.selectedCourse = null;
         this.filteredContent = [];
+        this.allContent = [];
         this.objectives = [];
         this.currentEditingCourse = null;
-        this.currentEditingContent = null;
-        this.currentCourseForContent = null;
         this.init();
     }
 
@@ -522,12 +15,12 @@ class DiplomaApp {
         this.setupEventListeners();
         this.setupSidebar();
         this.setupModals();
-        this.renderCourses();
-        this.updateStats();
+        this.loadDiplomados();
         this.showView('diplomados');
     }
 
     setupEventListeners() {
+        // Filtros de diplomados
         const searchInput = document.getElementById("search");
         const statusFilter = document.getElementById("status-filter");
         const categoryFilter = document.getElementById("category-filter");
@@ -538,18 +31,21 @@ class DiplomaApp {
         if (categoryFilter) categoryFilter.addEventListener("change", () => this.applyFilters());
         if (clearBtn) clearBtn.addEventListener("click", () => this.clearFilters());
 
+        // Navegación
         const backBtn = document.getElementById("backToDiplomados");
-        const breadcrumbHome = document.getElementById("breadcrumb-home");
-        
-        if (backBtn) backBtn.addEventListener("click", () => this.showView('diplomados'));
-        if (breadcrumbHome) breadcrumbHome.addEventListener("click", () => this.showView('diplomados'));
+        if (backBtn) backBtn.addEventListener("click", () => {
+            this.showView('diplomados');
+            this.loadDiplomados();
+        });
 
+        // Botones principales
         const createCourseBtn = document.getElementById("createCourseBtn");
         const addContentBtn = document.getElementById("addContentBtn");
         
         if (createCourseBtn) createCourseBtn.addEventListener("click", () => this.openCourseModal());
         if (addContentBtn) addContentBtn.addEventListener("click", () => this.navigateToUploadContent());
 
+        // Filtros de contenido
         const contentTypeFilter = document.getElementById("content-type-filter");
         const contentStatusFilter = document.getElementById("content-status-filter");
         const contentSearch = document.getElementById("content-search");
@@ -558,6 +54,7 @@ class DiplomaApp {
         if (contentStatusFilter) contentStatusFilter.addEventListener("change", () => this.applyContentFilters());
         if (contentSearch) contentSearch.addEventListener("input", () => this.applyContentFilters());
 
+        // Tabs de contenido
         const contentTabs = document.querySelectorAll('.tab-btn[data-tab]');
         contentTabs.forEach(tab => {
             tab.addEventListener('click', () => this.switchContentTab(tab.dataset.tab));
@@ -566,10 +63,7 @@ class DiplomaApp {
 
     navigateToUploadContent() {
         if (this.selectedCourse) {
-            localStorage.setItem('selectedCourseId', this.selectedCourse.id);
-            localStorage.setItem('selectedCourseTitle', this.selectedCourse.title);
-            localStorage.setItem('fromDiplomadosPage', 'true');
-            window.location.href = 'subirContenido.html';
+            window.location.href = `/subirContenido?diplomado_id=${this.selectedCourse.id}`;
         } else {
             this.showNotification("Error: No se ha seleccionado un diplomado", "error");
         }
@@ -594,7 +88,7 @@ class DiplomaApp {
 
         document.addEventListener('click', (e) => {
             if (window.innerWidth <= 768) {
-                if (sidebar && !sidebar.contains(e.target) && toggleMobileBtn && !toggleMobileBtn.contains(e.target)) {
+                if (!sidebar.contains(e.target) && !toggleMobileBtn.contains(e.target)) {
                     sidebar.classList.remove('active');
                 }
             }
@@ -613,39 +107,26 @@ class DiplomaApp {
 
         if (saveBtn) saveBtn.addEventListener("click", () => this.saveCourse());
 
-        const contentModal = document.getElementById("contentModalOverlay");
-        const closeContentBtn = document.getElementById("closeContentModal");
-        const cancelContentBtn = document.getElementById("cancel-content-btn");
-        const saveContentBtn = document.getElementById("save-content-btn");
-
-        [closeContentBtn, cancelContentBtn].forEach(btn => {
-            if (btn) btn.addEventListener("click", () => this.closeContentModal());
-        });
-
-        if (saveContentBtn) saveContentBtn.addEventListener("click", () => this.saveContent());
-
-        this.setupModalTabs();
-
         const addObjectiveBtn = document.getElementById("addObjective");
         const objectiveInput = document.getElementById("newObjective");
 
         if (addObjectiveBtn && objectiveInput) {
             addObjectiveBtn.addEventListener("click", () => this.addObjective());
             objectiveInput.addEventListener("keypress", (e) => {
-                if (e.key === "Enter") this.addObjective();
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    this.addObjective();
+                }
             });
         }
 
-        [modal, contentModal].forEach(m => {
-            if (m) {
-                m.addEventListener("click", (e) => {
-                    if (e.target === m) {
-                        if (m === modal) this.closeCourseModal();
-                        else this.closeContentModal();
-                    }
-                });
-            }
-        });
+        if (modal) {
+            modal.addEventListener("click", (e) => {
+                if (e.target === modal) this.closeCourseModal();
+            });
+        }
+
+        this.setupModalTabs();
     }
 
     setupModalTabs() {
@@ -657,14 +138,39 @@ class DiplomaApp {
                 modalTabs.forEach(t => t.classList.remove("active"));
                 tabPanels.forEach(p => p.classList.remove("active"));
                 tab.classList.add("active");
-                const targetPanel = document.getElementById(`tab-${tab.dataset.tab}`);
-                if (targetPanel) {
-                    targetPanel.classList.add("active");
-                }
+                document.getElementById(`tab-${tab.dataset.tab}`).classList.add("active");
             });
         });
     }
 
+    // =================== CARGAR DIPLOMADOS ===================
+    async loadDiplomados() {
+        try {
+            console.log('🔄 Cargando diplomados...');
+            const response = await fetch('/diplomados/api/listar');
+            console.log('📡 Response status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ Error response:', errorText);
+                throw new Error(`Error al cargar diplomados: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('✅ Diplomados recibidos:', data);
+            console.log('📊 Total diplomados:', data.length);
+            
+            this.courses = data;
+            this.filteredCourses = [...this.courses];
+            this.renderCourses();
+            this.updateStats();
+        } catch (error) {
+            console.error('💥 Error al cargar diplomados:', error);
+            this.showNotification('Error al cargar diplomados: ' + error.message, 'error');
+        }
+    }
+
+    // =================== GESTIÓN DE VISTAS ===================
     showView(viewName) {
         const views = document.querySelectorAll('.view-container');
         views.forEach(v => v.classList.remove('active'));
@@ -674,41 +180,31 @@ class DiplomaApp {
             targetView.classList.add('active');
             this.currentView = viewName;
         }
-
-        this.updateBreadcrumbs(viewName);
     }
 
-    updateBreadcrumbs(viewName) {
-        const breadcrumbs = document.getElementById('breadcrumbs');
-        if (!breadcrumbs) return;
+    // =================== VER CONTENIDO DEL DIPLOMADO ===================
+    async viewCourseContent(courseId) {
+        try {
+            this.selectedCourse = this.courses.find(c => c.id == courseId);
+            if (!this.selectedCourse) {
+                this.showNotification('Diplomado no encontrado', 'error');
+                return;
+            }
 
-        if (viewName === 'diplomados') {
-            breadcrumbs.innerHTML = `
-                <a href="#" class="breadcrumb-item active">
-                    <i class="fas fa-home"></i> Mis Diplomados
-                </a>
-            `;
-        } else if (viewName === 'content' && this.selectedCourse) {
-            breadcrumbs.innerHTML = `
-                <a href="#" class="breadcrumb-item" onclick="app.showView('diplomados')">
-                    <i class="fas fa-home"></i> Mis Diplomados
-                </a>
-                <a href="#" class="breadcrumb-item active">
-                    <i class="fas fa-folder"></i> ${this.selectedCourse.title}
-                </a>
-            `;
+            // Cargar contenidos desde la base de datos
+            const response = await fetch(`/contenido/api/listar/${courseId}`);
+            if (!response.ok) throw new Error('Error al cargar contenidos');
+            
+            this.allContent = await response.json();
+            this.filteredContent = [...this.allContent];
+            
+            this.updateCourseHeader();
+            this.renderContent();
+            this.showView('content');
+        } catch (error) {
+            console.error('Error al cargar contenidos:', error);
+            this.showNotification('Error al cargar contenidos del diplomado', 'error');
         }
-    }
-
-    viewCourseContent(courseId) {
-        this.selectedCourse = this.courses.find(c => c.id === courseId);
-        if (!this.selectedCourse) return;
-
-        this.currentCourseForContent = this.selectedCourse;
-        this.filteredContent = mockContent.filter(c => c.courseId === courseId);
-        this.updateCourseHeader();
-        this.renderContent();
-        this.showView('content');
     }
 
     updateCourseHeader() {
@@ -720,10 +216,10 @@ class DiplomaApp {
         const studentsEl = document.getElementById('selected-course-students');
         const contentEl = document.getElementById('selected-course-content');
 
-        if (titleEl) titleEl.textContent = this.selectedCourse.title;
-        if (descEl) descEl.textContent = this.selectedCourse.description;
-        if (nameEl) nameEl.textContent = this.selectedCourse.title;
-        if (studentsEl) studentsEl.textContent = `${this.selectedCourse.students} estudiantes`;
+        if (titleEl) titleEl.textContent = this.selectedCourse.titulo;
+        if (descEl) descEl.textContent = this.selectedCourse.descripcion;
+        if (nameEl) nameEl.textContent = this.selectedCourse.titulo;
+        if (studentsEl) studentsEl.textContent = `0 estudiantes`;
         if (contentEl) contentEl.textContent = `${this.filteredContent.length} contenidos`;
     }
 
@@ -741,16 +237,17 @@ class DiplomaApp {
         if (activeContent) activeContent.classList.add('active');
     }
 
+    // =================== FILTROS ===================
     applyFilters() {
         const searchTerm = document.getElementById("search")?.value.toLowerCase() || "";
         const statusFilter = document.getElementById("status-filter")?.value || "all";
         const categoryFilter = document.getElementById("category-filter")?.value || "all";
 
         this.filteredCourses = this.courses.filter(course => {
-            const matchSearch = course.title.toLowerCase().includes(searchTerm) || 
-                              course.description.toLowerCase().includes(searchTerm);
-            const matchStatus = statusFilter === "all" || course.status === statusFilter;
-            const matchCategory = categoryFilter === "all" || course.category === categoryFilter;
+            const matchSearch = course.titulo.toLowerCase().includes(searchTerm) || 
+                              course.descripcion.toLowerCase().includes(searchTerm);
+            const matchStatus = statusFilter === "all" || course.estado === statusFilter;
+            const matchCategory = categoryFilter === "all" || course.categoria === categoryFilter;
 
             return matchSearch && matchStatus && matchCategory;
         });
@@ -759,14 +256,9 @@ class DiplomaApp {
     }
 
     clearFilters() {
-        const searchEl = document.getElementById("search");
-        const statusEl = document.getElementById("status-filter");
-        const categoryEl = document.getElementById("category-filter");
-        
-        if (searchEl) searchEl.value = "";
-        if (statusEl) statusEl.value = "all";
-        if (categoryEl) categoryEl.value = "all";
-        
+        document.getElementById("search").value = "";
+        document.getElementById("status-filter").value = "all";
+        document.getElementById("category-filter").value = "all";
         this.filteredCourses = [...this.courses];
         this.renderCourses();
     }
@@ -778,20 +270,23 @@ class DiplomaApp {
         const statusFilter = document.getElementById("content-status-filter")?.value || "all";
         const searchTerm = document.getElementById("content-search")?.value.toLowerCase() || "";
 
-        const courseContent = mockContent.filter(c => c.courseId === this.selectedCourse.id);
-
-        this.filteredContent = courseContent.filter(content => {
-            const matchType = typeFilter === "all" || content.type === typeFilter;
-            const matchStatus = statusFilter === "all" || content.status === statusFilter;
-            const matchSearch = content.title.toLowerCase().includes(searchTerm) ||
-                              content.description.toLowerCase().includes(searchTerm);
+        this.filteredContent = this.allContent.filter(content => {
+            const matchType = typeFilter === "all" || content.tipo === typeFilter;
+            const matchStatus = statusFilter === "all" || content.estado === statusFilter;
+            const matchSearch = content.titulo.toLowerCase().includes(searchTerm) ||
+                              (content.descripcion && content.descripcion.toLowerCase().includes(searchTerm));
 
             return matchType && matchStatus && matchSearch;
         });
 
         this.renderContent();
+        
+        // Actualizar contador
+        const contentEl = document.getElementById('selected-course-content');
+        if (contentEl) contentEl.textContent = `${this.filteredContent.length} contenidos`;
     }
 
+    // =================== RENDERIZADO ===================
     renderCourses() {
         const container = document.getElementById("courses-list");
         if (!container) return;
@@ -809,44 +304,40 @@ class DiplomaApp {
 
         container.innerHTML = this.filteredCourses.map(course => `
             <div class="course-card">
-                <div class="course-gradient-header ${this.getCategoryClass(course.category)}">
+                <div class="course-gradient-header ${this.getCategoryClass(course.categoria)}">
                     <div class="course-header-content">
-                        <h3 class="course-title">${course.title}</h3>
-                        <p class="course-description">${course.description}</p>
+                        <h3 class="course-title">${course.titulo}</h3>
+                        <p class="course-description">${course.descripcion}</p>
                     </div>
-                    <div class="course-level-badge">${course.level}</div>
+                    <div class="course-level-badge">${course.nivel}</div>
                 </div>
                 <div class="course-card-body">
                     <div class="course-meta">
                         <div class="course-stats">
                             <div class="course-stat">
-                                <i class="fas fa-users"></i>
-                                <span>${course.students} estudiantes</span>
-                            </div>
-                            <div class="course-stat">
                                 <i class="fas fa-clock"></i>
-                                <span>${course.duration} horas</span>
+                                <span>${course.duracion_horas} horas</span>
                             </div>
                             <div class="course-stat">
-                                <i class="fas fa-star"></i>
-                                <span>${course.rating > 0 ? course.rating + ' rating' : 'Sin calificar'}</span>
+                                <i class="fas fa-book-open"></i>
+                                <span>${course.lecciones_estimadas} lecciones</span>
                             </div>
                         </div>
                         <div class="course-status">
-                            <span class="course-status-badge ${course.status}">
-                                ${this.getStatusLabel(course.status)}
+                            <span class="course-status-badge ${course.estado}">
+                                ${this.getStatusLabel(course.estado)}
                             </span>
-                            <div class="price">${this.formatPrice(course.price)}</div>
+                            <div class="price">${this.formatPrice(course.precio)}</div>
                         </div>
                     </div>
                     <div class="course-actions">
-                        <button class="course-action-btn primary" onclick="app.viewCourseContent('${course.id}')">
+                        <button class="course-action-btn primary" onclick="app.viewCourseContent(${course.id})">
                             <i class="fas fa-folder-open"></i> Contenido
                         </button>
-                        <button class="course-action-btn secondary" onclick="app.editCourse('${course.id}')">
+                        <button class="course-action-btn secondary" onclick="app.editCourse(${course.id})">
                             <i class="fas fa-edit"></i> Editar
                         </button>
-                        <button class="course-action-btn danger" onclick="app.deleteCourse('${course.id}')">
+                        <button class="course-action-btn danger" onclick="app.deleteCourse(${course.id})">
                             <i class="fas fa-trash"></i> Eliminar
                         </button>
                     </div>
@@ -876,29 +367,23 @@ class DiplomaApp {
         container.innerHTML = this.filteredContent.map(content => `
             <div class="content-item">
                 <div class="content-item-header">
-                    <span class="content-type-badge ${content.type}">${this.getTypeLabel(content.type)}</span>
-                    <span class="status-badge ${content.status}">${this.getStatusLabel(content.status)}</span>
+                    <span class="content-type-badge ${content.tipo}">${this.getTypeLabel(content.tipo)}</span>
+                    <span class="status-badge ${content.estado}">${this.getStatusLabel(content.estado)}</span>
                 </div>
-                <h4>${content.title}</h4>
-                <p>${content.description}</p>
+                <h4>${content.titulo}</h4>
+                <p>${content.descripcion || 'Sin descripción'}</p>
                 <div class="content-item-meta">
-                    <span>${content.lesson}</span>
-                    <span>${content.size}</span>
-                    <span>${content.uploadDate}</span>
+                    <span><i class="fas fa-layer-group"></i> ${content.leccion || 'General'}</span>
+                    <span><i class="fas fa-calendar"></i> ${content.fecha_creacion || 'Sin fecha'}</span>
                 </div>
-                ${content.type === 'video' && content.duration ? `<div class="content-item-meta"><i class="fas fa-play"></i> ${content.duration}</div>` : ''}
-                ${content.views !== undefined ? `<div class="content-item-meta"><i class="fas fa-eye"></i> ${content.views} visualizaciones</div>` : ''}
                 <div class="content-item-actions">
-                    <button class="content-action-btn" onclick="app.viewContent('${content.id}')" title="Ver">
+                    <button class="content-action-btn" onclick="app.viewContent(${content.id})" title="Ver">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="content-action-btn" onclick="app.editContent('${content.id}')" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="content-action-btn" onclick="app.downloadContent('${content.id}')" title="Descargar">
+                    <button class="content-action-btn" onclick="app.downloadContent('${content.archivo_url || ''}')" title="Descargar">
                         <i class="fas fa-download"></i>
                     </button>
-                    <button class="content-action-btn danger" onclick="app.deleteContent('${content.id}')" title="Eliminar">
+                    <button class="content-action-btn danger" onclick="app.deleteContent(${content.id})" title="Eliminar">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -906,20 +391,21 @@ class DiplomaApp {
         `).join("");
     }
 
+    // =================== MODALES ===================
     openCourseModal(courseId = null) {
         const modal = document.getElementById("modalOverlay");
         const modalTitle = document.getElementById("modal-title");
         const saveButton = document.getElementById("save-btn-text");
 
         if (courseId) {
-            this.currentEditingCourse = this.courses.find(c => c.id === courseId);
-            if (modalTitle) modalTitle.textContent = "Editar Diplomado";
-            if (saveButton) saveButton.textContent = "Actualizar Diplomado";
+            this.currentEditingCourse = this.courses.find(c => c.id == courseId);
+            modalTitle.textContent = "Editar Diplomado";
+            saveButton.textContent = "Actualizar Diplomado";
             this.populateCourseForm();
         } else {
             this.currentEditingCourse = null;
-            if (modalTitle) modalTitle.textContent = "Crear Nuevo Diplomado";
-            if (saveButton) saveButton.textContent = "Crear Diplomado";
+            modalTitle.textContent = "Crear Nuevo Diplomado";
+            saveButton.textContent = "Crear Diplomado";
             this.resetCourseForm();
         }
 
@@ -938,62 +424,45 @@ class DiplomaApp {
         }
     }
 
-    openContentModal(contentId = null) {
-        const modal = document.getElementById("contentModalOverlay");
-        const modalTitle = document.getElementById("content-modal-title");
-
-        if (contentId) {
-            this.currentEditingContent = mockContent.find(c => c.id === contentId);
-            if (modalTitle) modalTitle.textContent = "Editar Contenido";
-        } else {
-            this.currentEditingContent = null;
-            if (this.currentCourseForContent && modalTitle) {
-                modalTitle.textContent = `Agregar Contenido - ${this.currentCourseForContent.title}`;
-            } else if (modalTitle) {
-                modalTitle.textContent = "Agregar Contenido";
-            }
-        }
-
-        if (modal) {
-            modal.classList.add("active");
-            document.body.style.overflow = "hidden";
-        }
-    }
-
-    closeContentModal() {
-        const modal = document.getElementById("contentModalOverlay");
-        if (modal) {
-            modal.classList.remove("active");
-            document.body.style.overflow = "auto";
-        }
-    }
-
+    // =================== ACCIONES DE CONTENIDO ===================
     viewContent(contentId) {
-        const content = mockContent.find(c => c.id === contentId);
-        if (content) {
-            this.showNotification(`Visualizando: ${content.title}`, "info");
+        const content = this.filteredContent.find(c => c.id == contentId);
+        if (content && content.archivo_url) {
+            window.open(content.archivo_url, '_blank');
+        } else {
+            this.showNotification("Contenido no disponible", "info");
         }
     }
 
-    editContent(contentId) {
-        this.openContentModal(contentId);
-    }
-
-    downloadContent(contentId) {
-        const content = mockContent.find(c => c.id === contentId);
-        if (content) {
-            this.showNotification(`Descargando: ${content.title}`, "info");
+    downloadContent(archivo_url) {
+        if (archivo_url && archivo_url !== '') {
+            const link = document.createElement('a');
+            link.href = archivo_url;
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            this.showNotification("Descargando contenido...", "info");
+        } else {
+            this.showNotification("No hay archivo disponible", "error");
         }
     }
 
-    deleteContent(contentId) {
-        if (confirm("¿Estás seguro de que quieres eliminar este contenido?")) {
-            const index = mockContent.findIndex(c => c.id === contentId);
-            if (index !== -1) {
-                mockContent.splice(index, 1);
-                this.applyContentFilters();
-                this.showNotification("Contenido eliminado exitosamente", "success");
-            }
+    async deleteContent(contentId) {
+        if (!confirm("¿Estás seguro de que quieres eliminar este contenido?")) return;
+
+        try {
+            const response = await fetch(`/contenido/api/eliminar/${contentId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) throw new Error('Error al eliminar contenido');
+
+            this.showNotification("Contenido eliminado exitosamente", "success");
+            await this.viewCourseContent(this.selectedCourse.id);
+        } catch (error) {
+            console.error('Error:', error);
+            this.showNotification("Error al eliminar contenido", "error");
         }
     }
 
@@ -1001,51 +470,55 @@ class DiplomaApp {
         this.openCourseModal(courseId);
     }
 
-    deleteCourse(courseId) {
-        if (confirm("¿Estás seguro de que quieres eliminar este diplomado? Esta acción no se puede deshacer.")) {
-            const courseIndex = this.courses.findIndex(c => c.id === courseId);
-            if (courseIndex !== -1) {
-                const courseName = this.courses[courseIndex].title;
-                this.courses.splice(courseIndex, 1);
-                this.filteredCourses = [...this.courses];
-                this.renderCourses();
-                this.updateStats();
-                this.showNotification(`Diplomado "${courseName}" eliminado exitosamente`, "success");
-            }
+    async deleteCourse(courseId) {
+        if (!confirm("¿Estás seguro de que quieres eliminar este diplomado? Esta acción no se puede deshacer.")) return;
+
+        try {
+            const response = await fetch(`/diplomados/api/eliminar/${courseId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) throw new Error('Error al eliminar diplomado');
+
+            this.showNotification("Diplomado eliminado exitosamente", "success");
+            await this.loadDiplomados();
+        } catch (error) {
+            console.error('Error:', error);
+            this.showNotification("Error al eliminar diplomado", "error");
         }
     }
 
     getCategoryClass(category) {
-        return category.toLowerCase().replace(/\s+/g, '-');
+        const categoryMap = {
+            'Frontend': 'frontend',
+            'Backend': 'backend',
+            'Data Science': 'data-science',
+            'DevOps': 'devops'
+        };
+        return categoryMap[category] || 'frontend';
     }
 
+    // =================== FORMULARIOS ===================
     populateCourseForm() {
         if (!this.currentEditingCourse) return;
 
         const course = this.currentEditingCourse;
-        const titleEl = document.getElementById("courseTitle");
-        const categoryEl = document.getElementById("courseCategory");
-        const descEl = document.getElementById("courseDescription");
-        const levelEl = document.getElementById("courseLevel");
-        const durationEl = document.getElementById("courseDuration");
-        const lessonsEl = document.getElementById("courseLessons");
-        const priceEl = document.getElementById("coursePrice");
-        const statusEl = document.getElementById("courseStatus");
+        document.getElementById("courseTitle").value = course.titulo || "";
+        document.getElementById("courseCategory").value = course.categoria || "";
+        document.getElementById("courseDescription").value = course.descripcion || "";
+        document.getElementById("courseLevel").value = course.nivel || "Principiante";
+        document.getElementById("courseDuration").value = course.duracion_horas || "";
+        document.getElementById("courseLessons").value = course.lecciones_estimadas || "";
+        document.getElementById("coursePrice").value = course.precio || "";
+        document.getElementById("courseStatus").value = course.estado || "draft";
 
-        if (titleEl) titleEl.value = course.title || "";
-        if (categoryEl) categoryEl.value = course.category || "";
-        if (descEl) descEl.value = course.description || "";
-        if (levelEl) levelEl.value = course.level || "Principiante";
-        if (durationEl) durationEl.value = course.duration || "";
-        if (lessonsEl) lessonsEl.value = course.lessons || "";
-        if (priceEl) priceEl.value = course.price || "";
-        if (statusEl) statusEl.value = course.status || "draft";
+        this.objectives = Array.isArray(course.objetivos) ? course.objetivos : [];
+        this.renderObjectives();
     }
 
     resetCourseForm() {
-        const form = document.querySelector("#modalOverlay .modal-body");
-        const inputs = form?.querySelectorAll("input, select, textarea");
-        inputs?.forEach(input => {
+        const inputs = document.querySelectorAll("#modalOverlay input, #modalOverlay select, #modalOverlay textarea");
+        inputs.forEach(input => {
             if (input.type === "checkbox" || input.type === "radio") {
                 input.checked = false;
             } else {
@@ -1061,88 +534,69 @@ class DiplomaApp {
         const tabPanels = document.querySelectorAll("#modalOverlay .tab-panel");
         modalTabs.forEach(t => t.classList.remove("active"));
         tabPanels.forEach(p => p.classList.remove("active"));
-        if (modalTabs[0]) modalTabs[0].classList.add("active");
-        if (tabPanels[0]) tabPanels[0].classList.add("active");
+        modalTabs[0]?.classList.add("active");
+        tabPanels[0]?.classList.add("active");
     }
 
-    saveCourse() {
-        const titleEl = document.getElementById("courseTitle");
-        const categoryEl = document.getElementById("courseCategory");
-        const descEl = document.getElementById("courseDescription");
-        const levelEl = document.getElementById("courseLevel");
-        const durationEl = document.getElementById("courseDuration");
-        const lessonsEl = document.getElementById("courseLessons");
-        const priceEl = document.getElementById("coursePrice");
-        const statusEl = document.getElementById("courseStatus");
-
-        const title = titleEl?.value;
-        const category = categoryEl?.value;
-        const description = descEl?.value;
-        const level = levelEl?.value;
-        const duration = durationEl?.value;
-        const lessons = lessonsEl?.value;
-        const price = priceEl?.value;
-        const status = statusEl?.value;
+    async saveCourse() {
+        const title = document.getElementById("courseTitle")?.value.trim();
+        const category = document.getElementById("courseCategory")?.value;
+        const description = document.getElementById("courseDescription")?.value.trim();
+        const level = document.getElementById("courseLevel")?.value;
+        const duration = document.getElementById("courseDuration")?.value;
+        const lessons = document.getElementById("courseLessons")?.value;
+        const price = document.getElementById("coursePrice")?.value;
+        const status = document.getElementById("courseStatus")?.value;
 
         if (!title || !category || !description) {
-            this.showNotification("Por favor completa los campos obligatorios", "error");
+            this.showNotification("Por favor completa los campos obligatorios (Título, Categoría y Descripción)", "error");
             return;
         }
 
-        if (this.currentEditingCourse) {
-            const courseIndex = this.courses.findIndex(c => c.id === this.currentEditingCourse.id);
-            if (courseIndex !== -1) {
-                this.courses[courseIndex] = {
-                    ...this.courses[courseIndex],
-                    title,
-                    description,
-                    category,
-                    level: level || "Principiante",
-                    duration: parseInt(duration) || 0,
-                    lessons: parseInt(lessons) || 0,
-                    price: parseInt(price) || 0,
-                    status: status || "draft"
-                };
-                this.showNotification("Diplomado actualizado exitosamente", "success");
+        const courseData = {
+            titulo: title,
+            categoria: category,
+            descripcion: description,
+            nivel: level || "Principiante",
+            duracion_horas: parseInt(duration) || 0,
+            lecciones_estimadas: parseInt(lessons) || 0,
+            objetivos: this.objectives,
+            precio: parseFloat(price) || 0,
+            estado: status || "draft"
+        };
+
+        try {
+            let response;
+            if (this.currentEditingCourse) {
+                response = await fetch(`/diplomados/api/editar/${this.currentEditingCourse.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(courseData)
+                });
+            } else {
+                response = await fetch('/diplomados/api/crear', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(courseData)
+                });
             }
-        } else {
-            const newCourse = {
-                id: String(this.courses.length + 1),
-                title,
-                description,
-                category,
-                level: level || "Principiante",
-                duration: parseInt(duration) || 0,
-                students: 0,
-                rating: 0,
-                reviews: 0,
-                status: status || "draft",
-                progress: 0,
-                thumbnail: "https://via.placeholder.com/300x200",
-                price: parseInt(price) || 0,
-                lessons: parseInt(lessons) || 0,
-                contentCount: 0
-            };
-            
-            this.courses.push(newCourse);
-            this.showNotification("Diplomado creado exitosamente", "success");
-        }
 
-        this.filteredCourses = [...this.courses];
-        this.renderCourses();
-        this.updateStats();
-        this.closeCourseModal();
-    }
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Error al guardar diplomado');
+            }
 
-    saveContent() {
-        this.showNotification("Contenido guardado exitosamente", "success");
-        this.closeContentModal();
-        
-        if (this.currentView === 'content') {
-            this.applyContentFilters();
+            const message = this.currentEditingCourse ? "Diplomado actualizado exitosamente" : "Diplomado creado exitosamente";
+            this.showNotification(message, "success");
+            this.closeCourseModal();
+            await this.loadDiplomados();
+        } catch (error) {
+            console.error('Error:', error);
+            this.showNotification(error.message || "Error al guardar diplomado", "error");
         }
     }
 
+    // =================== OBJETIVOS ===================
     addObjective() {
         const input = document.getElementById("newObjective");
         const value = input?.value.trim();
@@ -1171,15 +625,7 @@ class DiplomaApp {
         `).join("");
     }
 
-    getLevelColor(level) {
-        const colors = {
-            "Principiante": "green",
-            "Intermedio": "blue",
-            "Avanzado": "red"
-        };
-        return colors[level] || "gray";
-    }
-
+    // =================== UTILIDADES ===================
     getTypeLabel(type) {
         const labels = {
             "video": "Video",
@@ -1194,8 +640,9 @@ class DiplomaApp {
         const labels = {
             "published": "Publicado",
             "draft": "Borrador",
-            "processing": "Procesando",
-            "active": "Activo"
+            "active": "Activo",
+            "archived": "Archivado",
+            "processing": "Procesando"
         };
         return labels[status] || status;
     }
@@ -1210,15 +657,11 @@ class DiplomaApp {
 
     updateStats() {
         const totalCourses = this.courses.length;
-        const activeCourses = this.courses.filter(c => c.status === 'active').length;
-        const totalStudents = this.courses.reduce((sum, c) => sum + c.students, 0);
-        const totalContent = this.courses.reduce((sum, c) => sum + (c.contentCount || 0), 0);
+        const activeCourses = this.courses.filter(c => c.estado === 'active').length;
 
         const elements = {
             'total-courses': totalCourses,
-            'active-courses': `${activeCourses} activos`,
-            'total-students': totalStudents,
-            'total-content': totalContent
+            'active-courses': `${activeCourses} activos`
         };
 
         Object.entries(elements).forEach(([id, value]) => {
@@ -1231,7 +674,7 @@ class DiplomaApp {
         const notification = document.createElement("div");
         notification.className = `notification ${type}`;
         notification.innerHTML = `
-            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
             ${message}
         `;
         
@@ -1239,7 +682,7 @@ class DiplomaApp {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: ${type === "success" ? "#10b981" : type === "error" ? "#ef4444" : type === "warning" ? "#f59e0b" : "#6366f1"};
+            background: ${type === "success" ? "#10b981" : type === "error" ? "#ef4444" : "#6366f1"};
             color: white;
             padding: 1rem 1.5rem;
             border-radius: 12px;
@@ -1257,21 +700,15 @@ class DiplomaApp {
 
         setTimeout(() => {
             notification.style.animation = "slideOutRight 0.3s ease-out forwards";
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
+            setTimeout(() => notification.remove(), 300);
         }, 3000);
     }
 }
 
+// Inicializar
 let app;
-let notificacionesManager;
-
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     app = new DiplomaApp();
-    notificacionesManager = new NotificacionesManager();
 });
 
 window.addEventListener('resize', () => {
@@ -1281,6 +718,7 @@ window.addEventListener('resize', () => {
     }
 });
 
+// Animaciones
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideInRight {
@@ -1306,7 +744,3 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { DiplomaApp, NotificacionesManager };
-}

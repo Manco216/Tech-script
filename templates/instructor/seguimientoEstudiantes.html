@@ -21,33 +21,40 @@
             </div>
 
             <nav>
-        <a href="{{ url_for('instructor') }}" class="nav-item" id="Inicio">
-          <i class="fas fa-chart-line icon"></i>
-          <span class="text">Panel</span>
-        </a>
-        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="mis-cursos">
-          <i class="fas fa-book icon"></i>
-          <span class="text">Mis Diplomados</span>
-        </a>
-        <a href="{{ url_for('diplomadosIns') }}" class="nav-item active" id="estudiantes">
-          <i class="fas fa-users icon"></i>
-          <span class="text">Estudiantes</span>
-        </a>
+<a href="{{ url_for('instructor.home') }}" class="nav-item"     id="dashboard">
+  <i class="fas fa-chart-line icon"></i>
+  <span class="text">Panel</span>
+</a>
+<a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="diplomados">
+  <i class="fas fa-book icon"></i>
+  <span class="text">Mis Diplomados</span>
+</a>
+<a href="{{ url_for('instructor.seguimiento_estudiantes') }}" class="nav-item active" id="estudiantes">
+  <i class="fas fa-users icon"></i>
+  <span class="text">Estudiantes</span>
+</a>
         <a href="{{ url_for('subirContenido') }}" class="nav-item" id="contenido">
           <i class="fas fa-upload icon"></i>
           <span class="text">Contenido</span>
         </a>
      
-        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
+        <a href="{{ url_for('reportesIns') }}" class="nav-item" id="reportes">
           <i class="fas fa-chart-bar icon"></i>
           <span class="text">Reportes</span>
         </a>
       </nav>
 
-            <div class="sidebar-footer">
-                <div class="nav-item" id="configuracion"><i class="fas fa-cog icon"></i><span class="text">Configuración</span></div>
-                <div class="nav-item" id="mi-cuenta"><i class="fas fa-user icon"></i><span class="text">Mi cuenta</span></div>
-            </div>
+    <div class="sidebar-footer">
+  <div class="user-card">
+    <div class="user">
+      <img src="https://i.pravatar.cc/40" alt="foto de perfil" class="user-avatar">
+      <div class="user-info">
+        <span class="name">{{ user.nombre }}</span>
+        <span class="email">{{ user.correo }}</span>
+      </div>
+    </div>
+  </div>
+</div>
         </aside>
 
         <!-- ========== MAIN CONTENT ========== -->

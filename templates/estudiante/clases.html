@@ -44,17 +44,13 @@
       </div>
       
       <nav>
-  <a href="{{ url_for('student') }}" class="nav-item " id="Inicio">
+  <a href="{{ url_for('home') }}" class="nav-item " id="Inicio">
     <i class="fas fa-chart-line icon"></i>
     <span class="text">Inicio</span>
   </a>
   <a href="{{ url_for('diplomados') }}" class="nav-item active" id="diplomados">
     <i class="fas fa-book icon"></i>
     <span class="text">Diplomados</span>
-  </a>
-  <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
-    <i class="fas fa-video icon"></i>
-    <span class="text">Mi progreso</span>
   </a>
   <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
     <i class="fas fa-credit-card icon"></i>
@@ -155,10 +151,7 @@
         <header class="header">
           <div class="header-content">
             <div class="header-left">
-              <div class="class-badge">
-                <div class="badge-glow"></div>
-                <span class="class-number">Clase 1</span>
-              </div>
+             
               <div class="class-info">
                 <span class="course-name">Curso de Frontend</span>
                 <h1 class="class-title">
@@ -181,18 +174,7 @@
             </div>
           </div>
           <div class="header-stats">
-            <div class="stat-item">
-              <i class="fas fa-clock"></i>
-              <span>45 min</span>
-            </div>
-            <div class="stat-item">
-              <i class="fas fa-users"></i>
-              <span>124 estudiantes</span>
-            </div>
-            <div class="stat-item">
-              <i class="fas fa-star"></i>
-              <span>4.9</span>
-            </div>
+           
           </div>
         </header>
 
@@ -258,11 +240,7 @@
               </h2>
               <span class="materials-count">3 archivos</span>
             </div>
-            <button class="download-all-btn">
-              <i class="fas fa-download"></i>
-              <span>Descargar todo</span>
-              <div class="btn-glow"></div>
-            </button>
+       
           </div>
           
           <div class="files-grid">

@@ -719,3 +719,276 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log('🚀 Plataforma de clases cargada con éxito - Versión actualizada');
 });
+
+// SISTEMA DE PROGRESO
+// SISTEMA DE PROGRESO - AL FINAL DE clases.js
+class ProgresoManager {
+    constructor() {
+        this.contenidoId = this.getContenidoIdFromURL();
+        if (this.contenidoId) {
+            console.log('ID de contenido:', this.contenidoId);
+            this.inicializar();
+        }
+    }
+
+    getContenidoIdFromURL() {
+        const path = window.location.pathname;
+        const match = path.match(/\/clase\/(\d+)/);
+        return match ? parseInt(match[1]) : null;
+    }
+
+    async inicializar() {
+        await this.cargarContenido();
+        this.setupSeguimientoProgreso();
+    }
+
+    async cargarContenido() {
+        try {
+            console.log('Cargando contenido...');
+            const response = await fetch(`/estudiante/api/clase/${this.contenidoId}`);
+            
+            if (!response.ok) {
+                throw new Error('Error al cargar contenido');
+            }
+            
+            const data = await response.json();
+            console.log('Datos recibidos:', data);
+            
+            // Actualizar título y módulo
+            const titleEl = document.querySelector('.title-text');
+            const courseNameEl = document.querySelector('.course-name');
+            const durationEl = document.querySelector('#duration span');
+            
+            if (titleEl) titleEl.textContent = data.contenido.titulo;
+            if (courseNameEl) courseNameEl.textContent = data.contenido.modulo_titulo;
+            if (durationEl) durationEl.textContent = data.contenido.duracion || '45 min';
+            
+            // Configurar video
+            const video = document.querySelector('video');
+            if (video && data.contenido.url_video) {
+                video.src = data.contenido.url_video;
+                
+                // Restaurar progreso
+                if (data.progreso.tiempo_visto > 0) {
+                    video.addEventListener('loadedmetadata', () => {
+                        video.currentTime = data.progreso.tiempo_visto;
+                    });
+                }
+                
+                console.log('Video configurado:', data.contenido.url_video);
+            } else {
+                console.warn('No hay URL de video');
+            }
+            
+            // Renderizar materiales
+            this.renderMateriales(data.contenido.materiales);
+            
+            // Configurar navegación
+            this.configurarNavegacion(data.navegacion);
+            
+        } catch (error) {
+            console.error('Error al cargar contenido:', error);
+            showNotification('Error al cargar la clase', 'error');
+        }
+    }
+
+    renderMateriales(materialesJSON) {
+        const container = document.querySelector('.files-grid');
+        const countEl = document.querySelector('.materials-count');
+        
+        if (!container) return;
+        
+        try {
+            let materiales = [];
+            
+            // Intentar parsear JSON
+            if (materialesJSON) {
+                if (typeof materialesJSON === 'string') {
+                    materiales = JSON.parse(materialesJSON);
+                } else if (Array.isArray(materialesJSON)) {
+                    materiales = materialesJSON;
+                }
+            }
+            
+            if (!materiales || materiales.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #64748b;">No hay materiales disponibles</p>';
+                if (countEl) countEl.textContent = '0 archivos';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            materiales.forEach((material, index) => {
+                const tipoClases = {
+                    'pdf': { icon: 'fa-file-pdf', class: 'pdf' },
+                    'excel': { icon: 'fa-file-excel', class: 'excel' },
+                    'xlsx': { icon: 'fa-file-excel', class: 'excel' },
+                    'image': { icon: 'fa-file-image', class: 'image' },
+                    'png': { icon: 'fa-file-image', class: 'image' },
+                    'jpg': { icon: 'fa-file-image', class: 'image' },
+                    'default': { icon: 'fa-file', class: 'pdf' }
+                };
+                
+                const tipo = tipoClases[material.tipo?.toLowerCase()] || tipoClases['default'];
+                
+                const card = document.createElement('div');
+                card.className = `file-card ${tipo.class}`;
+                card.innerHTML = `
+                    <div class="file-icon">
+                        <i class="fas ${tipo.icon}"></i>
+                    </div>
+                    <div class="file-info">
+                        <h3>${material.nombre || 'Archivo sin nombre'}</h3>
+                        <span class="file-size">${material.tamano || 'N/A'}</span>
+                    </div>
+                    <div class="file-actions">
+                        <button class="file-btn view" onclick="window.open('${material.url}', '_blank')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <a href="${material.url}" download class="file-btn download">
+                            <i class="fas fa-download"></i>
+                        </a>
+                    </div>
+                    <div class="file-progress">
+                        <div class="progress-bar small">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            if (countEl) countEl.textContent = `${materiales.length} archivo${materiales.length !== 1 ? 's' : ''}`;
+            
+            console.log('Materiales renderizados:', materiales.length);
+            
+        } catch (error) {
+            console.error('Error al renderizar materiales:', error);
+            container.innerHTML = '<p style="text-align: center; color: #64748b;">Error al cargar materiales</p>';
+        }
+    }
+
+    setupSeguimientoProgreso() {
+        const video = document.querySelector('video');
+        if (!video) {
+            console.warn('No hay elemento de video');
+            return;
+        }
+
+        // Guardar cada 30 segundos
+        setInterval(() => {
+            if (!video.paused && video.currentTime > 0) {
+                this.guardarProgreso(video);
+            }
+        }, 30000);
+
+        video.addEventListener('pause', () => this.guardarProgreso(video));
+        video.addEventListener('ended', () => this.marcarCompletado(video));
+
+        window.addEventListener('beforeunload', () => {
+            if (video.currentTime > 0) this.guardarProgreso(video);
+        });
+        
+        console.log('Seguimiento de progreso configurado');
+    }
+
+    async guardarProgreso(video) {
+        if (!video.duration) return;
+        
+        const porcentaje = (video.currentTime / video.duration) * 100;
+        const tiempo = Math.floor(video.currentTime);
+
+        try {
+            const response = await fetch(`/estudiante/api/clase/${this.contenidoId}/progreso`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    porcentaje_visto: porcentaje,
+                    tiempo_visto: tiempo
+                })
+            });
+
+            const data = await response.json();
+            
+            if (data.certificado_disponible) {
+                this.mostrarNotificacionCertificado();
+            }
+            
+            console.log('✅ Progreso guardado:', porcentaje.toFixed(1) + '%');
+            
+        } catch (error) {
+            console.error('❌ Error al guardar progreso:', error);
+        }
+    }
+
+    async marcarCompletado(video) {
+        await this.guardarProgreso(video);
+        showNotification('¡Clase completada!', 'success');
+        
+        // Opcional: avanzar automáticamente
+        setTimeout(() => {
+            const nextBtn = document.getElementById('nextClass');
+            if (nextBtn && !nextBtn.disabled) {
+                nextBtn.click();
+            }
+        }, 2000);
+    }
+
+    configurarNavegacion(navegacion) {
+        const prevBtn = document.getElementById('prevClass');
+        const nextBtn = document.getElementById('nextClass');
+
+        if (prevBtn) {
+            prevBtn.disabled = !navegacion.anterior;
+            if (navegacion.anterior) {
+                prevBtn.onclick = () => {
+                    window.location.href = `/estudiante/clase/${navegacion.anterior}`;
+                };
+            }
+        }
+
+        if (nextBtn) {
+            nextBtn.disabled = !navegacion.siguiente;
+            if (navegacion.siguiente) {
+                nextBtn.onclick = () => {
+                    window.location.href = `/estudiante/clase/${navegacion.siguiente}`;
+                };
+            }
+        }
+        
+        console.log('Navegación configurada - Anterior:', navegacion.anterior, 'Siguiente:', navegacion.siguiente);
+    }
+
+    mostrarNotificacionCertificado() {
+        const notif = document.createElement('div');
+        notif.style.cssText = `
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2.5rem; border-radius: 20px; color: white;
+            text-align: center; z-index: 10000;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            max-width: 450px; animation: scaleIn 0.5s ease;
+        `;
+        
+        notif.innerHTML = `
+            <i class="fas fa-certificate" style="font-size: 4rem; color: #fbbf24; margin-bottom: 1rem; display: block;"></i>
+            <h3 style="margin: 0 0 1rem 0; font-size: 1.8rem;">¡Felicitaciones!</h3>
+            <p style="margin: 0 0 1.5rem 0; font-size: 1.1rem;">Has completado el diplomado completo.<br>Tu certificado está listo para descargar.</p>
+            <a href="/estudiante/certificados" style="
+                display: inline-block; background: white; color: #6366f1;
+                padding: 0.85rem 2rem; border-radius: 12px;
+                text-decoration: none; font-weight: 700; font-size: 1rem;
+                transition: transform 0.2s;">Ver Certificado</a>
+        `;
+        
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 15000);
+    }
+}
+
+// Inicializar solo si estamos en la ruta de clase
+if (window.location.pathname.includes('/clase/')) {
+    window.progresoManager = new ProgresoManager();
+}

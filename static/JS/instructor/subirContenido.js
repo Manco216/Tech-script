@@ -1,664 +1,921 @@
-console.log("%c✅ subirContenido.js cargado", "color: white; background: #16a34a; padding:4px;");
-
-const mockContent = [
-    { id: "1", title: "Introducción a React Hooks", type: "video", course: "Desarrollo Web con React", lesson: "Lección 1", size: "245 MB", uploadDate: "2024-01-14", status: "published", views: 156, duration: "15:30", description: "Video introductorio sobre React Hooks y su implementación" },
-    { id: "2", title: "Ejercicios de useState", type: "document", course: "Desarrollo Web con React", lesson: "Lección 1", size: "2.5 MB", uploadDate: "2024-01-14", status: "published", views: 89, description: "Documento PDF con ejercicios prácticos de useState" },
-    { id: "3", title: "Diagrama de Componentes", type: "image", course: "Desarrollo Web con React", lesson: "Lección 2", size: "1.2 MB", uploadDate: "2024-01-13", status: "published", views: 67, description: "Diagrama explicativo de la arquitectura de componentes" },
-    { id: "4", title: "Quiz: Fundamentos de Python", type: "quiz", course: "Python para Data Science", lesson: "Lección 3", size: "0.5 MB", uploadDate: "2024-01-12", status: "draft", views: 0, description: "Evaluación de conocimientos básicos de Python" },
-    { id: "5", title: "Proyecto Final: API REST", type: "assignment", course: "Microservicios con Spring Boot", lesson: "Proyecto Final", size: "5.8 MB", uploadDate: "2024-01-10", status: "processing", views: 23, description: "Especificaciones del proyecto final del curso" }
-];
-
-// Variable global para el tipo seleccionado
 let selectedType = '';
+let selectedFile = null;
+let diplomados = [];
+let sidebarOpen = false;
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("📌 Inicializando UI de subirContenido...");
+    initSidebar(); // ✅ AGREGADO - Inicializar sidebar
+    initializeModal();
+    initializeTabs();
+    initializeContentTypes();
+    initializeUpload();
+    initializeButtons();
+    loadDiplomados();
+    loadAllContent();
+    initializeFilters();
+});
 
+// ======================================================
+// Sidebar - Gestión del menú lateral en móvil
+// ======================================================
+function initSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    if (!sidebar || !mobileMenuBtn || !sidebarOverlay) return;
+    
+    // Abrir sidebar con botón flotante
+    mobileMenuBtn.addEventListener('click', () => {
+        sidebar.classList.add('open');
+        sidebarOverlay.classList.add('active');
+        sidebarOpen = true;
+    });
+    
+    // Cerrar sidebar al hacer click en el overlay
+    sidebarOverlay.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        sidebarOverlay.classList.remove('active');
+        sidebarOpen = false;
+    });
+    
+    // Cerrar sidebar al hacer click en un nav-item (solo en móvil)
+    const navItems = sidebar.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 1024) {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('active');
+                sidebarOpen = false;
+            }
+        });
+    });
+    
+    // Cerrar sidebar al presionar ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebarOpen && window.innerWidth <= 1024) {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+            sidebarOpen = false;
+        }
+    });
+}
+
+// =================== MODAL ===================
+function initializeModal() {
     const modalOverlay = document.getElementById("modalOverlay");
     const createNewBtn = document.getElementById("createNewBtn");
     const closeModal = document.getElementById("closeModal");
     const cancelBtn = document.getElementById("cancel-btn");
 
-    // Abrir modal
-    createNewBtn.addEventListener("click", () => {
-        modalOverlay.style.display = "flex";
+    if (createNewBtn) {
+        createNewBtn.addEventListener("click", () => {
+            modalOverlay.style.display = "flex";
+            document.body.style.overflow = 'hidden';
+            resetForm();
+        });
+    }
+
+    [closeModal, cancelBtn].forEach(btn => {
+        if (btn) {
+            btn.addEventListener("click", () => {
+                modalOverlay.style.display = "none";
+                document.body.style.overflow = 'auto';
+            });
+        }
     });
 
-    // Cerrar modal con el botón de cerrar
-    closeModal.addEventListener("click", () => {
-        modalOverlay.style.display = "none";
-    });
-
-    // Cerrar modal con el botón cancelar
-    cancelBtn.addEventListener("click", () => {
-        modalOverlay.style.display = "none";
-    });
-
-    // Cerrar modal al hacer click fuera del contenido
     modalOverlay.addEventListener("click", (e) => {
         if (e.target === modalOverlay) {
             modalOverlay.style.display = "none";
+            document.body.style.overflow = 'auto';
         }
     });
 
-    // ---- Tabs dentro del modal ----
-    const tabBtns = document.querySelectorAll(".modal-tab");
-    const tabPanels = document.querySelectorAll(".tab-panel");
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && modalOverlay.style.display === 'flex') {
+            modalOverlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    });
+}
 
-    tabBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            const target = btn.getAttribute("data-tab");
+// =================== TABS ===================
+function initializeTabs() {
+    const mainTabBtns = document.querySelectorAll(".tab-btn");
+    const mainTabContents = document.querySelectorAll(".tab-content");
 
-            // quitar "active" a todos
-            tabBtns.forEach(b => b.classList.remove("active"));
-            tabPanels.forEach(p => p.classList.remove("active"));
+    mainTabBtns.forEach(tab => {
+        tab.addEventListener("click", () => {
+            const target = tab.getAttribute("data-tab");
+            
+            mainTabBtns.forEach(t => t.classList.remove("active"));
+            mainTabContents.forEach(c => c.classList.remove("active"));
+            
+            tab.classList.add("active");
+            document.getElementById(target).classList.add("active");
+        });
+    });
 
-            // activar el clickeado
-            btn.classList.add("active");
+    const modalTabBtns = document.querySelectorAll(".modal-tab");
+    const modalTabPanels = document.querySelectorAll(".tab-panel");
+
+    modalTabBtns.forEach(tab => {
+        tab.addEventListener("click", () => {
+            const target = tab.getAttribute("data-tab");
+            
+            modalTabBtns.forEach(t => t.classList.remove("active"));
+            modalTabPanels.forEach(p => p.classList.remove("active"));
+            
+            tab.classList.add("active");
             document.getElementById(`tab-${target}`).classList.add("active");
         });
     });
+}
 
-    // ----------------------
-    // Validación del formulario
-    // ----------------------
-    function validateForm() {
-        const requiredFields = [
-            { id: 'title', name: 'Título del Contenido' },
-            { id: 'course', name: 'Diplomado' },
-            { id: 'lesson', name: 'Lección' }
-        ];
-        
-        const errors = [];
-        
-        // Validar tipo de contenido seleccionado
-        if (!selectedType) {
-            errors.push('Debe seleccionar un tipo de contenido');
-        }
-        
-        // Validar campos obligatorios
-        requiredFields.forEach(field => {
-            const element = document.getElementById(field.id);
-            if (!element || !element.value.trim()) {
-                errors.push(`${field.name} es obligatorio`);
-            }
-        });
-        
-        // Validar archivo (excepto para quiz)
-        if (selectedType && selectedType !== 'quiz') {
-            const fileInput = document.getElementById('file-input');
-            if (!fileInput || !fileInput.files.length) {
-                errors.push('Debe subir un archivo');
-            }
-        }
-        
-        return errors;
-    }
+// =================== SELECCIÓN DE TIPO ===================
+function initializeContentTypes() {
+    const typeCards = document.querySelectorAll('.content-type-card');
+    const selectedTypeInfo = document.getElementById('selected-type-info');
+    const selectedTypeName = document.getElementById('selected-type-name');
+    
+    if (!typeCards.length) return;
 
-    function showValidationErrors(errors) {
-        // Remover errores previos
-        document.querySelectorAll('.error-message').forEach(el => el.remove());
-        
-        errors.forEach(error => {
-            const errorEl = document.createElement('div');
-            errorEl.className = 'error-message';
-            errorEl.style.cssText = `
-                background: #fee2e2;
-                border: 1px solid #fecaca;
-                color: #dc2626;
-                padding: 0.75rem 1rem;
-                border-radius: 8px;
-                margin: 0.5rem 0;
-                font-size: 0.9rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                animation: slideInError 0.3s ease-out;
-            `;
-            errorEl.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${error}`;
+    typeCards.forEach(card => {
+        card.addEventListener('click', () => {
+            typeCards.forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
             
-            // Insertar al inicio del modal body
-            const modalBody = document.querySelector('.modal-body');
-            if (modalBody) {
-                modalBody.insertBefore(errorEl, modalBody.firstChild);
+            selectedType = card.getAttribute('data-type');
+            
+            const typeNames = {
+                'video': 'Video',
+                'document': 'Documento', 
+                'image': 'Imagen',
+                'quiz': 'Evaluación'
+            };
+            
+            if (selectedTypeName) {
+                selectedTypeName.textContent = typeNames[selectedType] || selectedType;
             }
-        });
-        
-        // Scroll al primer error
-        const firstError = document.querySelector('.error-message');
-        if (firstError) {
-            firstError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-    }
-
-    // Función para manejar guardado
-    function handleSave(action) {
-        // Validar formulario
-        const errors = validateForm();
-        
-        if (errors.length > 0) {
-            showValidationErrors(errors);
-            return;
-        }
-        
-        // Remover mensajes de error si la validación pasa
-        document.querySelectorAll('.error-message').forEach(el => el.remove());
-        
-        // Aquí continuaría tu lógica de guardado
-        const actionText = action === 'draft' ? 'borrador guardado' : 'contenido publicado';
-        showSuccessMessage(`✅ ${actionText.charAt(0).toUpperCase() + actionText.slice(1)} exitosamente`);
-        
-        // Cerrar modal después de un delay
-        setTimeout(() => {
-            modalOverlay.style.display = "none";
-        }, 1500);
-    }
-
-    // Inicializar botones de guardado
-    function initializeButtons() {
-        const saveDraftBtn = document.getElementById('save-draft-btn');
-        const createPublishBtn = document.getElementById('create-publish-btn');
-        
-        if (saveDraftBtn) {
-            saveDraftBtn.addEventListener('click', () => handleSave('draft'));
-        }
-        
-        if (createPublishBtn) {
-            createPublishBtn.addEventListener('click', () => handleSave('publish'));
-        }
-    }
-
-    // Función para mostrar mensajes de éxito
-
-
-    // Llamar a initializeButtons cuando se cargue el DOM
-    initializeButtons();
-
-    // ----------------------
-    // Elementos
-    // ----------------------
-    const dropZone = document.getElementById("dropZone");
-    const fileInput = document.getElementById("fileInput");
-    const fileList = document.getElementById("fileList");
-    const contentListContainer = document.getElementById("contentList");
-    const tabTriggers = document.querySelectorAll(".tab-trigger");
-
-    // ----------------------
-    // Tabs principales
-    // ----------------------
-    tabTriggers.forEach(trigger => {
-        trigger.addEventListener("click", (e) => {
-            e.preventDefault();
-            switchTab(trigger.dataset.tab);
+            
+            if (selectedTypeInfo) {
+                selectedTypeInfo.classList.add('show');
+            }
+            
+            updateUploadZone();
+            
+            const quizConfig = document.getElementById('quiz-config');
+            if (quizConfig) {
+                if (selectedType === 'quiz') {
+                    quizConfig.classList.add('show');
+                } else {
+                    quizConfig.classList.remove('show');
+                }
+            }
         });
     });
+}
 
-    function switchTab(tabName) {
-        document.querySelectorAll(".tab-trigger").forEach(t => t.classList.remove("active"));
-        document.querySelectorAll(".tab-content").forEach(c => c.style.display = "none");
-
-        const triggerEl = document.querySelector(`[data-tab="${tabName}"]`);
-        if (triggerEl) triggerEl.classList.add("active");
-
-        let contentId = tabName === "upload" ? "upload-content" :
-                        tabName === "content" ? "content-tab" : "analytics-tab";
-
-        const contentEl = document.getElementById(contentId);
-        if (contentEl) contentEl.style.display = "block";
-
-        if (tabName === "content") populateContentList();
+function updateUploadZone() {
+    const uploadInfo = document.getElementById('upload-info');
+    const fileInput = document.getElementById('file-input');
+    
+    if (!uploadInfo || !fileInput) return;
+    
+    const typeConfig = {
+        'video': {
+            accept: '.mp4,.avi,.mov,.mkv',
+            info: 'Archivos de video: MP4, AVI, MOV (máx. 500MB)'
+        },
+        'document': {
+            accept: '.pdf,.docx,.pptx',
+            info: 'Documentos: PDF, DOCX, PPTX (máx. 50MB)'
+        },
+        'image': {
+            accept: '.png,.jpg,.jpeg,.svg,.gif',
+            info: 'Imágenes: PNG, JPG, SVG (máx. 10MB)'
+        },
+        'quiz': {
+            accept: '',
+            info: 'Las evaluaciones no requieren archivo'
+        }
+    };
+    
+    if (selectedType && typeConfig[selectedType]) {
+        uploadInfo.textContent = typeConfig[selectedType].info;
+        fileInput.accept = typeConfig[selectedType].accept;
     }
+}
 
-    // ----------------------
-    // Drag & Drop
-    // ----------------------
-    if (dropZone && fileInput) {
-        dropZone.addEventListener("click", () => fileInput.click());
-        dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("dragover"); });
-        dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
-        dropZone.addEventListener("drop", (e) => { e.preventDefault(); dropZone.classList.remove("dragover"); handleFiles(e.dataTransfer.files); });
-        fileInput.addEventListener("change", () => handleFiles(fileInput.files));
+// =================== UPLOAD ===================
+function initializeUpload() {
+    const uploadZone = document.getElementById('upload-zone');
+    const fileInput = document.getElementById('file-input');
+    const browseBtn = document.getElementById('browse-files');
+
+    if (!uploadZone || !fileInput) return;
+
+    browseBtn.addEventListener('click', () => fileInput.click());
+    uploadZone.addEventListener('click', () => {
+        if (selectedType && selectedType !== 'quiz') {
+            fileInput.click();
+        }
+    });
+
+    uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (selectedType && selectedType !== 'quiz') {
+            uploadZone.classList.add('dragover');
+        }
+    });
+
+    uploadZone.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('dragover');
+    });
+
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+        if (selectedType && selectedType !== 'quiz' && e.dataTransfer.files.length) {
+            handleFileSelect(e.dataTransfer.files[0]);
+        }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) {
+            handleFileSelect(e.target.files[0]);
+        }
+    });
+}
+
+function handleFileSelect(file) {
+    selectedFile = file;
+    
+    const uploadZone = document.getElementById('upload-zone');
+    const uploadProgress = document.getElementById('upload-progress');
+    const uploadSuccess = document.getElementById('upload-success');
+    
+    uploadZone.style.display = 'none';
+    uploadProgress.style.display = 'block';
+    uploadSuccess.style.display = 'none';
+    
+    const progressFill = document.getElementById('progress-fill');
+    const progressPercent = document.getElementById('progress-percent');
+    const progressText = document.getElementById('progress-text');
+    const progressFilename = document.querySelector('.progress-filename');
+    const progressSize = document.querySelector('.progress-size');
+    
+    progressFilename.textContent = file.name;
+    progressSize.textContent = formatFileSize(file.size);
+    
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 10;
+        progressFill.style.width = progress + '%';
+        progressPercent.textContent = progress + '%';
+        progressText.textContent = progress < 100 ? 'Preparando archivo...' : 'Archivo listo';
+        
+        if (progress >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+                uploadProgress.style.display = 'none';
+                uploadSuccess.style.display = 'block';
+                
+                const fileDetails = document.getElementById('file-details');
+                fileDetails.textContent = `${file.name} (${formatFileSize(file.size)})`;
+            }, 500);
+        }
+    }, 100);
+}
+
+// =================== CARGAR DIPLOMADOS ===================
+async function loadDiplomados() {
+    try {
+        const response = await fetch('/contenido/api/diplomados');
+        if (!response.ok) throw new Error('Error al cargar diplomados');
+        
+        diplomados = await response.json();
+        
+        const courseSelect = document.getElementById('course');
+        if (courseSelect) {
+            courseSelect.innerHTML = '<option value="">Seleccionar Diplomado</option>';
+            diplomados.forEach(dip => {
+                const option = document.createElement('option');
+                option.value = dip.id;
+                option.textContent = dip.titulo;
+                courseSelect.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Error cargando diplomados:', error);
+        showError('No se pudieron cargar los diplomados');
     }
+}
 
-    function handleFiles(files) {
-        fileList.innerHTML = "";
-        Array.from(files).forEach(file => {
-            const el = document.createElement("div");
-            el.className = "file-item";
-            el.innerHTML = `<i data-lucide="file"></i> ${file.name} (${formatFileSize(file.size)})`;
-            fileList.appendChild(el);
-        });
-    }
-
-    // ----------------------
-    // Contenido
-    // ----------------------
-    function populateContentList() {
-        contentListContainer.innerHTML = "";
-        mockContent.forEach(item => {
-            const itemEl = document.createElement("div");
-            itemEl.className = "content-item";
-            itemEl.innerHTML = `
-                <div><strong>${item.title}</strong> (${item.course})</div>
-                <div>
-                    <button onclick="viewContent('${item.id}')">👁️</button>
-                    <button onclick="editContent('${item.id}')">✏️</button>
-                    <button onclick="downloadContent('${item.id}')">⬇️</button>
-                    <button onclick="deleteContent('${item.id}')">🗑️</button>
+// =================== CARGAR TODO EL CONTENIDO ===================
+async function loadAllContent() {
+    try {
+        showLoading('Cargando contenido...');
+        
+        const response = await fetch('/contenido/api/listar-todos');
+        if (!response.ok) throw new Error('Error al cargar contenidos');
+        
+        const contenidos = await response.json();
+        console.log('Contenidos cargados:', contenidos);
+        
+        window.allContent = contenidos;
+        updateContentStats(contenidos);
+        renderContentList(contenidos);
+        hideLoading();
+        
+    } catch (error) {
+        hideLoading();
+        console.error('Error cargando contenidos:', error);
+        const contentList = document.getElementById('contentList');
+        if (contentList) {
+            contentList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error al cargar contenidos</h3>
+                    <p>${error.message}</p>
                 </div>
             `;
-            contentListContainer.appendChild(itemEl);
-        });
-    }
-
-    // ----------------------
-    // Cargar modal dinámico
-    // ----------------------
-    const modalWrapper = document.getElementById("modal-wrapper");
-    const createBtn = document.getElementById("createNewBtn");
-
-    if (modalWrapper && createBtn) {
-        fetch("modalContenido.html")
-            .then(res => res.text())
-            .then(html => {
-                modalWrapper.innerHTML = html;
-
-                const modal = document.getElementById("modal-overlay");
-                const closeBtn = document.getElementById("close-modal");
-                const cancelBtn = document.getElementById("cancel-btn");
-
-                // Abrir modal
-                createBtn.addEventListener("click", () => {
-                    modal.style.display = "flex";
-                    document.body.style.overflow = "hidden";
-                });
-
-                // Cerrar modal
-                [closeBtn, cancelBtn].forEach(btn => {
-                    if (btn) {
-                        btn.addEventListener("click", () => {
-                            modal.style.display = "none";
-                            document.body.style.overflow = "auto";
-                        });
-                    }
-                });
-
-                // 👇 Cargar el JS del modal dinámicamente después de insertar el HTML
-                const script = document.createElement("script");
-                script.src = "../../static/JS/instructor/modalContenido.js";
-                document.body.appendChild(script);
-            })
-            .catch(err => console.error("Error cargando modal:", err));
-    }
-
-    // ----------------------
-    // Inicializa tab upload
-    // ----------------------
-    switchTab("upload");
-});
-
-// ----------------------
-// Funciones globales
-// ----------------------
-function viewContent(id) {
-    const c = mockContent.find(x => x.id === id);
-    alert(`Ver: ${c.title}`);
-}
-function editContent(id) { alert(`Editar: ${id}`); }
-function downloadContent(id) { alert(`Descargar: ${id}`); }
-function deleteContent(id) {
-    if (confirm("¿Seguro de eliminar?")) {
-        const idx = mockContent.findIndex(x => x.id === id);
-        mockContent.splice(idx, 1);
-        document.getElementById("contentList").innerHTML = "";
+        }
     }
 }
-function formatFileSize(bytes) {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return (bytes / Math.pow(k, i)).toFixed(1) + " " + sizes[i];
-}
 
-(() => {
-    let tags = [];
-    let isUploading = false;
-    let dragActive = false;
+// =================== RENDERIZAR LISTA DE CONTENIDOS ===================
+function renderContentList(contenidos) {
+    const contentList = document.getElementById('contentList');
+    if (!contentList) return;
 
-    // ---------------------- Inicialización ----------------------
-    document.addEventListener('DOMContentLoaded', () => {
-        initializeModal();
-        initializeTabs();
-        initializeContentTypes();
-        initializeTags();
-        initializeUpload();
-        initializeSwitches();
-        initializeButtons();
-    });
-
-    // ---------------------- Modal ----------------------
-    function initializeModal() {
-        const modal = document.getElementById('modal-overlay');
-        const closeBtn = document.getElementById('close-modal');
-        const cancelBtn = document.getElementById('cancel-btn');
-        const openBtn = document.getElementById('createNewBtn');
-
-        if (!modal) return;
-
-        // Abrir modal con animación
-        if (openBtn) {
-            openBtn.addEventListener('click', () => {
-                modal.style.display = 'flex';
-                modal.classList.add("fadeInScale");
-                document.body.style.overflow = 'hidden';
-                initializeTabs();
-            });
-        }
-
-        // Cerrar modal
-        [closeBtn, cancelBtn].forEach(btn => {
-            if (btn) btn.addEventListener('click', closeModal);
-        });
-
-        // Click fuera
-        modal.addEventListener('click', e => {
-            if (e.target === modal) closeModal();
-        });
-
-        // Escape
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') closeModal();
-        });
+    if (!contenidos || contenidos.length === 0) {
+        contentList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <h3>No hay contenidos</h3>
+                <p>Crea tu primer contenido usando el botón "Crear Nuevo Contenido"</p>
+            </div>
+        `;
+        return;
     }
 
-    function closeModal() {
-        const modal = document.getElementById('modal-overlay');
-        if (modal) {
-            modal.classList.remove("fadeInScale");
-            modal.style.display = 'none';
-        }
-        document.body.style.overflow = 'auto';
-    }
-
-    // ---------------------- Tabs ----------------------
-    function initializeTabs() {
-        const tabs = document.querySelectorAll(".tab-btn");
-        const contents = document.querySelectorAll(".tab-content");
-
-        if (tabs.length === 0 || contents.length === 0) {
-            console.warn("⚠️ No tabs found in modal");
-            return;
-        }
-
-        tabs.forEach(tab => {
-            tab.addEventListener("click", () => {
-                const target = tab.getAttribute("data-tab");
-
-                // Quitar activo de todos
-                tabs.forEach(t => t.classList.remove("active"));
-                contents.forEach(c => c.style.display = "none");
-
-                // Activar el tab clicado
-                tab.classList.add("active");
-
-                // Mostrar el contenido correspondiente
-                const activeContent = document.getElementById(target);
-                if (activeContent) {
-                    activeContent.style.display = "block";
-                }
-            });
-        });
-
-        // Inicializa el primer tab visible
-        tabs[0].classList.add("active");
-        contents.forEach(c => c.style.display = "none");
-        const firstContent = document.getElementById(tabs[0].getAttribute("data-tab"));
-        if (firstContent) {
-            firstContent.style.display = "block";
-        }
-    }
-
-    function switchToTab(tabName) {
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
-        });
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.toggle('active', content.id === `tab-${tabName}`);
-            if (content.id === `tab-${tabName}`) content.classList.add("slideIn");
-        });
-    }
-
-    // ---------------------- Selección de tipo de contenido ----------------------
-    function initializeContentTypes() {
-        const typeCards = document.querySelectorAll('.content-type-card');
-        const selectedTypeInfo = document.getElementById('selected-type-info');
-        const selectedTypeName = document.getElementById('selected-type-name');
+    contentList.innerHTML = contenidos.map(item => {
+        let filePreview = '';
+        const fileUrl = item.archivo_url || '';
         
-        if (!typeCards.length) return;
-
-        typeCards.forEach(card => {
-            card.addEventListener('click', () => {
-                // Remover selección previa
-                typeCards.forEach(c => c.classList.remove('selected'));
-                
-                // Seleccionar la tarjeta actual
-                card.classList.add('selected');
-                
-                // Obtener el tipo seleccionado
-                selectedType = card.getAttribute('data-type');
-                
-                // Actualizar información
-                if (selectedTypeName) {
-                    const typeNames = {
-                        'video': 'Video',
-                        'document': 'Documento', 
-                        'image': 'Imagen',
-                        'quiz': 'Evaluación'
-                    };
-                    selectedTypeName.textContent = typeNames[selectedType] || selectedType;
-                }
-                
-                // Mostrar información de selección
-                if (selectedTypeInfo) {
-                    selectedTypeInfo.classList.add('show');
-                }
-                
-                // Configurar zona de upload según el tipo
-                updateUploadZone();
-                
-                // Mostrar/ocultar configuración de quiz
-                const quizConfig = document.getElementById('quiz-config');
-                if (quizConfig) {
-                    if (selectedType === 'quiz') {
-                        quizConfig.classList.add('show');
-                    } else {
-                        quizConfig.classList.remove('show');
-                    }
-                }
-            });
-        });
-    }
-
-    function updateUploadZone() {
-        const uploadInfo = document.getElementById('upload-info');
-        const fileInput = document.getElementById('file-input');
-        
-        if (!uploadInfo || !fileInput) return;
-        
-        const typeConfig = {
-            'video': {
-                accept: '.mp4,.avi,.mov',
-                info: 'Archivos de video: MP4, AVI, MOV (máx. 500MB)'
-            },
-            'document': {
-                accept: '.pdf,.docx,.pptx',
-                info: 'Documentos: PDF, DOCX, PPTX (máx. 50MB)'
-            },
-            'image': {
-                accept: '.png,.jpg,.jpeg,.svg',
-                info: 'Imágenes: PNG, JPG, SVG (máx. 10MB)'
-            },
-            'quiz': {
-                accept: '',
-                info: 'Las evaluaciones se crean con el editor integrado'
+        if (fileUrl) {
+            switch(item.tipo) {
+                case 'video':
+                    filePreview = `
+                        <div class="content-preview video-preview">
+                            <video width="100%" height="300" controls>
+                                <source src="${fileUrl}" type="video/mp4">
+                                Tu navegador no soporta video.
+                            </video>
+                        </div>
+                    `;
+                    break;
+                case 'image':
+                    filePreview = `
+                        <div class="content-preview image-preview">
+                            <img src="${fileUrl}" alt="${item.titulo}">
+                        </div>
+                    `;
+                    break;
+                case 'document':
+                    const ext = fileUrl.split('.').pop().toLowerCase();
+                    const isPdf = ext === 'pdf';
+                    filePreview = `
+                        <div class="content-preview document-preview">
+                            ${isPdf ? `
+                                <iframe src="${fileUrl}" width="100%" height="400"></iframe>
+                            ` : `
+                                <div class="document-icon">
+                                    <i class="fas fa-file-${ext === 'docx' ? 'word' : ext === 'pptx' ? 'powerpoint' : 'alt'}"></i>
+                                    <p>Documento ${ext.toUpperCase()}</p>
+                                </div>
+                            `}
+                        </div>
+                    `;
+                    break;
             }
-        };
-        
-        if (selectedType && typeConfig[selectedType]) {
-            uploadInfo.textContent = typeConfig[selectedType].info;
-            fileInput.accept = typeConfig[selectedType].accept;
+        }
+
+        return `
+            <div class="content-item" data-id="${item.id}">
+                <div class="content-item-header">
+                    <div class="content-type-badge ${item.tipo}">${getTipoIcon(item.tipo)}</div>
+                    <div class="content-title-section">
+                        <h4>${item.titulo}</h4>
+                        <p class="content-diplomado">
+                            <i class="fas fa-graduation-cap"></i> 
+                            ${item.diplomado_titulo || 'Sin diplomado'}
+                        </p>
+                    </div>
+                </div>
+                
+                ${item.leccion ? `
+                    <p class="content-lesson">
+                        <i class="fas fa-book-open"></i> ${item.leccion}
+                    </p>
+                ` : ''}
+                
+                <p class="content-description">${item.descripcion || 'Sin descripción'}</p>
+                
+                ${filePreview}
+                
+                ${fileUrl ? `
+                    <a href="${fileUrl}" download="${item.titulo}" class="btn-download">
+                        <i class="fas fa-download"></i> Descargar ${item.tipo}
+                    </a>
+                ` : ''}
+                
+                <div class="content-meta">
+                    <div class="content-badges">
+                        <span class="badge ${getEstadoClass(item.estado)}">${getEstadoText(item.estado)}</span>
+                        <span class="badge ${getDificultadClass(item.dificultad)}">${getDificultadText(item.dificultad)}</span>
+                    </div>
+                    <span class="content-date">
+                        <i class="fas fa-clock"></i> ${item.fecha_creacion}
+                    </span>
+                </div>
+                
+                <div class="content-actions">
+                    <button onclick="viewContent(${item.id})" class="btn-icon" title="Ver detalles">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button onclick="deleteContent(${item.id})" class="btn-icon btn-icon-danger" title="Eliminar">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// =================== FUNCIONES AUXILIARES ===================
+function getTipoIcon(tipo) {
+    const icons = {
+        'video': '<i class="fas fa-video"></i>',
+        'document': '<i class="fas fa-file-alt"></i>',
+        'image': '<i class="fas fa-image"></i>',
+        'quiz': '<i class="fas fa-question-circle"></i>'
+    };
+    return icons[tipo] || '';
+}
+
+function getEstadoClass(estado) {
+    const classes = {
+        'published': 'green',
+        'draft': 'gray',
+        'private': 'blue'
+    };
+    return classes[estado] || 'gray';
+}
+
+function getEstadoText(estado) {
+    const estados = {
+        'published': 'Publicado',
+        'draft': 'Borrador',
+        'private': 'Privado',
+        'processing': 'Procesando'
+    };
+    return estados[estado] || estado;
+}
+
+function getDificultadClass(dificultad) {
+    const classes = {
+        'beginner': 'green',
+        'intermediate': 'blue',
+        'advanced': 'red'
+    };
+    return classes[dificultad] || 'gray';
+}
+
+function getDificultadText(dificultad) {
+    const texts = {
+        'beginner': 'Principiante',
+        'intermediate': 'Intermedio',
+        'advanced': 'Avanzado'
+    };
+    return texts[dificultad] || dificultad;
+}
+
+// =================== ACTUALIZAR ESTADÍSTICAS ===================
+function updateContentStats(contenidos) {
+    const totalEl = document.querySelector('.stat-card:nth-child(1) .stat-info p');
+    const videosEl = document.querySelector('.stat-card:nth-child(2) .stat-info p');
+    const docsEl = document.querySelector('.stat-card:nth-child(3) .stat-info p');
+    const publishedEl = document.querySelector('.stat-card:nth-child(4) .stat-info p');
+    
+    if (!totalEl) return;
+    
+    const stats = {
+        total: contenidos.length,
+        videos: contenidos.filter(c => c.tipo === 'video').length,
+        documents: contenidos.filter(c => c.tipo === 'document').length,
+        images: contenidos.filter(c => c.tipo === 'image').length,
+        quizzes: contenidos.filter(c => c.tipo === 'quiz').length,
+        published: contenidos.filter(c => c.estado === 'published').length,
+        draft: contenidos.filter(c => c.estado === 'draft').length
+    };
+    
+    totalEl.textContent = stats.total;
+    totalEl.nextElementSibling.textContent = `${stats.published} publicados, ${stats.draft} borradores`;
+    
+    videosEl.textContent = stats.videos;
+    videosEl.nextElementSibling.textContent = `Videos del curso`;
+    
+    docsEl.textContent = stats.documents;
+    docsEl.nextElementSibling.textContent = `${stats.images} imágenes, ${stats.quizzes} quizzes`;
+    
+    publishedEl.textContent = stats.published;
+    publishedEl.nextElementSibling.textContent = `${stats.total - stats.published} pendientes`;
+}
+
+// =================== FILTROS ===================
+function initializeFilters() {
+    const contentFilter = document.getElementById('content-filter');
+    const statusFilter = document.getElementById('status-filter');
+    
+    if (contentFilter) {
+        contentFilter.addEventListener('change', applyFilters);
+    }
+    
+    if (statusFilter) {
+        statusFilter.addEventListener('change', applyFilters);
+    }
+    
+    const reloadBtn = document.getElementById('reload-content-btn');
+    if (reloadBtn) {
+        reloadBtn.addEventListener('click', () => {
+            loadAllContent();
+        });
+    }
+}
+
+function applyFilters() {
+    if (!window.allContent) return;
+    
+    const contentType = document.getElementById('content-filter')?.value || 'all';
+    const status = document.getElementById('status-filter')?.value || 'all';
+    
+    let filtered = window.allContent;
+    
+    if (contentType !== 'all') {
+        filtered = filtered.filter(item => item.tipo === contentType);
+    }
+    
+    if (status !== 'all') {
+        filtered = filtered.filter(item => item.estado === status);
+    }
+    
+    renderContentList(filtered);
+}
+
+// =================== BOTONES DE ACCIÓN ===================
+function initializeButtons() {
+    const createPublishBtn = document.getElementById('create-publish-btn');
+    
+    if (createPublishBtn) {
+        createPublishBtn.addEventListener('click', handleCreateContent);
+    }
+    
+    const changeFileBtn = document.getElementById('change-file-btn');
+    if (changeFileBtn) {
+        changeFileBtn.addEventListener('click', () => {
+            const uploadZone = document.getElementById('upload-zone');
+            const uploadSuccess = document.getElementById('upload-success');
+            uploadZone.style.display = 'block';
+            uploadSuccess.style.display = 'none';
+            selectedFile = null;
+        });
+    }
+}
+
+// =================== CREAR CONTENIDO ===================
+async function handleCreateContent() {
+    const errors = validateForm();
+    
+    if (errors.length > 0) {
+        showValidationErrors(errors);
+        return;
+    }
+    
+    removeValidationErrors();
+    
+    const formData = new FormData();
+    
+    formData.append('tipo', selectedType);
+    formData.append('titulo', document.getElementById('title').value);
+    formData.append('descripcion', document.getElementById('description').value);
+    formData.append('diplomado_id', document.getElementById('course').value);
+    formData.append('leccion', document.getElementById('lesson').value);
+    formData.append('orden', document.getElementById('order').value || 0);
+    formData.append('dificultad', document.getElementById('difficulty').value || 'beginner');
+    formData.append('estado', 'published');
+    
+    formData.append('is_public', document.getElementById('is-public').checked);
+    formData.append('allow_download', document.getElementById('allow-download').checked);
+    formData.append('enable_comments', document.getElementById('enable-comments').checked);
+    
+    const publishDate = document.getElementById('publish-date').value;
+    if (publishDate) formData.append('publish_date', publishDate);
+    
+    const expireDate = document.getElementById('expire-date').value;
+    if (expireDate) formData.append('expire_date', expireDate);
+    
+    formData.append('notify', document.getElementById('notify-students').value);
+    formData.append('prerequisito', document.getElementById('prerequisites').value);
+    
+    if (selectedType === 'quiz') {
+        formData.append('quiz_preguntas', document.getElementById('quiz-questions').value);
+        formData.append('quiz_tiempo', document.getElementById('quiz-time').value);
+        formData.append('quiz_score_min', document.getElementById('quiz-score').value);
+        formData.append('quiz_intentos', document.getElementById('quiz-attempts').value);
+    } else {
+        if (selectedFile) {
+            formData.append('archivo', selectedFile);
         }
     }
+    
+    try {
+        showLoading('Creando contenido...');
+        
+        const response = await fetch('/contenido/api/crear', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        hideLoading();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Error al crear contenido');
+        }
+        
+        showSuccess('Contenido creado exitosamente');
+        
+        setTimeout(() => {
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetForm();
+            loadAllContent();
+        }, 1500);
+        
+    } catch (error) {
+        hideLoading();
+        showError(error.message);
+        console.error('Error:', error);
+    }
+}
 
-    // ---------------------- Funciones placeholder ----------------------
-    function initializeTags() {
-        console.log("🏷️ Tags initialized");
+// =================== VALIDACIÓN ===================
+function validateForm() {
+    const errors = [];
+    
+    if (!selectedType) {
+        errors.push('Debe seleccionar un tipo de contenido');
     }
     
-    function initializeUpload() {
-        console.log("📤 Upload initialized");
+    const titulo = document.getElementById('title').value.trim();
+    if (!titulo) {
+        errors.push('El título es obligatorio');
     }
     
-    function initializeSwitches() {
-        console.log("🔄 Switches initialized");
+    const diplomadoId = document.getElementById('course').value;
+    if (!diplomadoId) {
+        errors.push('Debe seleccionar un diplomado');
     }
     
-    function initializeButtons() {
-        console.log("🔘 Buttons initialized");
+    const leccion = document.getElementById('lesson').value;
+    if (!leccion) {
+        errors.push('Debe seleccionar una lección');
     }
+    
+    if (selectedType !== 'quiz' && !selectedFile) {
+        errors.push('Debe subir un archivo');
+    }
+    
+    if (selectedType === 'quiz') {
+        const preguntas = document.getElementById('quiz-questions').value;
+        if (!preguntas || preguntas < 1) {
+            errors.push('Número de preguntas inválido');
+        }
+    }
+    
+    return errors;
+}
 
-    // ---------------------- Estilos animaciones ----------------------
-    const style = document.createElement("style");
-    style.innerHTML = `
-        /* Mejoras para inputs */
-        .form-input,
-        .form-select,
-        input[type="text"],
-        input[type="number"],
-        input[type="datetime-local"],
-        select,
-        textarea {
-            padding: 0.875rem 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
+function showValidationErrors(errors) {
+    removeValidationErrors();
+    
+    errors.forEach(error => {
+        const errorEl = document.createElement('div');
+        errorEl.className = 'error-message';
+        errorEl.style.cssText = `
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin: 0.5rem 0;
             font-size: 0.9rem;
-            transition: all 0.3s ease;
-            background: #fff;
-            color: #1e293b;
-            font-family: inherit;
-        }
-
-        .form-input:hover,
-        .form-select:hover,
-        input[type="text"]:hover,
-        input[type="number"]:hover,
-        input[type="datetime-local"]:hover,
-        select:hover,
-        textarea:hover {
-            border-color: #a855f7;
-            box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.1);
-            transform: translateY(-1px);
-        }
-
-        .form-input:focus,
-        .form-select:focus,
-        input[type="text"]:focus,
-        input[type="number"]:focus,
-        input[type="datetime-local"]:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #8b5cf6;
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
-            transform: translateY(-1px);
-        }
-
-        ::placeholder {
-            color: #94a3b8;
-            opacity: 1;
-        }
-
-        .tags-input-container:focus-within {
-            border-color: #8b5cf6;
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
-        }
-
-        /* Selección de tipo de contenido */
-        .content-type-card.selected {
-            border-color: #6366f1;
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.2);
-            transform: translateY(-4px);
-        }
-
-        .content-type-card.selected::before {
-            content: '';
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 24px;
-            height: 24px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            border-radius: 50%;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 0.5rem;
+            animation: slideInError 0.3s ease-out;
+        `;
+        errorEl.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${error}`;
+        
+        const modalBody = document.querySelector('.modal-body');
+        if (modalBody) {
+            modalBody.insertBefore(errorEl, modalBody.firstChild);
         }
+    });
+    
+    const firstError = document.querySelector('.error-message');
+    if (firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+}
 
-        .content-type-card.selected::after {
-            content: '✓';
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 24px;
-            height: 24px;
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1;
-        }
+function removeValidationErrors() {
+    document.querySelectorAll('.error-message').forEach(el => el.remove());
+}
 
-        /* Animaciones */
-        .fadeInScale {
-            animation: fadeInScale 0.4s ease forwards;
+// =================== ACCIONES DE CONTENIDO ===================
+function viewContent(id) {
+    alert(`Ver contenido ID: ${id} - Funcionalidad pendiente`);
+}
+
+async function deleteContent(id) {
+    if (!confirm('¿Estás seguro de eliminar este contenido?')) {
+        return;
+    }
+    
+    try {
+        showLoading('Eliminando contenido...');
+        
+        const response = await fetch(`/contenido/api/eliminar/${id}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        
+        hideLoading();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Error al eliminar');
         }
         
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.7); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .slideIn {
-            animation: slideIn 0.4s ease;
-        }
+        showSuccess('Contenido eliminado exitosamente');
+        loadAllContent();
         
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
+    } catch (error) {
+        hideLoading();
+        showError(error.message);
+        console.error('Error:', error);
+    }
+}
 
-        @keyframes slideInError {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+// =================== UTILIDADES ===================
+function resetForm() {
+    selectedType = '';
+    selectedFile = null;
+    
+    document.querySelectorAll('.content-type-card').forEach(c => c.classList.remove('selected'));
+    
+    const selectedTypeInfo = document.getElementById('selected-type-info');
+    if (selectedTypeInfo) selectedTypeInfo.classList.remove('show');
+    
+    document.getElementById('title').value = '';
+    document.getElementById('description').value = '';
+    document.getElementById('course').value = '';
+    document.getElementById('lesson').value = '';
+    document.getElementById('order').value = '';
+    document.getElementById('difficulty').value = '';
+    
+    const uploadZone = document.getElementById('upload-zone');
+    const uploadSuccess = document.getElementById('upload-success');
+    if (uploadZone) uploadZone.style.display = 'block';
+    if (uploadSuccess) uploadSuccess.style.display = 'none';
+    
+    removeValidationErrors();
+    
+    document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector('.modal-tab[data-tab="tipo"]').classList.add('active');
+    document.getElementById('tab-tipo').classList.add('active');
+}
 
-        @keyframes neonFade {
-            0% { opacity: 0; }
-            20% { opacity: 1; text-shadow: 0 0 10px #ff00cc, 0 0 20px #3333ff; }
-            80% { opacity: 1; }
-            100% { opacity: 0; }
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
+}
+
+function showLoading(message) {
+    const loadingDiv = document.createElement('div');
+    loadingDiv.id = 'loading-overlay';
+    loadingDiv.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+    `;
+    loadingDiv.innerHTML = `
+        <div style="background: white; padding: 2rem 3rem; border-radius: 16px; text-align: center;">
+            <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: #6366f1; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+            <p style="color: #1e293b; font-weight: 600;">${message}</p>
+        </div>
+    `;
+    document.body.appendChild(loadingDiv);
+    
+    const style = document.createElement('style');
+    style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+    document.head.appendChild(style);
+}
+
+function hideLoading() {
+    const loading = document.getElementById('loading-overlay');
+    if (loading) loading.remove();
+}
+
+function showSuccess(message) {
+    showNotification(message, 'success');
+}
+
+function showError(message) {
+    showNotification(message, 'error');
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        color: white;
+        font-weight: 600;
+        z-index: 10001;
+        animation: slideInRight 0.3s ease;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    `;
+    
+    if (type === 'success') {
+        notification.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        notification.innerHTML = '<i class="fas fa-check-circle"></i> ' + message;
+    } else {
+        notification.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+        notification.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + message;
+    }
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+    
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
         }
     `;
     document.head.appendChild(style);
+}
 
-})();
+// =================== RESPONSIVE - CERRAR SIDEBAR AL CAMBIAR TAMAÑO ===================
+window.addEventListener('resize', () => {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    if (window.innerWidth > 1024 && sidebar && sidebarOverlay) {
+        sidebar.classList.remove('open');
+        sidebarOverlay.classList.remove('active');
+        sidebarOpen = false;
+    }
+});

@@ -143,31 +143,78 @@ document.addEventListener("DOMContentLoaded", function() {
     // CARGA DE CERTIFICADOS
     // ========================
     
-    function loadCertificates() {
-        if (!certificatesContainer) return;
+ async function loadCertificates() {
+    if (!certificatesContainer) return;
 
-        // Mostrar loading skeleton
-        showLoadingSkeleton();
+    showLoadingSkeleton();
+    
+    try {
+        const response = await fetch('/estudiante/api/certificados');
+        const certificados = await response.json();
         
-        // Simular carga asíncrona
-        setTimeout(() => {
-            certificatesContainer.innerHTML = '';
+        certificatesContainer.innerHTML = '';
+        
+        if (certificados.length === 0) {
+            certificatesContainer.innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-certificate"></i>
+                    <p>Aun no tienes certificados. Completa un diplomado para obtener uno.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        certificados.forEach((cert, index) => {
+            const card = document.createElement('div');
+            card.className = 'certificate-card';
+            card.style.opacity = '0';
             
-            filteredCertificates.forEach((cert, index) => {
-                const certCard = createCertificateCard(cert, index);
-                certificatesContainer.appendChild(certCard);
-            });
+            card.innerHTML = `
+                <div class="certificate-image">
+                    <img src="https://picsum.photos/400/250?random=${index}" alt="${cert.diplomado}">
+                    <div class="cert-overlay" style="background: linear-gradient(45deg, #6366f140, #8b5cf615);">
+                        <div class="cert-badge" style="background: #6366f1;">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="certificate-info">
+                    <h3>${cert.diplomado}</h3>
+                    <p class="certificate-prof">Codigo: ${cert.codigo}</p>
+                    <p class="certificate-date">Emitido el ${cert.fecha_emision}</p>
+                    <div class="certificate-actions">
+                        <span class="share-label">Acciones:</span>
+                        <div class="social-buttons">
+                            <button class="social-btn download" onclick="window.location.href='${cert.url_descarga}'">
+                                <i class="fas fa-download"></i>
+                            </button>
+                           
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            certificatesContainer.appendChild(card);
+        });
 
-            // Aplicar animaciones escalonadas
-            const cards = certificatesContainer.querySelectorAll('.certificate-card');
-            cards.forEach((card, index) => {
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 100);
-            });
-        }, 500);
+        const cards = certificatesContainer.querySelectorAll('.certificate-card');
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+        
+    } catch (error) {
+        console.error('Error:', error);
+        certificatesContainer.innerHTML = `
+            <div class="no-results">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Error al cargar los certificados</p>
+            </div>
+        `;
     }
+}
 
     function showLoadingSkeleton() {
         certificatesContainer.innerHTML = '';

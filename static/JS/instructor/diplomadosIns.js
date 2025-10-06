@@ -1,150 +1,13 @@
-const courses = [
-    {
-        id: "1",
-        title: "Desarrollo Web con React",
-        description: "Aprende a crear aplicaciones web modernas con React, hooks y estado global.",
-        category: "Frontend",
-        level: "Intermedio",
-        duration: 40,
-        students: 156,
-        rating: 4.8,
-        reviews: 89,
-        status: "active",
-        progress: 100,
-        thumbnail: "https://via.placeholder.com/300x200",
-        price: 150000,
-        lessons: 24,
-        contentCount: 18
-    },
-    {
-        id: "2",
-        title: "Python para Data Science",
-        description: "Domina Python y sus librerías para análisis de datos y machine learning.",
-        category: "Data Science",
-        level: "Principiante",
-        duration: 35,
-        students: 203,
-        rating: 4.9,
-        reviews: 127,
-        status: "active",
-        progress: 100,
-        thumbnail: "https://via.placeholder.com/300x200",
-        price: 180000,
-        lessons: 28,
-        contentCount: 25
-    },
-    {
-        id: "3",
-        title: "Microservicios con Spring Boot",
-        description: "Arquitectura de microservicios usando Spring Boot y tecnologías cloud.",
-        category: "Backend",
-        level: "Avanzado",
-        duration: 50,
-        students: 78,
-        rating: 4.7,
-        reviews: 45,
-        status: "active",
-        progress: 85,
-        thumbnail: "https://via.placeholder.com/300x200",
-        price: 220000,
-        lessons: 32,
-        contentCount: 31
-    },
-    {
-        id: "4",
-        title: "Introducción a DevOps",
-        description: "Conceptos fundamentales de DevOps, CI/CD y automatización.",
-        category: "DevOps",
-        level: "Principiante",
-        duration: 25,
-        students: 0,
-        rating: 0,
-        reviews: 0,
-        status: "draft",
-        progress: 60,
-        thumbnail: "https://via.placeholder.com/300x200",
-        price: 120000,
-        lessons: 18,
-        contentCount: 5
-    }
-];
-
-const mockContent = [
-    { 
-        id: "1", 
-        courseId: "1",
-        title: "Introducción a React Hooks", 
-        type: "video", 
-        lesson: "Lección 1", 
-        size: "245 MB", 
-        uploadDate: "2024-01-14", 
-        status: "published", 
-        views: 156, 
-        duration: "15:30", 
-        description: "Video introductorio sobre React Hooks y su implementación" 
-    },
-    { 
-        id: "2", 
-        courseId: "1",
-        title: "Ejercicios de useState", 
-        type: "document", 
-        lesson: "Lección 1", 
-        size: "2.5 MB", 
-        uploadDate: "2024-01-14", 
-        status: "published", 
-        views: 89, 
-        description: "Documento PDF con ejercicios prácticos de useState" 
-    },
-    { 
-        id: "3", 
-        courseId: "1",
-        title: "Quiz: Fundamentos de React", 
-        type: "quiz", 
-        lesson: "Lección 2", 
-        size: "0.5 MB", 
-        uploadDate: "2024-01-12", 
-        status: "published", 
-        views: 134, 
-        description: "Evaluación de conocimientos básicos de React" 
-    },
-    { 
-        id: "4", 
-        courseId: "2",
-        title: "Introducción a NumPy", 
-        type: "video", 
-        lesson: "Lección 1", 
-        size: "180 MB", 
-        uploadDate: "2024-01-13", 
-        status: "published", 
-        views: 203, 
-        duration: "12:45", 
-        description: "Video sobre las bases de NumPy para análisis de datos" 
-    },
-    { 
-        id: "5", 
-        courseId: "2",
-        title: "Ejercicios de Pandas", 
-        type: "document", 
-        lesson: "Lección 3", 
-        size: "3.2 MB", 
-        uploadDate: "2024-01-10", 
-        status: "draft", 
-        views: 0, 
-        description: "Ejercicios prácticos con la librería Pandas" 
-    }
-];
-
 class DiplomaApp {
     constructor() {
-        this.courses = courses;
-        this.filteredCourses = [...courses];
+        this.courses = [];
+        this.filteredCourses = [];
         this.currentView = 'diplomados';
         this.selectedCourse = null;
         this.filteredContent = [];
+        this.allContent = [];
         this.objectives = [];
         this.currentEditingCourse = null;
-        this.currentEditingContent = null;
-        this.currentCourseForContent = null;
         this.init();
     }
 
@@ -152,8 +15,7 @@ class DiplomaApp {
         this.setupEventListeners();
         this.setupSidebar();
         this.setupModals();
-        this.renderCourses();
-        this.updateStats();
+        this.loadDiplomados();
         this.showView('diplomados');
     }
 
@@ -171,10 +33,10 @@ class DiplomaApp {
 
         // Navegación
         const backBtn = document.getElementById("backToDiplomados");
-        const breadcrumbHome = document.getElementById("breadcrumb-home");
-        
-        if (backBtn) backBtn.addEventListener("click", () => this.showView('diplomados'));
-        if (breadcrumbHome) breadcrumbHome.addEventListener("click", () => this.showView('diplomados'));
+        if (backBtn) backBtn.addEventListener("click", () => {
+            this.showView('diplomados');
+            this.loadDiplomados();
+        });
 
         // Botones principales
         const createCourseBtn = document.getElementById("createCourseBtn");
@@ -199,16 +61,9 @@ class DiplomaApp {
         });
     }
 
-    // Nueva función para navegar a subir contenido
     navigateToUploadContent() {
         if (this.selectedCourse) {
-            // Guardar información del diplomado en localStorage
-            localStorage.setItem('selectedCourseId', this.selectedCourse.id);
-            localStorage.setItem('selectedCourseTitle', this.selectedCourse.title);
-            localStorage.setItem('fromDiplomadosPage', 'true');
-            
-            // Navegar a la página de subir contenido
-            window.location.href = 'subirContenido.html';
+            window.location.href = `/subirContenido?diplomado_id=${this.selectedCourse.id}`;
         } else {
             this.showNotification("Error: No se ha seleccionado un diplomado", "error");
         }
@@ -241,7 +96,6 @@ class DiplomaApp {
     }
 
     setupModals() {
-        // Modal de diplomados
         const modal = document.getElementById("modalOverlay");
         const closeBtn = document.getElementById("closeModal");
         const cancelBtn = document.getElementById("cancelBtn");
@@ -253,47 +107,29 @@ class DiplomaApp {
 
         if (saveBtn) saveBtn.addEventListener("click", () => this.saveCourse());
 
-        // Modal de contenido
-        const contentModal = document.getElementById("contentModalOverlay");
-        const closeContentBtn = document.getElementById("closeContentModal");
-        const cancelContentBtn = document.getElementById("cancel-content-btn");
-        const saveContentBtn = document.getElementById("save-content-btn");
-
-        [closeContentBtn, cancelContentBtn].forEach(btn => {
-            if (btn) btn.addEventListener("click", () => this.closeContentModal());
-        });
-
-        if (saveContentBtn) saveContentBtn.addEventListener("click", () => this.saveContent());
-
-        // Tabs de modales
-        this.setupModalTabs();
-
-        // Objetivos
         const addObjectiveBtn = document.getElementById("addObjective");
         const objectiveInput = document.getElementById("newObjective");
 
         if (addObjectiveBtn && objectiveInput) {
             addObjectiveBtn.addEventListener("click", () => this.addObjective());
             objectiveInput.addEventListener("keypress", (e) => {
-                if (e.key === "Enter") this.addObjective();
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    this.addObjective();
+                }
             });
         }
 
-        // Cerrar modales al hacer click fuera
-        [modal, contentModal].forEach(m => {
-            if (m) {
-                m.addEventListener("click", (e) => {
-                    if (e.target === m) {
-                        if (m === modal) this.closeCourseModal();
-                        else this.closeContentModal();
-                    }
-                });
-            }
-        });
+        if (modal) {
+            modal.addEventListener("click", (e) => {
+                if (e.target === modal) this.closeCourseModal();
+            });
+        }
+
+        this.setupModalTabs();
     }
 
     setupModalTabs() {
-        // Tabs del modal de diplomados
         const modalTabs = document.querySelectorAll("#modalOverlay .modal-tab");
         const tabPanels = document.querySelectorAll("#modalOverlay .tab-panel");
 
@@ -307,7 +143,34 @@ class DiplomaApp {
         });
     }
 
-    // Gestión de vistas
+    // =================== CARGAR DIPLOMADOS ===================
+    async loadDiplomados() {
+        try {
+            console.log('🔄 Cargando diplomados...');
+            const response = await fetch('/diplomados/api/listar');
+            console.log('📡 Response status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ Error response:', errorText);
+                throw new Error(`Error al cargar diplomados: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('✅ Diplomados recibidos:', data);
+            console.log('📊 Total diplomados:', data.length);
+            
+            this.courses = data;
+            this.filteredCourses = [...this.courses];
+            this.renderCourses();
+            this.updateStats();
+        } catch (error) {
+            console.error('💥 Error al cargar diplomados:', error);
+            this.showNotification('Error al cargar diplomados: ' + error.message, 'error');
+        }
+    }
+
+    // =================== GESTIÓN DE VISTAS ===================
     showView(viewName) {
         const views = document.querySelectorAll('.view-container');
         views.forEach(v => v.classList.remove('active'));
@@ -317,44 +180,31 @@ class DiplomaApp {
             targetView.classList.add('active');
             this.currentView = viewName;
         }
-
-        this.updateBreadcrumbs(viewName);
     }
 
-updateBreadcrumbs(viewName) {
-        const breadcrumbs = document.getElementById('breadcrumbs');
-        if (!breadcrumbs) return;
+    // =================== VER CONTENIDO DEL DIPLOMADO ===================
+    async viewCourseContent(courseId) {
+        try {
+            this.selectedCourse = this.courses.find(c => c.id == courseId);
+            if (!this.selectedCourse) {
+                this.showNotification('Diplomado no encontrado', 'error');
+                return;
+            }
 
-        if (viewName === 'diplomados') {
-            breadcrumbs.innerHTML = `
-                <a href="#" class="breadcrumb-item active">
-                    <i class="fas fa-home"></i> Mis Diplomados
-                </a>
-            `;
-        } else if (viewName === 'content' && this.selectedCourse) {
-            breadcrumbs.innerHTML = `
-                <a href="#" class="breadcrumb-item" onclick="app.showView('diplomados')">
-                    <i class="fas fa-home"></i> Mis Diplomados
-                </a>
-                <a href="#" class="breadcrumb-item active">
-                    <i class="fas fa-folder"></i> ${this.selectedCourse.title}
-                </a>
-            `;
+            // Cargar contenidos desde la base de datos
+            const response = await fetch(`/contenido/api/listar/${courseId}`);
+            if (!response.ok) throw new Error('Error al cargar contenidos');
+            
+            this.allContent = await response.json();
+            this.filteredContent = [...this.allContent];
+            
+            this.updateCourseHeader();
+            this.renderContent();
+            this.showView('content');
+        } catch (error) {
+            console.error('Error al cargar contenidos:', error);
+            this.showNotification('Error al cargar contenidos del diplomado', 'error');
         }
-    }
-
-    // Gestión de diplomados
-    viewCourseContent(courseId) {
-        this.selectedCourse = this.courses.find(c => c.id === courseId);
-        if (!this.selectedCourse) return;
-
-        // Guardar referencia del diplomado seleccionado para el modal de contenido
-        this.currentCourseForContent = this.selectedCourse;
-        
-        this.filteredContent = mockContent.filter(c => c.courseId === courseId);
-        this.updateCourseHeader();
-        this.renderContent();
-        this.showView('content');
     }
 
     updateCourseHeader() {
@@ -366,10 +216,10 @@ updateBreadcrumbs(viewName) {
         const studentsEl = document.getElementById('selected-course-students');
         const contentEl = document.getElementById('selected-course-content');
 
-        if (titleEl) titleEl.textContent = this.selectedCourse.title;
-        if (descEl) descEl.textContent = this.selectedCourse.description;
-        if (nameEl) nameEl.textContent = this.selectedCourse.title;
-        if (studentsEl) studentsEl.textContent = `${this.selectedCourse.students} estudiantes`;
+        if (titleEl) titleEl.textContent = this.selectedCourse.titulo;
+        if (descEl) descEl.textContent = this.selectedCourse.descripcion;
+        if (nameEl) nameEl.textContent = this.selectedCourse.titulo;
+        if (studentsEl) studentsEl.textContent = `0 estudiantes`;
         if (contentEl) contentEl.textContent = `${this.filteredContent.length} contenidos`;
     }
 
@@ -387,17 +237,17 @@ updateBreadcrumbs(viewName) {
         if (activeContent) activeContent.classList.add('active');
     }
 
-    // Filtros
+    // =================== FILTROS ===================
     applyFilters() {
         const searchTerm = document.getElementById("search")?.value.toLowerCase() || "";
         const statusFilter = document.getElementById("status-filter")?.value || "all";
         const categoryFilter = document.getElementById("category-filter")?.value || "all";
 
         this.filteredCourses = this.courses.filter(course => {
-            const matchSearch = course.title.toLowerCase().includes(searchTerm) || 
-                              course.description.toLowerCase().includes(searchTerm);
-            const matchStatus = statusFilter === "all" || course.status === statusFilter;
-            const matchCategory = categoryFilter === "all" || course.category === categoryFilter;
+            const matchSearch = course.titulo.toLowerCase().includes(searchTerm) || 
+                              course.descripcion.toLowerCase().includes(searchTerm);
+            const matchStatus = statusFilter === "all" || course.estado === statusFilter;
+            const matchCategory = categoryFilter === "all" || course.categoria === categoryFilter;
 
             return matchSearch && matchStatus && matchCategory;
         });
@@ -420,21 +270,23 @@ updateBreadcrumbs(viewName) {
         const statusFilter = document.getElementById("content-status-filter")?.value || "all";
         const searchTerm = document.getElementById("content-search")?.value.toLowerCase() || "";
 
-        const courseContent = mockContent.filter(c => c.courseId === this.selectedCourse.id);
-
-        this.filteredContent = courseContent.filter(content => {
-            const matchType = typeFilter === "all" || content.type === typeFilter;
-            const matchStatus = statusFilter === "all" || content.status === statusFilter;
-            const matchSearch = content.title.toLowerCase().includes(searchTerm) ||
-                              content.description.toLowerCase().includes(searchTerm);
+        this.filteredContent = this.allContent.filter(content => {
+            const matchType = typeFilter === "all" || content.tipo === typeFilter;
+            const matchStatus = statusFilter === "all" || content.estado === statusFilter;
+            const matchSearch = content.titulo.toLowerCase().includes(searchTerm) ||
+                              (content.descripcion && content.descripcion.toLowerCase().includes(searchTerm));
 
             return matchType && matchStatus && matchSearch;
         });
 
         this.renderContent();
+        
+        // Actualizar contador
+        const contentEl = document.getElementById('selected-course-content');
+        if (contentEl) contentEl.textContent = `${this.filteredContent.length} contenidos`;
     }
 
-    // Renderizado con nuevo diseño
+    // =================== RENDERIZADO ===================
     renderCourses() {
         const container = document.getElementById("courses-list");
         if (!container) return;
@@ -452,44 +304,40 @@ updateBreadcrumbs(viewName) {
 
         container.innerHTML = this.filteredCourses.map(course => `
             <div class="course-card">
-                <div class="course-gradient-header ${this.getCategoryClass(course.category)}">
+                <div class="course-gradient-header ${this.getCategoryClass(course.categoria)}">
                     <div class="course-header-content">
-                        <h3 class="course-title">${course.title}</h3>
-                        <p class="course-description">${course.description}</p>
+                        <h3 class="course-title">${course.titulo}</h3>
+                        <p class="course-description">${course.descripcion}</p>
                     </div>
-                    <div class="course-level-badge">${course.level}</div>
+                    <div class="course-level-badge">${course.nivel}</div>
                 </div>
                 <div class="course-card-body">
                     <div class="course-meta">
                         <div class="course-stats">
                             <div class="course-stat">
-                                <i class="fas fa-users"></i>
-                                <span>${course.students} estudiantes</span>
-                            </div>
-                            <div class="course-stat">
                                 <i class="fas fa-clock"></i>
-                                <span>${course.duration} horas</span>
+                                <span>${course.duracion_horas} horas</span>
                             </div>
                             <div class="course-stat">
-                                <i class="fas fa-star"></i>
-                                <span>${course.rating > 0 ? course.rating + ' rating' : 'Sin calificar'}</span>
+                                <i class="fas fa-book-open"></i>
+                                <span>${course.lecciones_estimadas} lecciones</span>
                             </div>
                         </div>
                         <div class="course-status">
-                            <span class="course-status-badge ${course.status}">
-                                ${this.getStatusLabel(course.status)}
+                            <span class="course-status-badge ${course.estado}">
+                                ${this.getStatusLabel(course.estado)}
                             </span>
-                            <div class="price">${this.formatPrice(course.price)}</div>
+                            <div class="price">${this.formatPrice(course.precio)}</div>
                         </div>
                     </div>
                     <div class="course-actions">
-                        <button class="course-action-btn primary" onclick="app.viewCourseContent('${course.id}')">
+                        <button class="course-action-btn primary" onclick="app.viewCourseContent(${course.id})">
                             <i class="fas fa-folder-open"></i> Contenido
                         </button>
-                        <button class="course-action-btn secondary" onclick="app.editCourse('${course.id}')">
+                        <button class="course-action-btn secondary" onclick="app.editCourse(${course.id})">
                             <i class="fas fa-edit"></i> Editar
                         </button>
-                        <button class="course-action-btn danger" onclick="app.deleteCourse('${course.id}')">
+                        <button class="course-action-btn danger" onclick="app.deleteCourse(${course.id})">
                             <i class="fas fa-trash"></i> Eliminar
                         </button>
                     </div>
@@ -519,29 +367,23 @@ updateBreadcrumbs(viewName) {
         container.innerHTML = this.filteredContent.map(content => `
             <div class="content-item">
                 <div class="content-item-header">
-                    <span class="content-type-badge ${content.type}">${this.getTypeLabel(content.type)}</span>
-                    <span class="status-badge ${content.status}">${this.getStatusLabel(content.status)}</span>
+                    <span class="content-type-badge ${content.tipo}">${this.getTypeLabel(content.tipo)}</span>
+                    <span class="status-badge ${content.estado}">${this.getStatusLabel(content.estado)}</span>
                 </div>
-                <h4>${content.title}</h4>
-                <p>${content.description}</p>
+                <h4>${content.titulo}</h4>
+                <p>${content.descripcion || 'Sin descripción'}</p>
                 <div class="content-item-meta">
-                    <span>${content.lesson}</span>
-                    <span>${content.size}</span>
-                    <span>${content.uploadDate}</span>
+                    <span><i class="fas fa-layer-group"></i> ${content.leccion || 'General'}</span>
+                    <span><i class="fas fa-calendar"></i> ${content.fecha_creacion || 'Sin fecha'}</span>
                 </div>
-                ${content.type === 'video' && content.duration ? `<div class="content-item-meta"><i class="fas fa-play"></i> ${content.duration}</div>` : ''}
-                ${content.views !== undefined ? `<div class="content-item-meta"><i class="fas fa-eye"></i> ${content.views} visualizaciones</div>` : ''}
                 <div class="content-item-actions">
-                    <button class="content-action-btn" onclick="app.viewContent('${content.id}')" title="Ver">
+                    <button class="content-action-btn" onclick="app.viewContent(${content.id})" title="Ver">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="content-action-btn" onclick="app.editContent('${content.id}')" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="content-action-btn" onclick="app.downloadContent('${content.id}')" title="Descargar">
+                    <button class="content-action-btn" onclick="app.downloadContent('${content.archivo_url || ''}')" title="Descargar">
                         <i class="fas fa-download"></i>
                     </button>
-                    <button class="content-action-btn danger" onclick="app.deleteContent('${content.id}')" title="Eliminar">
+                    <button class="content-action-btn danger" onclick="app.deleteContent(${content.id})" title="Eliminar">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -549,14 +391,14 @@ updateBreadcrumbs(viewName) {
         `).join("");
     }
 
-    // Gestión de modales
+    // =================== MODALES ===================
     openCourseModal(courseId = null) {
         const modal = document.getElementById("modalOverlay");
         const modalTitle = document.getElementById("modal-title");
         const saveButton = document.getElementById("save-btn-text");
 
         if (courseId) {
-            this.currentEditingCourse = this.courses.find(c => c.id === courseId);
+            this.currentEditingCourse = this.courses.find(c => c.id == courseId);
             modalTitle.textContent = "Editar Diplomado";
             saveButton.textContent = "Actualizar Diplomado";
             this.populateCourseForm();
@@ -582,63 +424,45 @@ updateBreadcrumbs(viewName) {
         }
     }
 
-    openContentModal(contentId = null) {
-        const modal = document.getElementById("contentModalOverlay");
-        const modalTitle = document.getElementById("content-modal-title");
-
-        if (contentId) {
-            this.currentEditingContent = mockContent.find(c => c.id === contentId);
-            modalTitle.textContent = "Editar Contenido";
-        } else {
-            this.currentEditingContent = null;
-            if (this.currentCourseForContent) {
-                modalTitle.textContent = `Agregar Contenido - ${this.currentCourseForContent.title}`;
-            } else {
-                modalTitle.textContent = "Agregar Contenido";
-            }
-        }
-
-        if (modal) {
-            modal.classList.add("active");
-            document.body.style.overflow = "hidden";
-        }
-    }
-
-    closeContentModal() {
-        const modal = document.getElementById("contentModalOverlay");
-        if (modal) {
-            modal.classList.remove("active");
-            document.body.style.overflow = "auto";
-        }
-    }
-
-    // Acciones de contenido
+    // =================== ACCIONES DE CONTENIDO ===================
     viewContent(contentId) {
-        const content = mockContent.find(c => c.id === contentId);
-        if (content) {
-            this.showNotification(`Visualizando: ${content.title}`, "info");
+        const content = this.filteredContent.find(c => c.id == contentId);
+        if (content && content.archivo_url) {
+            window.open(content.archivo_url, '_blank');
+        } else {
+            this.showNotification("Contenido no disponible", "info");
         }
     }
 
-    editContent(contentId) {
-        this.openContentModal(contentId);
-    }
-
-    downloadContent(contentId) {
-        const content = mockContent.find(c => c.id === contentId);
-        if (content) {
-            this.showNotification(`Descargando: ${content.title}`, "info");
+    downloadContent(archivo_url) {
+        if (archivo_url && archivo_url !== '') {
+            const link = document.createElement('a');
+            link.href = archivo_url;
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            this.showNotification("Descargando contenido...", "info");
+        } else {
+            this.showNotification("No hay archivo disponible", "error");
         }
     }
 
-    deleteContent(contentId) {
-        if (confirm("¿Estás seguro de que quieres eliminar este contenido?")) {
-            const index = mockContent.findIndex(c => c.id === contentId);
-            if (index !== -1) {
-                mockContent.splice(index, 1);
-                this.applyContentFilters();
-                this.showNotification("Contenido eliminado exitosamente", "success");
-            }
+    async deleteContent(contentId) {
+        if (!confirm("¿Estás seguro de que quieres eliminar este contenido?")) return;
+
+        try {
+            const response = await fetch(`/contenido/api/eliminar/${contentId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) throw new Error('Error al eliminar contenido');
+
+            this.showNotification("Contenido eliminado exitosamente", "success");
+            await this.viewCourseContent(this.selectedCourse.id);
+        } catch (error) {
+            console.error('Error:', error);
+            this.showNotification("Error al eliminar contenido", "error");
         }
     }
 
@@ -646,45 +470,55 @@ updateBreadcrumbs(viewName) {
         this.openCourseModal(courseId);
     }
 
-    // Nueva función para eliminar diplomado
-    deleteCourse(courseId) {
-        if (confirm("¿Estás seguro de que quieres eliminar este diplomado? Esta acción no se puede deshacer.")) {
-            const courseIndex = this.courses.findIndex(c => c.id === courseId);
-            if (courseIndex !== -1) {
-                const courseName = this.courses[courseIndex].title;
-                this.courses.splice(courseIndex, 1);
-                this.filteredCourses = [...this.courses];
-                this.renderCourses();
-                this.updateStats();
-                this.showNotification(`Diplomado "${courseName}" eliminado exitosamente`, "success");
-            }
+    async deleteCourse(courseId) {
+        if (!confirm("¿Estás seguro de que quieres eliminar este diplomado? Esta acción no se puede deshacer.")) return;
+
+        try {
+            const response = await fetch(`/diplomados/api/eliminar/${courseId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) throw new Error('Error al eliminar diplomado');
+
+            this.showNotification("Diplomado eliminado exitosamente", "success");
+            await this.loadDiplomados();
+        } catch (error) {
+            console.error('Error:', error);
+            this.showNotification("Error al eliminar diplomado", "error");
         }
     }
 
-    // Nueva función para obtener la clase de categoría
     getCategoryClass(category) {
-        return category.toLowerCase().replace(/\s+/g, '-');
+        const categoryMap = {
+            'Frontend': 'frontend',
+            'Backend': 'backend',
+            'Data Science': 'data-science',
+            'DevOps': 'devops'
+        };
+        return categoryMap[category] || 'frontend';
     }
 
-    // Formularios
+    // =================== FORMULARIOS ===================
     populateCourseForm() {
         if (!this.currentEditingCourse) return;
 
         const course = this.currentEditingCourse;
-        document.getElementById("courseTitle").value = course.title || "";
-        document.getElementById("courseCategory").value = course.category || "";
-        document.getElementById("courseDescription").value = course.description || "";
-        document.getElementById("courseLevel").value = course.level || "Principiante";
-        document.getElementById("courseDuration").value = course.duration || "";
-        document.getElementById("courseLessons").value = course.lessons || "";
-        document.getElementById("coursePrice").value = course.price || "";
-        document.getElementById("courseStatus").value = course.status || "draft";
+        document.getElementById("courseTitle").value = course.titulo || "";
+        document.getElementById("courseCategory").value = course.categoria || "";
+        document.getElementById("courseDescription").value = course.descripcion || "";
+        document.getElementById("courseLevel").value = course.nivel || "Principiante";
+        document.getElementById("courseDuration").value = course.duracion_horas || "";
+        document.getElementById("courseLessons").value = course.lecciones_estimadas || "";
+        document.getElementById("coursePrice").value = course.precio || "";
+        document.getElementById("courseStatus").value = course.estado || "draft";
+
+        this.objectives = Array.isArray(course.objetivos) ? course.objetivos : [];
+        this.renderObjectives();
     }
 
     resetCourseForm() {
-        const form = document.querySelector("#modalOverlay .modal-body");
-        const inputs = form?.querySelectorAll("input, select, textarea");
-        inputs?.forEach(input => {
+        const inputs = document.querySelectorAll("#modalOverlay input, #modalOverlay select, #modalOverlay textarea");
+        inputs.forEach(input => {
             if (input.type === "checkbox" || input.type === "radio") {
                 input.checked = false;
             } else {
@@ -696,7 +530,6 @@ updateBreadcrumbs(viewName) {
         this.renderObjectives();
         this.currentEditingCourse = null;
 
-        // Reset to first tab
         const modalTabs = document.querySelectorAll("#modalOverlay .modal-tab");
         const tabPanels = document.querySelectorAll("#modalOverlay .tab-panel");
         modalTabs.forEach(t => t.classList.remove("active"));
@@ -705,10 +538,10 @@ updateBreadcrumbs(viewName) {
         tabPanels[0]?.classList.add("active");
     }
 
-    saveCourse() {
-        const title = document.getElementById("courseTitle")?.value;
+    async saveCourse() {
+        const title = document.getElementById("courseTitle")?.value.trim();
         const category = document.getElementById("courseCategory")?.value;
-        const description = document.getElementById("courseDescription")?.value;
+        const description = document.getElementById("courseDescription")?.value.trim();
         const level = document.getElementById("courseLevel")?.value;
         const duration = document.getElementById("courseDuration")?.value;
         const lessons = document.getElementById("courseLessons")?.value;
@@ -716,70 +549,54 @@ updateBreadcrumbs(viewName) {
         const status = document.getElementById("courseStatus")?.value;
 
         if (!title || !category || !description) {
-            this.showNotification("Por favor completa los campos obligatorios", "error");
+            this.showNotification("Por favor completa los campos obligatorios (Título, Categoría y Descripción)", "error");
             return;
         }
 
-        if (this.currentEditingCourse) {
-            // Actualizar curso existente
-            const courseIndex = this.courses.findIndex(c => c.id === this.currentEditingCourse.id);
-            if (courseIndex !== -1) {
-                this.courses[courseIndex] = {
-                    ...this.courses[courseIndex],
-                    title,
-                    description,
-                    category,
-                    level: level || "Principiante",
-                    duration: parseInt(duration) || 0,
-                    lessons: parseInt(lessons) || 0,
-                    price: parseInt(price) || 0,
-                    status: status || "draft"
-                };
-                this.showNotification("Diplomado actualizado exitosamente", "success");
+        const courseData = {
+            titulo: title,
+            categoria: category,
+            descripcion: description,
+            nivel: level || "Principiante",
+            duracion_horas: parseInt(duration) || 0,
+            lecciones_estimadas: parseInt(lessons) || 0,
+            objetivos: this.objectives,
+            precio: parseFloat(price) || 0,
+            estado: status || "draft"
+        };
+
+        try {
+            let response;
+            if (this.currentEditingCourse) {
+                response = await fetch(`/diplomados/api/editar/${this.currentEditingCourse.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(courseData)
+                });
+            } else {
+                response = await fetch('/diplomados/api/crear', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(courseData)
+                });
             }
-        } else {
-            // Crear nuevo curso
-            const newCourse = {
-                id: String(this.courses.length + 1),
-                title,
-                description,
-                category,
-                level: level || "Principiante",
-                duration: parseInt(duration) || 0,
-                students: 0,
-                rating: 0,
-                reviews: 0,
-                status: status || "draft",
-                progress: 0,
-                thumbnail: "https://via.placeholder.com/300x200",
-                price: parseInt(price) || 0,
-                lessons: parseInt(lessons) || 0,
-                contentCount: 0
-            };
-            
-            this.courses.push(newCourse);
-            this.showNotification("Diplomado creado exitosamente", "success");
-        }
 
-        this.filteredCourses = [...this.courses];
-        this.renderCourses();
-        this.updateStats();
-        this.closeCourseModal();
-    }
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Error al guardar diplomado');
+            }
 
-    saveContent() {
-        // Aquí iría la lógica para guardar contenido
-        // Por ahora, solo mostramos un mensaje
-        this.showNotification("Contenido guardado exitosamente", "success");
-        this.closeContentModal();
-        
-        // Refrescar la vista de contenido si estamos en ella
-        if (this.currentView === 'content') {
-            this.applyContentFilters();
+            const message = this.currentEditingCourse ? "Diplomado actualizado exitosamente" : "Diplomado creado exitosamente";
+            this.showNotification(message, "success");
+            this.closeCourseModal();
+            await this.loadDiplomados();
+        } catch (error) {
+            console.error('Error:', error);
+            this.showNotification(error.message || "Error al guardar diplomado", "error");
         }
     }
 
-    // Objetivos
+    // =================== OBJETIVOS ===================
     addObjective() {
         const input = document.getElementById("newObjective");
         const value = input?.value.trim();
@@ -808,16 +625,7 @@ updateBreadcrumbs(viewName) {
         `).join("");
     }
 
-    // Utilidades
-    getLevelColor(level) {
-        const colors = {
-            "Principiante": "green",
-            "Intermedio": "blue",
-            "Avanzado": "red"
-        };
-        return colors[level] || "gray";
-    }
-
+    // =================== UTILIDADES ===================
     getTypeLabel(type) {
         const labels = {
             "video": "Video",
@@ -832,6 +640,8 @@ updateBreadcrumbs(viewName) {
         const labels = {
             "published": "Publicado",
             "draft": "Borrador",
+            "active": "Activo",
+            "archived": "Archivado",
             "processing": "Procesando"
         };
         return labels[status] || status;
@@ -847,16 +657,11 @@ updateBreadcrumbs(viewName) {
 
     updateStats() {
         const totalCourses = this.courses.length;
-        const activeCourses = this.courses.filter(c => c.status === 'active').length;
-        const totalStudents = this.courses.reduce((sum, c) => sum + c.students, 0);
-        const totalContent = this.courses.reduce((sum, c) => sum + (c.contentCount || 0), 0);
+        const activeCourses = this.courses.filter(c => c.estado === 'active').length;
 
-        // Update DOM
         const elements = {
             'total-courses': totalCourses,
-            'active-courses': `${activeCourses} activos`,
-            'total-students': totalStudents,
-            'total-content': totalContent
+            'active-courses': `${activeCourses} activos`
         };
 
         Object.entries(elements).forEach(([id, value]) => {
@@ -900,21 +705,20 @@ updateBreadcrumbs(viewName) {
     }
 }
 
-// Inicializar la aplicación
+// Inicializar
 let app;
 document.addEventListener('DOMContentLoaded', () => {
     app = new DiplomaApp();
 });
 
-// Manejar redimensionamiento de ventana
 window.addEventListener('resize', () => {
     const sidebar = document.getElementById('sidebar');
-    if (window.innerWidth > 768) {
+    if (window.innerWidth > 768 && sidebar) {
         sidebar.classList.remove('active');
     }
 });
 
-// Añadir estilos de animación y nuevos estilos para las tarjetas con gradiente
+// Animaciones
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideInRight {
@@ -940,8 +744,3 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-// Exportar para uso en módulos
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = DiplomaApp;
-}

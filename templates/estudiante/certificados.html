@@ -9,7 +9,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+       <!-- Botón hamburguesa flotante (solo móvil/tablet) -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Overlay para cerrar sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <!-- CONTENEDOR PRINCIPAL DEL LAYOUT -->
+
     <div class="layout">
             <aside class="sidebar" id="sidebar">
 
@@ -26,17 +34,13 @@
   
   <!-- NAVEGACIÓN PRINCIPAL -->
   <nav>
-  <a href="{{ url_for('student') }}" class="nav-item" id="Inicio">
+  <a href="{{ url_for('home') }}" class="nav-item" id="Inicio">
     <i class="fas fa-chart-line icon"></i>
     <span class="text">Inicio</span>
   </a>
   <a href="{{ url_for('diplomados') }}" class="nav-item" id="diplomados">
     <i class="fas fa-book icon"></i>
     <span class="text">Diplomados</span>
-  </a>
-  <a href="{{ url_for('progreso_semanal') }}" class="nav-item" id="tutorias">
-    <i class="fas fa-video icon"></i>
-    <span class="text">Mi progreso</span>
   </a>
   <a href="{{ url_for('pagos') }}" class="nav-item" id="pagos">
     <i class="fas fa-credit-card icon"></i>
@@ -85,31 +89,12 @@
           <img src="https://i.pravatar.cc/40" alt="Foto de perfil">
         </div>
         <div class="dropdown-menu" id="dropdownMenu">
-          <div class="dropdown-header">
-            <div class="dropdown-avatar">
-              <img src="https://i.pravatar.cc/40" alt="Avatar">
-            </div>
-            <div class="dropdown-user-info">
-              <h4>María González</h4>
-              <span>Estudiante</span>
-            </div>
-          </div>
+          
 
-          <div class="dropdown-divider"></div>
+
+
           <div class="dropdown-content">
-            <a href="perfilEstudiante.html" class="dropdown-item">
-              <i class="fas fa-user"></i>
-              <span>Mi Cuenta</span>
-            </a>
-            <a href="login.html" class="dropdown-item">
-              <i class="fas fa-cog"></i>
-              <span>Configuración</span>
-            </a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item logout">
-              <i class="fas fa-sign-out-alt"></i>
-              <span>Cerrar Sesión</span>
-            </a>
+          
           </div>
         </div>
       </div>
@@ -119,35 +104,12 @@
 
             <!-- CONTENIDO PRINCIPAL -->
             <div class="content">
-                <div class="page-header">
-                    <h1>Mis certificados</h1>
-                    <div class="stats-container">
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-trophy"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-number" id="totalCerts">0</span>
-                                <span class="stat-label">Certificados</span>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-number" id="thisMonth">0</span>
-                                <span class="stat-label">Este mes</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
                 
                 <!-- FILTROS -->
                 <div class="filters-section">
                     <div class="certificate-tabs">
                         <button class="tab-btn active" data-tab="all">Todos</button>
-                        <button class="tab-btn" data-tab="recent">Recientes</button>
                     </div>
 
                 </div>
@@ -175,9 +137,6 @@
                     <div class="modal-actions">
                         <button class="btn-primary" id="downloadBtn">
                             <i class="fas fa-download"></i> Descargar
-                        </button>
-                        <button class="btn-secondary" id="shareBtn">
-                            <i class="fas fa-share"></i> Compartir
                         </button>
                     </div>
                 </div>
