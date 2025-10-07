@@ -9,6 +9,8 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logof.png') }}"/>
 </head>
 <body>
+
+
     <div class="layout">
         <!-- ========== SIDEBAR ========== -->
         <aside class="sidebar" id="sidebar">
@@ -17,7 +19,7 @@
                     <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo">
                     <h2>tech-script</h2>
                 </div>
-                <button id="toggleSidebar" class="toggle-btn">☰</button>
+                
             </div>
 
       <nav>
@@ -53,8 +55,7 @@
         <!-- ========== MAIN CONTENT ========== -->
         <main class="main">
             <div class="topbar">
-                <button id="toggleSidebarMobile" class="toggle-btn">☰</button>
-                
+              <button id="toggleSidebarMobile" class="toggle-btn">☰</button>
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
                     <input type="text" placeholder="Buscar diplomados, contenido...">

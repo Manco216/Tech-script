@@ -21,6 +21,7 @@ def create_recovery_blueprint(mysql, mail, app):
         return render_template("recuperarContrasena.html")
     
     # =================== VISTA: PÁGINA DE RESET ===================
+   # Función reset_page en recovery.py (alrededor de la línea 40)
     @recovery_bp.route("/reset/<token>", methods=["GET"])
     def reset_page(token):
         try:
@@ -28,8 +29,9 @@ def create_recovery_blueprint(mysql, mail, app):
             email = serializer.loads(token, salt='password-reset-salt', max_age=3600)
             return render_template("resetPassword.html", token=token)
         except SignatureExpired:
+            # CORRECCIÓN AQUÍ: Mensaje específico por vencimiento
             return render_template("tokenExpired.html", 
-                                 mensaje="El enlace ha expirado. Solicita uno nuevo.")
+                                 mensaje="El token ha vencido. Solicita uno nuevo.") 
         except BadSignature:
             return render_template("tokenExpired.html", 
                                  mensaje="Enlace inválido. Solicita uno nuevo.")
@@ -50,11 +52,8 @@ def create_recovery_blueprint(mysql, mail, app):
             usuario = cur.fetchone()
             
             if not usuario:
-                # Por seguridad, no revelar si el email existe o no
-                return jsonify({
-                    "success": True,
-                    "message": "Si el email existe, recibirás un enlace de recuperación"
-                }), 200
+                # Modificación: Enviar un error 404 explícito
+                return jsonify({"error": "El correo no está registrado"}), 404 
             
             # Generar token único
             token = serializer.dumps(email, salt='password-reset-salt')

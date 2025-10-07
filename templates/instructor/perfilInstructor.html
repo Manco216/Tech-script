@@ -19,77 +19,76 @@
         </div>
     </header>
 
-    <main class="profile-wrap">
-    <aside class="profile-card">
-        <div class="avatar" id="avatarInicial">
-            <button class="avatar-btn" title="Cambiar foto">
-                <i class="fas fa-camera"></i>
-            </button>
-        </div>
-        <h2 class="name" id="nombreUsuario">Cargando...</h2>
-        <div class="email" id="correoUsuario">Cargando...</div>
-        <span class="role" id="rolUsuario">Estudiante</span>
-
-        <ul class="meta">
-            <li><strong>Diplomados matriculados:</strong> <span id="totalMatriculas">0</span></li>
-            <li><strong>Fecha de ingreso:</strong> <span id="fechaIngreso">-</span></li>
-        </ul>
-    </aside>
-
-    <section class="info-card">
-        <div class="info-header">
-            <h3>Información Personal</h3>
-            <div class="info-actions">
-                <button id="editBtn" class="btn small">
-                    <i class="fas fa-pen"></i> Editar
+        <main class="profile-wrap">
+        <!-- Tarjeta lateral con avatar y resumen -->
+        <aside class="profile-card">
+            <div class="avatar">
+                {{ usuario.nombre[0:2]|upper }}
+                <button class="avatar-btn" title="Cambiar foto">
+                    <i class="fas fa-camera"></i>
                 </button>
             </div>
-        </div>
+            <h2 class="name">{{ usuario.nombre }}</h2>
+            <div class="email">{{ usuario.correo }}</div>
+            <span class="role">
+                {% if usuario.fk_rol == 1 %}
+                    Estudiante
+                {% elif usuario.fk_rol == 2 %}
+                    Instructor
+                {% elif usuario.fk_rol == 3 %}
+                    Administrador
+                {% endif %}
+            </span>
 
-        <form id="profileForm" class="info-form" autocomplete="off">
-            <div class="grid-2">
-                <label>
-                    Nombre Completo
-                    <input type="text" id="nombre" readonly>
-                </label>
-                <label>
-                    Correo Electrónico
-                    <input type="email" id="correo" readonly>
-                </label>
+            <ul class="meta">
+                <li><strong>Dirección:</strong> {{ usuario.direccion or 'No registrada' }}</li>
+                <li><strong>Teléfono:</strong> {{ usuario.telefono or 'No registrado' }}</li>
+                <li><strong>Fecha de registro:</strong> {{ usuario.fecha_creacion.strftime('%d/%m/%Y') }}</li>
+            </ul>
+        </aside>
+
+        <!-- Formulario de información personal -->
+        <section class="info-card">
+            <div class="info-header">
+                <h3>Información Personal</h3>
+                <div class="info-actions">
+                    <button id="editBtn" class="btn small">
+                        <i class="fas fa-pen"></i> Editar
+                    </button>
+                </div>
             </div>
 
-            <div class="grid-2">
-                <label>
-                    Número de Documento
-                    <input type="text" id="documento" readonly>
-                </label>
-                <label>
-                    Teléfono
-                    <input type="tel" id="telefono" readonly>
-                </label>
-            </div>
+            <form id="profileForm" class="info-form" autocomplete="off">
+                <div class="grid-2">
+                    <label>
+                        Nombre Completo
+                        <input type="text" id="nombre" value="{{ usuario.nombre }}" readonly>
+                    </label>
+                    <label>
+                        Correo Electrónico
+                        <input type="email" id="correo" value="{{ usuario.correo }}" readonly>
+                    </label>
+                </div>
 
-            <div class="grid-2">
-                <label>
-                    Dirección
-                    <input type="text" id="direccion" readonly>
-                </label>
-            </div>
+                <div class="grid-2">
+                    <label>
+                        Número de Documento
+                        <input type="text" id="documento" value="{{ usuario.documento or '' }}" readonly>
+                    </label>
+                    <label>
+                        Teléfono
+                        <input type="tel" id="telefono" value="{{ usuario.telefono or '' }}" readonly>
+                    </label>
+                </div>
 
-            <div class="form-actions">
-                <button type="button" id="saveBtn" class="btn primary" style="display: none;">
-                    <i class="fas fa-save"></i> Guardar Cambios
-                </button>
-                <button type="button" id="cancelBtn" class="btn" style="display: none;">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
-                <button type="button" id="logoutBtn" class="btn primary">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                </button>
-            </div>
-        </form>
-    </section>
-</main>
+                <div class="form-actions">
+                    <button type="button" id="logoutBtn" class="btn primary">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </button>
+                </div>
+            </form>
+        </section>
+    </main>
     <script src="../../static/JS/estudiante/perfilEstudiante.js"></script>
 </body>
 </html>

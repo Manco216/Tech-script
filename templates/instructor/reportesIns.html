@@ -58,53 +58,71 @@
           <div class="user">
             <img src="https://i.pravatar.cc/40?img=6" alt="foto de perfil" class="user-avatar">
             <div class="user-info">
-              <span class="name">Prof. Martínez</span>
-              <span class="email">martinez@techscript.com</span>
+              <span class="name">Prof. {{ user.nombre }}</span>
+              <span class="email">{{ user.correo }}</span>
             </div>
           </div>
         </div>
       </div>
     </aside>
 
-
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="container">
-     
-
-    <div class="main" id="reportContent">
+<div class="main" id="reportContent">
         <!-- Page Header -->
          <div class="page-header">
             <div class="page-title">
                 <i class="fas fa-chart-line"></i>
-                <span>Reportes Instructor</span>
+                <span>Reportes Administrativos</span>
             </div>
             <button class="btn-export" id="btnExportPDF">
                 <i class="fas fa-file-pdf"></i> Exportar PDF
             </button>
         </div>
 
-       <div class="stats-grid">
-    <div class="stat-card-new blue-bg">
-        <p class="stat-label">Total Estudiantes</p>
-        <h3 id="kpi-estudiantes">--</h3>
-    </div>
+        <!-- KPIs Principales -->
+        <div class="stats-grid">
+            <div class="stat-card-new blue-bg">
+                <p class="stat-label">Total Estudiantes</p>
+                <h3 id="kpi-estudiantes">--</h3>
+                <p><i class="fas fa-arrow-up"></i> <span id="kpi-crecimiento">--%</span></p>
+            </div>
 
-    <div class="stat-card-new green-bg">
-        <p class="stat-label">Estudiantes Finalizados</p>
-        <h3 id="kpi-finalizados">--</h3>
-    </div>
+            <div class="stat-card-new green-bg">
+                <p class="stat-label">Ingresos Totales</p>
+                <h3 id="kpi-ingresos">$--</h3>
+            </div>
 
-    <div class="stat-card-new purple-bg">
-        <p class="stat-label">Tasa de Finalización</p>
-        <h3 id="kpi-finalizacion">--%</h3>
-    </div>
+            <div class="stat-card-new purple-bg">
+                <p class="stat-label">Tasa de Finalización</p>
+                <h3 id="kpi-finalizacion">--%</h3>
+            </div>
+        </div>
 
-    <div class="stat-card-new orange-bg">
-        <p class="stat-label">Ingresos Totales</p>
-        <h3 id="kpi-ingresos">$--</h3>
+
+        <!-- Métricas de Engagement -->
+        <div class="engagement-section">
+            <h3><i class="fas fa-chart-pie"></i> Métricas de Engagement</h3>
+            <div class="stats-grid">
+                <div class="stat-card-new orange-bg">
+                    <p>Usuarios Activos</p>
+                    <h3 id="eng-activos">--%</h3>
+                </div>
+                <div class="stat-card-new blue-bg">
+                    <p>Sesiones Totales</p>
+                    <h3 id="eng-sesiones">--</h3>
+                </div>
+                <div class="stat-card-new green-bg">
+                    <p>Tasa de Retención</p>
+                    <h3 id="eng-retencion">--%</h3>
+                </div>
+                <div class="stat-card-new purple-bg">
+                    <p>Tiempo Promedio / Sesión</p>
+                    <h3 id="eng-tiempo">--</h3>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 </div>
-
 
     <script src="../../static/JS/admin/reportes.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>

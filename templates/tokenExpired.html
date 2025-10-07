@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enlace Expirado - tech-script</title>
+    <link rel="icon" type="image/png" href="../static/img/logof.png">
+    <link rel="stylesheet" href="../../static/CSS/tokenExpired.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card-container">
+            
+            <div class="logo">
+                <span class="logo-icon">TS</span>
+                <span class="logo-text">tech-script</span>
+            </div>
+            
+            <div class="error-content">
+                <div class="status-icon">✗</div>
+                
+                <h2>Enlace Expirado o Inválido</h2>
+                
+                <p>{{ mensaje }}</p>
+                
+                <p>Para proteger tu cuenta, los enlaces de recuperación solo son válidos por un corto tiempo. Por favor, solicita uno nuevo.</p>
+
+                <a href="{{ url_for('recovery.recovery_page') }}" class="action-button">
+                    Solicitar Nuevo Enlace
+                </a>
+            </div>
+
+            <div class="card-footer">
+                <p>tech-script © 2025. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

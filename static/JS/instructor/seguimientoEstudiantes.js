@@ -244,3 +244,144 @@ function mostrarError(mensaje) {
     // Remover después de 5 segundos
     setTimeout(() => errorDiv.remove(), 5000);
 }
+function initSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    if (!sidebar) return;
+    
+    // Abrir sidebar con botón flotante
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            if (sidebarOverlay) {
+                sidebarOverlay.classList.add('active');
+            }
+            sidebarOpen = true;
+        });
+    }
+    
+    // Cerrar sidebar al hacer click en el overlay
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+            sidebarOpen = false;
+        });
+    }
+    
+    // Cerrar sidebar al hacer click en un nav-item (solo en móvil)
+    const navItems = sidebar.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 1024) {
+                sidebar.classList.remove('open');
+                if (sidebarOverlay) {
+                    sidebarOverlay.classList.remove('active');
+                }
+                sidebarOpen = false;
+            }
+        });
+    });
+    
+    // Cerrar sidebar al presionar ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebarOpen && window.innerWidth <= 1024) {
+            sidebar.classList.remove('open');
+            if (sidebarOverlay) {
+                sidebarOverlay.classList.remove('active');
+            }
+            sidebarOpen = false;
+        }
+    });
+}
+// ========== EXPORTAR DASHBOARD A PDF ==========
+document.addEventListener('DOMContentLoaded', () => {
+    const exportBtn = document.getElementById('exportPDF');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', exportarPDF);
+    }
+});
+
+async function exportarPDF() {
+    try {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const content = document.querySelector('.content-area'); // Selecciona el área principal del dashboard
+        
+        if (!content) {
+            alert('No se encontró el contenido para exportar.');
+            return;
+        }
+
+        // Mostrar mensaje temporal
+        const loadingMsg = document.createElement('div');
+        loadingMsg.textContent = 'Generando PDF...';
+        loadingMsg.style.position = 'fixed';
+        loadingMsg.style.top = '10px';
+        loadingMsg.style.right = '10px';
+        loadingMsg.style.padding = '10px 15px';
+        loadingMsg.style.background = '#333';
+        loadingMsg.style.color = '#fff';
+        loadingMsg.style.borderRadius = '8px';
+        loadingMsg.style.zIndex = '9999';
+        document.body.appendChild(loadingMsg);
+
+        // Convertir el contenido a imagen
+        const canvas = await html2canvas(content, { scale: 2, useCORS: true });
+        const imgData = canvas.toDataURL('image/png');
+
+        const imgWidth = 190; // ancho del A4 menos márgenes
+        const pageHeight = 297;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 10;
+
+        // Agregar primera página
+        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        // Si el contenido es más largo que una página
+        while (heightLeft > 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+
+        pdf.save('reporte_dashboard.pdf');
+        loadingMsg.remove();
+        console.log('PDF generado con éxito');
+    } catch (error) {
+        console.error('Error al generar PDF:', error);
+        mostrarError('Error al exportar PDF: ' + error.message);
+    }
+}
+
+
+// ---------------------- Inicialización ----------------------
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicializar sidebar
+    initSidebar();
+    
+    // Inicializar datos de la semana
+    currentWeek = getStartOfWeek(new Date());
+    updateWeekDisplay();
+    initializeChart();
+    updateChart();
+
+    // Eventos para cambiar semana
+    document.getElementById('prevWeek')?.addEventListener('click', () => changeWeek(-1));
+    document.getElementById('nextWeek')?.addEventListener('click', () => changeWeek(1));
+
+    // Toggle gráfico horas/sesiones
+    document.querySelectorAll('.view-toggle .toggle-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.view-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            viewMode = this.dataset.view;
+            updateChart();
+        });
+    });
+});

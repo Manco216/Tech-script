@@ -22,27 +22,28 @@
         </div>
       </div>
       
-        <a href="{{ url_for('admin.home') }}" class="nav-item active" id="Inicio">
+      <nav>
+        <a href="{{ url_for('instructor') }}" class="nav-item active" id="Inicio">
           <i class="fas fa-chart-line icon"></i>
           <span class="text">Panel</span>
         </a>
-        <a href="{{ url_for('admin.reportes') }}" class="nav-item">
+         <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
           <i class="fas fa-chart-bar icon"></i>
           <span class="text">Reportes</span>
         </a>
-        <a href="{{ url_for('admin.gestion_diplomados') }}" class="nav-item">
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="mis-cursos">
           <i class="fas fa-book icon"></i>
           <span class="text">Gestion Diplomados</span>
         </a>
-        <a href="{{ url_for('admin.gestion_usuarios') }}" class="nav-item">
+        <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="estudiantes">
           <i class="fas fa-users icon"></i>
           <span class="text"> Gestion Usuarios</span>
         </a>
-        <a href="{{ url_for('admin.subir_contenido') }}" class="nav-item">
+        <a href="{{ url_for('subirContenido') }}" class="nav-item" id="contenido">
           <i class="fas fa-upload icon"></i>
           <span class="text">Contenido</span>
         </a>
-        <a href="{{ url_for('admin.metricas') }}" class="nav-item">
+         <a href="{{ url_for('diplomadosIns') }}" class="nav-item" id="reportes">
           <i class="fas fa-chart-bar icon"></i>
           <span class="text">Metricas</span>
         </a>

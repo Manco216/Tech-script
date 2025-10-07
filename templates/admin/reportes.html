@@ -17,7 +17,7 @@
      <div class="layout">
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-      <button id="toggleSidebar" class="toggle-btn">☰</button>
+      <button id="toggleSidebar" class="toggle-btn"></button>
       <div class="logo">
         <div class="logo-content">
           <img src="../../static/img/logo.png" alt="Logo">
@@ -56,8 +56,8 @@
           <div class="user">
             <img src="https://i.pravatar.cc/40?img=6" alt="foto de perfil" class="user-avatar">
             <div class="user-info">
-              <span class="name">Prof. Martínez</span>
-              <span class="email">martinez@techscript.com</span>
+              <span class="name">Admin. {{ user.nombre }}</span>
+              <span class="email">{{ user.correo }}</span>
             </div>
           </div>
         </div>
@@ -69,7 +69,7 @@
     <main class="container">
       <!-- BARRA SUPERIOR -->
       <header class="topbar">
-        <button id="toggleSidebarTop" class="toggle-btn"><i class="fas fa-bars"></i></button>
+     
         <div class="search-container">
           <i class="fas fa-search search-icon"></i>
           <input type="text" placeholder="Buscar estudiantes, cursos, contenido..." id="search-input">
@@ -90,7 +90,7 @@
                   <img src="https://i.pravatar.cc/40?img=6" alt="Avatar">
                 </div>
                 <div class="dropdown-user-info">
-                  <h4>Prof. Martínez</h4>
+                  <h4>Prof. {{ user.nombre }}</h4>
                   <span>Instructor</span>
                 </div>
               </div>

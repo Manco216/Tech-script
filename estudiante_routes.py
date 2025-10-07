@@ -47,6 +47,7 @@ def diplomados():
     """Página de diplomados del estudiante"""
     return render_template("estudiante/diplomados.html", user=current_user)
 
+
 # =================== API: LISTAR DIPLOMADOS DISPONIBLES ===================
 @estudiante_bp.route("/api/diplomados", methods=["GET"])
 @login_required
