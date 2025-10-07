@@ -98,14 +98,14 @@
               <img src="https://i.pravatar.cc/40" alt="Avatar">
             </div>
             <div class="dropdown-user-info">
-              <h4>María González</h4>
+              <h4>{{ user.nombre }}</h4>
               <span>Estudiante</span>
             </div>
           </div>
 
           <div class="dropdown-divider"></div>
           <div class="dropdown-content">
-            <a href="perfilEstudiante.html" class="dropdown-item">
+            <a href="{{ url_for('perfiles.perfil_estudiante') }}" class="dropdown-item">
               <i class="fas fa-user"></i>
               <span>Mi Cuenta</span>
             </a>
@@ -124,17 +124,19 @@
       </div>
       </header>
 
-      <!-- ========== SECCIÓN WELCOME + CALENDARIO ========== -->
+        <!-- ========== SECCIÓN WELCOME + CALENDARIO ========== -->
       <section class="welcome-calendar">
         <!-- TARJETA DE BIENVENIDA -->
         <div class="welcome">
           <div class="welcome-content">
             <div class="welcome-main">
               <div class="welcome-text">
-                <div class="dropdown-user-info">
-                  <h4>Hola. {{ user.nombre }}</h4>
-                  <span>Estudiante</span>
-                </div>
+                <h1>¡Bienvenido de vuelta, {{ user.nombre }}!</h1>
+                <p>Continúa tu camino hacia el éxito profesional. Tienes nuevos módulos esperándote.</p>
+                <a href="#" class="welcome-btn" id="continuar-aprendiendo">
+                  <i class="fas fa-play"></i>
+                  Continuar Aprendiendo
+                </a>
               </div>
               <div class="welcome-illustration">
                 <img src="../../static/img/Online learning.gif" alt="Ilustración de aprendizaje online">

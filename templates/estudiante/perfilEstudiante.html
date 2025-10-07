@@ -19,23 +19,35 @@
         </div>
     </header>
 
-    <main class="profile-wrap">
+     <main class="profile-wrap">
+        <!-- Tarjeta lateral con avatar y resumen -->
         <aside class="profile-card">
-            <div class="avatar">MC
+            <div class="avatar">
+                {{ usuario.nombre[0:2]|upper }}
                 <button class="avatar-btn" title="Cambiar foto">
                     <i class="fas fa-camera"></i>
                 </button>
             </div>
-            <h2 class="name">María Camila Sánchez</h2>
-            <div class="email">mcsanchez@gigq.com</div>
-            <span class="role">Coordinadora</span>
+            <h2 class="name">{{ usuario.nombre }}</h2>
+            <div class="email">{{ usuario.correo }}</div>
+            <span class="role">
+                {% if usuario.fk_rol == 1 %}
+                    Estudiante
+                {% elif usuario.fk_rol == 2 %}
+                    Instructor
+                {% elif usuario.fk_rol == 3 %}
+                    Administrador
+                {% endif %}
+            </span>
 
             <ul class="meta">
-                <li><strong>Departamento:</strong> Control de Calidad</li>
-                <li><strong>Fecha de ingreso:</strong> Marzo 2023</li>
+                <li><strong>Dirección:</strong> {{ usuario.direccion or 'No registrada' }}</li>
+                <li><strong>Teléfono:</strong> {{ usuario.telefono or 'No registrado' }}</li>
+                <li><strong>Fecha de registro:</strong> {{ usuario.fecha_creacion.strftime('%d/%m/%Y') }}</li>
             </ul>
         </aside>
 
+        <!-- Formulario de información personal -->
         <section class="info-card">
             <div class="info-header">
                 <h3>Información Personal</h3>
@@ -50,22 +62,22 @@
                 <div class="grid-2">
                     <label>
                         Nombre Completo
-                        <input type="text" id="nombre" value="María Camila Sánchez Rodríguez" readonly>
+                        <input type="text" id="nombre" value="{{ usuario.nombre }}" readonly>
                     </label>
                     <label>
                         Correo Electrónico
-                        <input type="email" id="correo" value="maria.sanchez@gigq.com" readonly>
+                        <input type="email" id="correo" value="{{ usuario.correo }}" readonly>
                     </label>
                 </div>
 
                 <div class="grid-2">
                     <label>
                         Número de Documento
-                        <input type="text" id="documento" value="1098765432" readonly>
+                        <input type="text" id="documento" value="{{ usuario.documento or '' }}" readonly>
                     </label>
                     <label>
                         Teléfono
-                        <input type="tel" id="telefono" value="+57 315 987 6543" readonly>
+                        <input type="tel" id="telefono" value="{{ usuario.telefono or '' }}" readonly>
                     </label>
                 </div>
 
@@ -76,9 +88,8 @@
                 </div>
             </form>
         </section>
-
-       
     </main>
+    
     <script src="../../static/JS/estudiante/perfilEstudiante.js"></script>
 </body>
 </html>

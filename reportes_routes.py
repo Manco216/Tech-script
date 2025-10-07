@@ -28,11 +28,6 @@ def decimal_a_float(obj):
 def reportes():
     return render_template("admin/reportes.html", user=current_user)
 
-@reportes_bp.route("/instructor/reportesIns")
-@login_required
-def reportesIns():
-    return render_template("instructor/reportesIns.html", user=current_user)
-
 # ---------------------
 # API - KPIs PRINCIPALES
 # ---------------------

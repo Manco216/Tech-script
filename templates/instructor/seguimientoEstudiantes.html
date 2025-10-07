@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+
+     <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+
     <div class="layout">
         <!-- ========== SIDEBAR ========== -->
         <aside class="sidebar" id="sidebar">
@@ -53,7 +58,7 @@
         <!-- ========== MAIN CONTENT ========== -->
         <main class="main">
             <div class="topbar">
-                <button id="toggleSidebarMobile" class="toggle-btn">☰</button>
+             
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
                     <input type="text" placeholder="Buscar estudiantes...">
@@ -75,9 +80,10 @@
         </h1>
         <p class="page-description">Estadísticas generales y distribución por diplomados</p>
         <div class="header-actions">
-            <button class="btn btn-secondary" id="reportContent">
-                <i class="fas fa-file-pdf"></i> Exportar PDF
-            </button>
+<button id="exportPDF" class="btn btn-primary">
+  <i class="fas fa-file-pdf"></i> Exportar PDF
+</button>
+
             <button class="btn btn-primary" id="sendGroupMessage">
                 <i class="fas fa-comments"></i> Mensaje Grupal
             </button>
@@ -156,11 +162,7 @@
         <div class="tab-content active" id="overview-tab">
             <div class="overview-grid">
 
-                <!-- Progreso General -->
-                <div class="chart-card">
-                    <h3><i class="fas fa-chart-line"></i> Progreso General</h3>
-                    <canvas id="progressChart"></canvas>
-                </div>
+
 
                 <!-- Actividad Reciente -->
                 <div class="chart-card recent-activity">
@@ -205,6 +207,9 @@
     </div>
 </div>
 
+<!-- Librerías necesarias -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 <script src="{{ url_for('static', filename='JS/instructor/seguimientoEstudiantes.js') }}"></script>

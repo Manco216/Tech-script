@@ -54,8 +54,8 @@
           <div class="user">
             <img src="https://i.pravatar.cc/40?img=6" alt="foto de perfil" class="user-avatar">
             <div class="user-info">
-              <span class="name">Prof. Martínez</span>
-              <span class="email">martinez@techscript.com</span>
+              <span class="name">Admin. {{ user.nombre }}</span>
+              <span class="email">{{ user.correo }}</span>
             </div>
           </div>
         </div>
@@ -117,7 +117,7 @@
             <div class="welcome-main">
               <div class="welcome-text">
                 <h1>¡Bienvenido de vuelta al Panel administrativo!</h1>
-                <p>Gestiona tus Diplomados y Usuarios. Tienes 3 tareas pendientes de revisión.</p>
+                <p>Gestiona tus Diplomados y Usuarios.</p>
                                   <h4>¡Bienvenido Admin {{ user.nombre }}</h4>
                   <span>Administrador</span>
                 <a href="#" class="welcome-btn" id="revisar-tareas">
@@ -175,7 +175,7 @@
       <div class="stat-content">
         <div class="stat-info">
           <h3>Total Estudiantes</h3>
-          <div class="stat-number">105</div>
+          <div class="stat-number">3</div>
         </div>
         <div class="stat-icon">
           <i class="fas fa-users"></i>

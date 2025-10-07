@@ -32,7 +32,7 @@ from routes.contenidos_routes import contenidos_bp
 from routes.pagos_routes import pagosH_bp
 from instructor_routes import instructor_bp
 from reportes_instructor_routes import reportes_instructor_bp
-
+from perfiles_routes import perfiles_bp
 
 
 
@@ -52,7 +52,7 @@ app.register_blueprint(contenidos_bp)
 app.register_blueprint(pagosH_bp)
 app.register_blueprint(instructor_bp)
 app.register_blueprint(reportes_instructor_bp)
-
+app.register_blueprint(perfiles_bp)
 
 
 # Flask-Session
@@ -154,12 +154,6 @@ def subirContenido():
     return render_template("instructor/subirContenido.html")
 
 
-@app.route('/perfilEstudiante', methods=['GET', 'POST'])
-@login_required
-def perfilEstudiante():
-    return render_template("estudiante/perfilEstudiante.html")
-
-
 @app.route('/recuperarContrasena', methods=['GET', 'POST'])
 def recuperarContrasena():
     return render_template("recuperarContrasena.html")
@@ -197,7 +191,7 @@ def login():
     return render_template("login.html", mensaje=mensaje)
 
 @app.route('/crear-usuario', methods=['POST'])
-def crear_usuario():
+def registro_manual():
     nombre = request.form.get('txtNombre')
     correo = request.form.get('txtCorreo')
     contrasena = request.form.get('txtContrasena')
@@ -259,7 +253,7 @@ def auth_callback():
 
     if not usuario:
         hashed_pass = generate_password_hash(os.urandom(16).hex())
-        crear_usuario(mysql, nombre, None, correo, hashed_pass, None, None, fk_rol=1)
+        crear_usuario(mysql, nombre, None, correo, hashed_pass, None, None, 1)
         usuario = obtener_usuario_por_correo(mysql, correo)
         
     login_user(usuario)
@@ -279,7 +273,7 @@ def auth_callback():
 
     if not usuario:
         hashed_pass = generate_password_hash(os.urandom(16).hex())
-        crear_usuario(mysql, nombre, None, correo, hashed_pass, None, None, fk_rol=1)
+        crear_usuario(mysql, nombre, None, correo, hashed_pass, None, None, 1)
         usuario = obtener_usuario_por_correo(mysql, correo)
         
     login_user(usuario)

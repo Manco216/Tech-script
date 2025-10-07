@@ -744,3 +744,82 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+function initSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    if (!sidebar) return;
+    
+    // Abrir sidebar con botón flotante
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            if (sidebarOverlay) {
+                sidebarOverlay.classList.add('active');
+            }
+            sidebarOpen = true;
+        });
+    }
+    
+    // Cerrar sidebar al hacer click en el overlay
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+            sidebarOpen = false;
+        });
+    }
+    
+    // Cerrar sidebar al hacer click en un nav-item (solo en móvil)
+    const navItems = sidebar.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 1024) {
+                sidebar.classList.remove('open');
+                if (sidebarOverlay) {
+                    sidebarOverlay.classList.remove('active');
+                }
+                sidebarOpen = false;
+            }
+        });
+    });
+    
+    // Cerrar sidebar al presionar ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebarOpen && window.innerWidth <= 1024) {
+            sidebar.classList.remove('open');
+            if (sidebarOverlay) {
+                sidebarOverlay.classList.remove('active');
+            }
+            sidebarOpen = false;
+        }
+    });
+}
+
+// ---------------------- Inicialización ----------------------
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicializar sidebar
+    initSidebar();
+    
+    // Inicializar datos de la semana
+    currentWeek = getStartOfWeek(new Date());
+    updateWeekDisplay();
+    initializeChart();
+    updateChart();
+
+    // Eventos para cambiar semana
+    document.getElementById('prevWeek')?.addEventListener('click', () => changeWeek(-1));
+    document.getElementById('nextWeek')?.addEventListener('click', () => changeWeek(1));
+
+    // Toggle gráfico horas/sesiones
+    document.querySelectorAll('.view-toggle .toggle-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.view-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            viewMode = this.dataset.view;
+            updateChart();
+        });
+    });
+});
